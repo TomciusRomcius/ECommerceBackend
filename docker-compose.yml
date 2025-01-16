@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17.2
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=development
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
