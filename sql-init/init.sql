@@ -7,17 +7,17 @@ BEGIN
 END
 $$;
 
-CREATE TABLE manufacturer(
+CREATE TABLE manufacturers(
   manufacturerId SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE category(
+CREATE TABLE categories(
   categoryId SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE "user"(
+CREATE TABLE "users"(
   userId SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL,
   lastname varchar(255) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE "user"(
   password varchar(255) NOT NULL
 );
 
-CREATE TABLE address(
+CREATE TABLE addresses(
   addressId SERIAL PRIMARY KEY,
   userId int NOT NULL,
   addressType addressTypeEnum NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE address(
   city varchar(255) NOT NULL,
   location varchar(255) NOT NULL,
   zipCode varchar(15) NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "user"(userId)
+  FOREIGN KEY (userId) REFERENCES "users"(userId)
 );
 
 CREATE TABLE paymentDetails(
@@ -44,25 +44,25 @@ CREATE TABLE paymentDetails(
   cardType varchar(50) NOT NULL,
   lastFourDigits varchar(4) NOT NULL,
   expDate Date NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "user"(userId)
+  FOREIGN KEY (userId) REFERENCES "users"(userId)
 );
 
-CREATE TABLE product(
+CREATE TABLE products(
   productId SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL,
   description varchar(1000) NOT NULL,
   price DECIMAL(6, 2) NOT NULL,
   manufacturerId int NOT NULL,
   categoryId int NOT NULL,
-  FOREIGN KEY (manufacturerId) REFERENCES manufacturer(manufacturerId),
-  FOREIGN KEY (categoryId) REFERENCES category(categoryId)
+  FOREIGN KEY (manufacturerId) REFERENCES manufacturers(manufacturerId),
+  FOREIGN KEY (categoryId) REFERENCES categories(categoryId)
 );
 
-CREATE TABLE cartProduct(
+CREATE TABLE cartProducts(
   cartProductId SERIAL PRIMARY KEY,
   userId int NOT NULL,
   productId int NOT NULL,
   quantity int NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "user"(userId),
-  FOREIGN KEY (productId) REFERENCES product(productId)
+  FOREIGN KEY (userId) REFERENCES "users"(userId),
+  FOREIGN KEY (productId) REFERENCES products(productId)
 );
