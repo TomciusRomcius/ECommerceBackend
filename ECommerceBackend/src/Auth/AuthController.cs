@@ -1,4 +1,3 @@
-using ECommerce.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
