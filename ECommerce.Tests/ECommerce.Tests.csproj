@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ECommerceBackend.csproj"></ProjectReference>
+    <ProjectReference Include="../ECommerceBackend/ECommerceBackend.csproj"></ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
