@@ -14,11 +14,16 @@ namespace ECommerce.Common.Services
     {
         private readonly SigningCredentials SigningCredentials;
         private readonly JwtSecurityTokenHandler TokenHandler = new JwtSecurityTokenHandler();
+        private readonly SymmetricSecurityKey SecurityKey;
 
         public JwtService(string secretKey)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            if (secretKey.Length < 16)
+            {
+                throw new ArgumentException("Secret key too short!");
+            }
+            SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
         }
 
         public string CreateUserToken(int userId, string email)
@@ -39,6 +44,22 @@ namespace ECommerce.Common.Services
             var token = TokenHandler.CreateToken(tokenDescriptor);
 
             return TokenHandler.WriteToken(token);
+        }
+
+        public JwtSecurityToken ReadToken(string jwtToken)
+        {
+            // TODO: add valid issr
+            var validationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                IssuerSigningKey = SecurityKey
+            };
+
+            SecurityToken validatedToken;
+            TokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
+            return validatedToken as JwtSecurityToken;
         }
     }
 }
