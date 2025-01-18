@@ -5,7 +5,12 @@ using System.Security.Claims;
 
 namespace ECommerce.Common.Services
 {
-    public class JwtService
+    public interface IJwtService
+    {
+        public string CreateUserToken(int userId, string email);
+    }
+
+    public class JwtService : IJwtService
     {
         private readonly SigningCredentials SigningCredentials;
         private readonly JwtSecurityTokenHandler TokenHandler = new JwtSecurityTokenHandler();
