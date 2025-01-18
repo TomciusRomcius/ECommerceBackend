@@ -1,20 +1,47 @@
+using ECommerce.Common.Services;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
-namespace Routes.TestRoute
+namespace ECommerce.Auth
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class TestRouteController : ControllerBase
+	public class AuthController : ControllerBase
 	{
-		[HttpPost("sign-up-with-password")]
-		public object SignUpWithPassword()
+		readonly IAuthService _authService;
+		readonly ILogger _logger;
+		public AuthController(IAuthService authService)
 		{
-			return "Test";
+			_authService = authService;
+			ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+			_logger = loggerFactory.CreateLogger("AuthController");
+		}
+		[HttpPost("sign-up-with-password")]
+		public async Task<IActionResult> SignUpWithPassword(SignUpWithPasswordRequestDto signUpWithPasswordRequestDto)
+		{
+			try
+			{
+				AuthResponseDto resDto = await _authService.SignUpWithPassword(signUpWithPasswordRequestDto);
+				Response.Cookies.Append("user", resDto.jwtToken);
+				return StatusCode(201, resDto);
+			}
+			catch (PostgresException ex)
+			{
+				_logger.LogInformation(ex.ToString());
+				return StatusCode(500, "Encountered an error while writting to the database.");
+			}
+
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.ToString());
+				return StatusCode(500, "Unknown error.");
+			}
 		}
 		[HttpPost("sign-in-with-password")]
-		public object SignUpWithPassword()
+		public async Task<IActionResult> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto)
 		{
-			return "Test";
+			AuthResponseDto res = await _authService.SignInWithPassword(signInWithPasswordRequestDto);
+			return Ok(res);
 		}
 	}
 }

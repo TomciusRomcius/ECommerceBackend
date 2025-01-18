@@ -2,7 +2,7 @@ namespace ECommerce.Auth
 {
 	public interface IAuthService
 	{
-		public void SignUpWithPassword();
-		public void SignInWithPassword();
+		public Task<AuthResponseDto> SignUpWithPassword(SignUpWithPasswordRequestDto signUpWithPasswordRequestDto);
+		public Task<AuthResponseDto> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto);
 	}
 }
