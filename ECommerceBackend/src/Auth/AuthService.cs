@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
 using Npgsql;
@@ -7,9 +6,10 @@ namespace ECommerce.Auth
 {
     public class AuthService : IAuthService
     {
-        readonly PostgresService _postgresService;
-        readonly JwtService _jwtService;
-        public AuthService(PostgresService postgresService, JwtService jwtService)
+        readonly IPostgresService _postgresService;
+        readonly IJwtService _jwtService;
+
+        public AuthService(IPostgresService postgresService, IJwtService jwtService)
         {
             _postgresService = postgresService;
             _jwtService = jwtService;
@@ -23,22 +23,18 @@ namespace ECommerce.Auth
             ";
 
             // TODO: add salt
-            SHA1 sha1 = SHA1.Create();
             string passwordHash = PasswordHasher.Hash(signUpWithPasswordRequestDto.Password);
 
-            var cmd = new NpgsqlCommand(query, _postgresService.Connection)
-            {
-                Parameters = {
+            QueryParameter[] parameters = [
                     new("name", signUpWithPasswordRequestDto.Name),
                     new("lastname", signUpWithPasswordRequestDto.Lastname),
                     new("email", signUpWithPasswordRequestDto.Email),
-                    new("password", passwordHash),
-                }
-            };
+                    new("password", passwordHash)
+                ];
 
-            var id = await cmd.ExecuteScalarAsync();
+            int? id = (int?)await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            if (id == null || !(id is int))
+            if (id is not int)
             {
                 throw new HttpRequestException("Id is null or id is not an int");
             }
@@ -58,17 +54,14 @@ namespace ECommerce.Auth
                 SELECT userId, password FROM users WHERE email = @Email
             ";
 
-            var cmd = new NpgsqlCommand(query, _postgresService.Connection)
-            {
-                Parameters = {
-                    new("Email", signInWithPasswordRequestDto.Email)
-                }
-            };
-            var reader = cmd.ExecuteReader();
-            await reader.ReadAsync();
-            // TODO: add salt
-            int id = reader.GetInt32(0);
-            string retrievedPasswordHash = reader.GetString(1);
+            QueryParameter[] parameters = [
+                new("Email", signInWithPasswordRequestDto.Email)
+            ];
+
+            List<object> result = await _postgresService.ExecuteReaderAsync(query, parameters);
+
+            int id = (int)result[0];
+            string? retrievedPasswordHash = result[1].ToString();
 
             if (!PasswordHasher.Verify(signInWithPasswordRequestDto.Password, retrievedPasswordHash))
             {
