@@ -21,7 +21,7 @@ builder.Services.AddSingleton<IJwtService, JwtService>(_ => new JwtService(jwtOp
 string? connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
 if (connectionString == null)
 {
-    throw new Exception("Connection string is empty");
+    throw new ArgumentException("Connection string is empty");
 }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
