@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using ECommerce.Common.Utils;
 
 namespace ECommerce.Common.Services
 {
@@ -15,14 +16,18 @@ namespace ECommerce.Common.Services
         private readonly SigningCredentials SigningCredentials;
         private readonly JwtSecurityTokenHandler TokenHandler = new JwtSecurityTokenHandler();
         private readonly SymmetricSecurityKey SecurityKey;
+        private readonly JwtOptions _jwtOptions;
 
-        public JwtService(string secretKey)
+        public JwtService(JwtOptions jwtOptions)
         {
-            if (secretKey.Length < 16)
+            _jwtOptions = jwtOptions;
+
+            if (_jwtOptions.SigningKey.Length < 16)
             {
                 throw new ArgumentException("Secret key too short!");
             }
-            SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SigningKey));
             SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
         }
 
@@ -32,12 +37,13 @@ namespace ECommerce.Common.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.Iss, _jwtOptions.Issuer),
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddHours(_jwtOptions.ExpirationHours),
                 SigningCredentials = this.SigningCredentials,
             };
 
@@ -46,20 +52,20 @@ namespace ECommerce.Common.Services
             return TokenHandler.WriteToken(token);
         }
 
-        public JwtSecurityToken ReadToken(string jwtToken)
-        {
-            // TODO: add valid issr
-            var validationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                IssuerSigningKey = SecurityKey
-            };
+        // public JwtSecurityToken ReadToken(string jwtToken)
+        // {
+        //     // TODO: add valid issr
+        //     var validationParameters = new TokenValidationParameters()
+        //     {
+        //         ValidateIssuer = false,
+        //         ValidateAudience = false,
+        //         ValidateLifetime = false,
+        //         IssuerSigningKey = SecurityKey
+        //     };
 
-            SecurityToken validatedToken;
-            TokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
-            return validatedToken as JwtSecurityToken;
-        }
+        //     SecurityToken validatedToken;
+        //     TokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
+        //     return validatedToken as JwtSecurityToken;
+        // }
     }
 }

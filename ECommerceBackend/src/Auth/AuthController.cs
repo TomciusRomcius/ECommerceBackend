@@ -39,8 +39,9 @@ namespace ECommerce.Auth
 		[HttpPost("sign-in-with-password")]
 		public async Task<IActionResult> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto)
 		{
-			AuthResponseDto res = await _authService.SignInWithPassword(signInWithPasswordRequestDto);
-			return Ok(res);
+			AuthResponseDto resDto = await _authService.SignInWithPassword(signInWithPasswordRequestDto);
+			Response.Cookies.Append("user", resDto.jwtToken);
+			return Ok(resDto);
 		}
 	}
 }
