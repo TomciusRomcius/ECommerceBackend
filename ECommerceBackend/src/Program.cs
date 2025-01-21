@@ -52,6 +52,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new PostgresService(connectionString));
+
+builder.Services.AddSingleton<IProductService, ProductService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 
