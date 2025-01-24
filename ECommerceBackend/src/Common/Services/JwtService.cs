@@ -52,20 +52,20 @@ namespace ECommerce.Common.Services
             return TokenHandler.WriteToken(token);
         }
 
-        // public JwtSecurityToken ReadToken(string jwtToken)
-        // {
-        //     // TODO: add valid issr
-        //     var validationParameters = new TokenValidationParameters()
-        //     {
-        //         ValidateIssuer = false,
-        //         ValidateAudience = false,
-        //         ValidateLifetime = false,
-        //         IssuerSigningKey = SecurityKey
-        //     };
+        public JwtSecurityToken ReadToken(string jwtToken)
+        {
+            // TODO: add valid issr
+            var validationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                IssuerSigningKey = SecurityKey
+            };
 
-        //     SecurityToken validatedToken;
-        //     TokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
-        //     return validatedToken as JwtSecurityToken;
-        // }
+            SecurityToken validatedToken;
+            TokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
+            return validatedToken as JwtSecurityToken;
+        }
     }
 }
