@@ -15,7 +15,13 @@ namespace ECommerce.Common.Services
     }
     public interface IPostgresService
     {
-        public Task<List<object>> ExecuteReaderAsync(string query, QueryParameter[] parameters);
+        /// <summary>
+        ///     Execute Postgres query
+        /// </summary>
+        /// <returns>
+        ///     Returns a list of rows
+        /// </returns>
+        public Task<List<Dictionary<string, object>>> ExecuteAsync(string query, QueryParameter[]? parameters = null);
         public Task<object?> ExecuteScalarAsync(string query, QueryParameter[] parameters);
     }
 
@@ -29,22 +35,30 @@ namespace ECommerce.Common.Services
             Connection.Open();
         }
 
-        public async Task<List<object>> ExecuteReaderAsync(string query, QueryParameter[] parameters)
+        public async Task<List<Dictionary<string, object>>> ExecuteAsync(string query, QueryParameter[]? parameters = null)
         {
             NpgsqlCommand cmd = new NpgsqlCommand(query, Connection);
-            foreach (var parameter in parameters)
+
+            if (parameters != null)
             {
-                cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                foreach (var parameter in parameters)
+                {
+                    cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                }
             }
-            NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-            List<object> result = new List<object>();
+
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
 
             while (await reader.ReadAsync())
             {
+                var row = new Dictionary<string, object>();
                 for (int ordinal = 0; ordinal < reader.FieldCount; ordinal++)
                 {
-                    result.Add(reader.GetValue(ordinal));
+                    row[reader.GetName(ordinal)] = reader.GetValue(ordinal);
                 }
+
+                result.Add(row);
             }
 
             return result;
