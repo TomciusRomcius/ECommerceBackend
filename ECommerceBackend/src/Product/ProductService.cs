@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Text;
 using ECommerce.Common.Services;
-using Npgsql;
+using ECommerce.Common.Utils;
 
 namespace ECommerce.Product
 {
@@ -14,6 +13,7 @@ namespace ECommerce.Product
     public class ProductService : IProductService
     {
         private readonly IPostgresService _postgresService;
+        private ILogger logger = LoggerManager.GetInstance().CreateLogger("ProductService");
 
         public ProductService(IPostgresService postgresService)
         {
@@ -47,9 +47,9 @@ namespace ECommerce.Product
                 parameters.Add(new QueryParameter($"categoryId{i}", productDto.CategoryId));
             }
 
-            List<object> results = await _postgresService.ExecuteReaderAsync(query.ToString(), parameters.ToArray());
+            List<Dictionary<string, object>> results = await _postgresService.ExecuteAsync(query.ToString(), parameters.ToArray());
 
-            return [results.ToString()];
+            throw new NotImplementedException();
         }
     }
 }
