@@ -23,7 +23,7 @@ namespace ECommerce.Common.Services
         ///     Returns a list of rows
         /// </returns>
         public Task<List<Dictionary<string, object>>> ExecuteAsync(string query, QueryParameter[]? parameters = null);
-        public Task<object?> ExecuteScalarAsync(string query, QueryParameter[] parameters);
+        public Task<object?> ExecuteScalarAsync(string query, QueryParameter[]? parameters = null);
     }
 
     public class PostgresService : IPostgresService
@@ -67,13 +67,18 @@ namespace ECommerce.Common.Services
             return result;
         }
 
-        public async Task<object?> ExecuteScalarAsync(string query, QueryParameter[] parameters)
+        public async Task<object?> ExecuteScalarAsync(string query, QueryParameter[]? parameters = null)
         {
             NpgsqlCommand cmd = new NpgsqlCommand(query, Connection);
-            foreach (var parameter in parameters)
+
+            if (parameters != null)
             {
-                cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                foreach (var parameter in parameters)
+                {
+                    cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                }
             }
+
             return await cmd.ExecuteScalarAsync();
         }
     }
