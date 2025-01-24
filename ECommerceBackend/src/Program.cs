@@ -1,5 +1,6 @@
 using System.Text;
 using ECommerce.Auth;
+using ECommerce.Categories;
 using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
 using ECommerce.Product;
@@ -56,6 +57,7 @@ builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new Postgr
 
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
 
 builder.Services.AddControllers();
 
