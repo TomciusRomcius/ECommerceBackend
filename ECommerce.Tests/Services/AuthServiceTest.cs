@@ -74,14 +74,17 @@ namespace ECommerce.Tests
 
             string expectedJwt = "jwt";
             int expectedUserId = 5;
-            var readList = new List<object>()
+
+            var readList = new List<Dictionary<string, object>>
             {
-                expectedUserId,
-                hashedPassword
+                new Dictionary<string, object>()
+                {
+                    ["userid"] = expectedUserId,
+                    ["password"] = hashedPassword,
+                }
             };
 
-
-            _mockPostgresService.Setup(postgres => postgres.ExecuteReaderAsync(It.IsAny<string>(), It.IsAny<QueryParameter[]>())).ReturnsAsync(readList);
+            _mockPostgresService.Setup(postgres => postgres.ExecuteAsync(It.IsAny<string>(), It.IsAny<QueryParameter[]?>())).ReturnsAsync(readList);
             _mockJwtService.Setup(jwt => jwt.CreateUserToken(It.IsAny<int>(), It.IsAny<string>())).Returns(expectedJwt);
 
             AuthResponseDto result = await _authService.SignInWithPassword(dto);
@@ -104,15 +107,17 @@ namespace ECommerce.Tests
 
             string expectedJwt = "jwt";
             int expectedUserId = 5;
-            var readList = new List<object>()
 
+            var readList = new List<Dictionary<string, object>>
             {
-                expectedUserId,
-                hashedRealPassword
+                new Dictionary<string, object>()
+                {
+                    ["userid"] = expectedUserId,
+                    ["password"] = hashedRealPassword,
+                }
             };
 
-
-            _mockPostgresService.Setup(postgres => postgres.ExecuteReaderAsync(It.IsAny<string>(), It.IsAny<QueryParameter[]>())).ReturnsAsync(readList);
+            _mockPostgresService.Setup(postgres => postgres.ExecuteAsync(It.IsAny<string>(), It.IsAny<QueryParameter[]>())).ReturnsAsync(readList);
             _mockJwtService.Setup(jwt => jwt.CreateUserToken(It.IsAny<int>(), It.IsAny<string>())).Returns(expectedJwt);
             await Assert.ThrowsAsync<BadHttpRequestException>(() => _authService.SignInWithPassword(dto));
         }
