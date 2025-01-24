@@ -1,6 +1,5 @@
 using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
-using Npgsql;
 
 namespace ECommerce.Auth
 {
@@ -58,10 +57,10 @@ namespace ECommerce.Auth
                 new("Email", signInWithPasswordRequestDto.Email)
             ];
 
-            List<object> result = await _postgresService.ExecuteReaderAsync(query, parameters);
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
 
-            int id = (int)result[0];
-            string? retrievedPasswordHash = result[1].ToString();
+            int id = (int)rows[0]["userid"];
+            string? retrievedPasswordHash = rows[0]["password"].ToString();
 
             if (!PasswordHasher.Verify(signInWithPasswordRequestDto.Password, retrievedPasswordHash))
             {
