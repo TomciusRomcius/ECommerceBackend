@@ -1,3 +1,4 @@
+using System.Data;
 using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
 
@@ -50,7 +51,7 @@ namespace ECommerce.Auth
         public async Task<AuthResponseDto> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto)
         {
             string query = @"
-                SELECT userId, password FROM users WHERE email = @Email
+                SELECT userid, password FROM users WHERE email = @Email
             ";
 
             QueryParameter[] parameters = [
@@ -59,8 +60,13 @@ namespace ECommerce.Auth
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
 
-            int id = (int)rows[0]["userid"];
+            int? id = Convert.ToInt32(rows[0]["userid"]);
             string? retrievedPasswordHash = rows[0]["password"].ToString();
+
+            if (id == null || retrievedPasswordHash == null)
+            {
+                throw new DataException("Id or retrievedPassword is null");
+            }
 
             if (!PasswordHasher.Verify(signInWithPasswordRequestDto.Password, retrievedPasswordHash))
             {
@@ -68,14 +74,14 @@ namespace ECommerce.Auth
             }
 
             string jwt = _jwtService.CreateUserToken(
-                id,
+                id.Value,
                 signInWithPasswordRequestDto.Email
             );
 
             return new AuthResponseDto()
             {
                 jwtToken = jwt,
-                userId = id
+                userId = id.Value
             };
         }
 
