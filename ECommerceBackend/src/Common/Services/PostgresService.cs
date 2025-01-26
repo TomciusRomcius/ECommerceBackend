@@ -29,7 +29,6 @@ namespace ECommerce.Common.Services
     public class PostgresService : IPostgresService
     {
         public NpgsqlConnection Connection { get; }
-        private readonly ILogger logger = LoggerManager.GetInstance().CreateLogger("postgres");
 
         public PostgresService(string connectionString)
         {
@@ -57,7 +56,6 @@ namespace ECommerce.Common.Services
                 var row = new Dictionary<string, object>();
                 for (int ordinal = 0; ordinal < reader.FieldCount; ordinal++)
                 {
-                    logger.LogInformation($"row: {reader.GetName(ordinal)}  {reader.GetValue(ordinal)}");
                     row[reader.GetName(ordinal)] = reader.GetValue(ordinal);
                 }
 
