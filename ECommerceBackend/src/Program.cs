@@ -1,6 +1,5 @@
 using ECommerce.Auth;
 using ECommerce.Categories;
-using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
 using ECommerce.Manufacturers;
 using ECommerce.Product;
@@ -24,9 +23,6 @@ if (jwtOptions == null)
 {
     throw new ArgumentException("Jwt options is null");
 }
-
-builder.Services.AddSingleton<JwtOptions>(jwtOptions);
-builder.Services.AddSingleton<IJwtService, JwtService>(_ => new JwtService(jwtOptions));
 
 // Auth setup
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
