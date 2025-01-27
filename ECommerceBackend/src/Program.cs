@@ -21,17 +21,13 @@ builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLo
 builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new PostgresService(connectionString));
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
-// JWT service
-var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
-if (jwtOptions == null)
-{
-    throw new ArgumentException("Jwt options is null");
-}
+// TODO: define issuer in appsettings
+string issuer = "localhost";
 
 // Auth setup
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
-    options.Tokens.AuthenticatorIssuer = jwtOptions.Issuer;
+    options.Tokens.AuthenticatorIssuer = issuer;
 })
     .AddUserStore<PostgresUserStore>()
     .AddSignInManager<SignInManager<ApplicationUser>>()
