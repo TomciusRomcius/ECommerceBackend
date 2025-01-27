@@ -1,6 +1,8 @@
 using ECommerce.Auth;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
+using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Services;
 using ECommerce.Manufacturers;
 using ECommerce.Product;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +17,9 @@ if (connectionString == null)
     throw new ArgumentException("Connection string is empty");
 }
 
+builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
 builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new PostgresService(connectionString));
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 // JWT service
 var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();

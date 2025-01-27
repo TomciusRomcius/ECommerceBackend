@@ -1,6 +1,7 @@
 using System.Text;
-using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
+using ECommerce.DataAccess.Services;
+using ECommerce.DataAccess.Utils;
 
 namespace ECommerce.Product
 {

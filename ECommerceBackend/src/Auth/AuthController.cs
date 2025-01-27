@@ -29,6 +29,8 @@ namespace ECommerce.Auth
             {
                 Email = signUpWithPasswordRequestDto.Email,
                 UserName = signUpWithPasswordRequestDto.Email,
+                Firstname = signUpWithPasswordRequestDto.Firstname,
+                Lastname = signUpWithPasswordRequestDto.Lastname,
             };
 
             var result = await _userManager.CreateAsync(user, signUpWithPasswordRequestDto.Password);

@@ -1,19 +1,8 @@
-using ECommerce.Common.Utils;
+using ECommerce.DataAccess.Utils;
 using Npgsql;
 
-namespace ECommerce.Common.Services
+namespace ECommerce.DataAccess.Services
 {
-    public class QueryParameter
-    {
-        public string Key { get; set; }
-        public object Value { get; set; }
-
-        public QueryParameter(string key, object value)
-        {
-            Key = key;
-            Value = value;
-        }
-    }
     public interface IPostgresService
     {
         /// <summary>

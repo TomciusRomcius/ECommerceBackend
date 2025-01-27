@@ -1,78 +1,77 @@
-using ECommerce.Common.Services;
-using ECommerce.Common.Utils;
+using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
-using System.Data;
 
 namespace ECommerce.Auth
 {
     public class PostgresUserStore : IUserEmailStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>
     {
-        private readonly IPostgresService _postgresService;
-        private readonly ILogger _logger = LoggerManager.GetInstance().CreateLogger("PostgresUserStore");
+        readonly IUserRepository _userRepository;
+        readonly ILogger _logger;
 
-        public PostgresUserStore(IPostgresService postgresService)
+        public PostgresUserStore(IUserRepository userRepository, ILogger logger)
         {
-            _postgresService = postgresService;
+            _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Creating user with email: ${user.Email}");
-            string query = @"
-                INSERT INTO users (email, password)
-                VALUES (@email, @password)
-                RETURNING userId;
-            ";
-
-            if (user.Email == null || user.PasswordHash == null)
+            if (user.NormalizedEmail is null || user.PasswordHash is null)
             {
-                throw new DataException("User email or password is null");
+                return IdentityResult.Failed();
             }
 
-            QueryParameter[] parameters = [
-                new("email", user.NormalizedEmail),
-                new("password", user.PasswordHash)
-            ];
-
-            int? id = (int?)await _postgresService.ExecuteScalarAsync(query, parameters);
-
-            if (id is not int)
+            try
             {
-                throw new HttpRequestException("Id is null or id is not an int");
+                await _userRepository.CreateAsync(
+                    new UserModel(user.Id, user.NormalizedEmail, user.PasswordHash, user.Firstname, user.Lastname)
+                );
             }
 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return IdentityResult.Failed();
+            }
 
-            user.Id = id.ToString();
             return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            int id;
+            bool success = true;
 
-            if (!int.TryParse(user.Id, out id))
+            try
             {
-                throw new DataException("Id is not a number");
+                await _userRepository.DeleteAsync(user.Id);
             }
 
-            string query = @$"
-                DELETE FROM users WHERE userId = @id 
-            ";
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                success = false;
+            }
 
-            QueryParameter[] parameters = [new QueryParameter("id", id)];
-            _postgresService.ExecuteScalarAsync(query, parameters);
-
-            return Task.FromResult(IdentityResult.Success);
+            return success ? IdentityResult.Success : IdentityResult.Failed();
         }
 
-        public Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            UserModel? userModel = await _userRepository.FindByIdAsync(userId);
+            ApplicationUser? result = null;
+
+            if (userModel is not null)
+            {
+                result = new ApplicationUser(userModel.UserId, userModel.Email, userModel.PasswordHash);
+            }
+
+            return result;
         }
 
-        public Task<ApplicationUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            return Task.FromResult<ApplicationUser?>(null);
+            return await this.FindByEmailAsync(normalizedUserName, cancellationToken);
         }
 
         public Task<string?> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -102,9 +101,40 @@ namespace ECommerce.Auth
             return Task.CompletedTask;
         }
 
-        public Task<IdentityResult> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(IdentityResult.Success);
+            if (user.NormalizedEmail is null)
+            {
+                throw new InvalidOperationException("Normalized email is null");
+            }
+
+            if (user.PasswordHash is null)
+            {
+                throw new InvalidOperationException("Password hash is null");
+            }
+
+            bool success = true;
+
+            try
+            {
+                var userModel = new UserModel(
+                    user.Id,
+                    user.NormalizedEmail,
+                    user.PasswordHash,
+                    user.Firstname,
+                    user.Lastname
+                );
+
+                await _userRepository.UpdateAsync(userModel);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                success = false;
+            }
+
+            return success ? IdentityResult.Success : IdentityResult.Failed();
         }
 
         public void Dispose()
@@ -137,29 +167,19 @@ namespace ECommerce.Auth
 
         public async Task<ApplicationUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Finding user email: {normalizedEmail}");
+            UserModel? userModel = await _userRepository.FindByEmailAsync(normalizedEmail);
 
-            string query = @"
-                SELECT * FROM users WHERE email = @email 
-            ";
-
-            QueryParameter[] parameters = [new QueryParameter("email", normalizedEmail)];
-
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-
-            ApplicationUser? user = null;
-
-            if (rows.Count != 0)
+            if (userModel is null)
             {
-                user = new ApplicationUser
-                {
-                    Email = rows[0]["email"].ToString(),
-                    UserName = rows[0]["email"].ToString(),
-                    PasswordHash = rows[0]["password"].ToString(),
-                };
+                return null;
             }
 
-            return user;
+            return new ApplicationUser
+            {
+                NormalizedEmail = userModel!.Email!,
+                PasswordHash = userModel.PasswordHash!,
+                Id = userModel.UserId.ToString()!
+            };
         }
 
         public Task<string?> GetNormalizedEmailAsync(ApplicationUser user, CancellationToken cancellationToken)

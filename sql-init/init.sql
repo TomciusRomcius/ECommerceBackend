@@ -18,16 +18,17 @@ CREATE TABLE categories(
 );
 
 CREATE TABLE "users"(
-  userId SERIAL PRIMARY KEY,
-  name varchar(255) NOT NULL,
-  lastname varchar(255) NOT NULL,
+  userId uuid NOT NULL,
   email varchar(255) NOT NULL UNIQUE,
-  password varchar(255) NOT NULL
+  passwordHash varchar(255) NOT NULL,
+  firstname varchar(255) NOT NULL,
+  lastname varchar(255) NOT NULL,
+  PRIMARY KEY (userId)
 );
 
 CREATE TABLE addresses(
   addressId SERIAL PRIMARY KEY,
-  userId int NOT NULL,
+  userId uuid NOT NULL,
   addressType addressTypeEnum NOT NULL,
   country varchar(255) NOT NULL,
   city varchar(255) NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE addresses(
 
 CREATE TABLE paymentDetails(
   paymentDetailsId SERIAL PRIMARY KEY,
-  userId int NOT NULL,
+  userId uuid NOT NULL,
   paymentToken varchar(4) NOT NULL,
   cardholderName varchar(255) NOT NULL,
   cardType varchar(50) NOT NULL,
@@ -60,7 +61,7 @@ CREATE TABLE products(
 
 CREATE TABLE cartProducts(
   cartProductId SERIAL PRIMARY KEY,
-  userId int NOT NULL,
+  userId uuid NOT NULL,
   productId int NOT NULL,
   quantity int NOT NULL,
   FOREIGN KEY (userId) REFERENCES "users"(userId),

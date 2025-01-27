@@ -1,6 +1,7 @@
 using System.Data;
 using System.Text;
-using ECommerce.Common.Services;
+using ECommerce.DataAccess.Services;
+using ECommerce.DataAccess.Utils;
 
 namespace ECommerce.Categories
 {

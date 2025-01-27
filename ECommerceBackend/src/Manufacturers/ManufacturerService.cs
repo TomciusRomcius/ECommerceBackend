@@ -1,5 +1,6 @@
 using System.Data;
-using ECommerce.Common.Services;
+using ECommerce.DataAccess.Services;
+using ECommerce.DataAccess.Utils;
 
 namespace ECommerce.Manufacturers
 {
