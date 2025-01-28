@@ -26,6 +26,19 @@ CREATE TABLE "users"(
   PRIMARY KEY (userId)
 );
 
+CREATE TABLE roleTypes(
+  roleTypeId SERIAL PRIMARY KEY,
+  name varchar(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE userRoles(
+  userId uuid NOT NULL,
+  roleTypeId int NOT NULL,
+  PRIMARY KEY (userId, roleTypeId),
+  FOREIGN KEY (userId) REFERENCES users(userId),  
+  FOREIGN KEY (roleTypeId) REFERENCES roleTypes(roleTypeId) 
+);
+
 CREATE TABLE addresses(
   addressId SERIAL PRIMARY KEY,
   userId uuid NOT NULL,

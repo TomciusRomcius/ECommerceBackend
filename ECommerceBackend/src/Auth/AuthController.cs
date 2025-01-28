@@ -1,8 +1,7 @@
-using System.Net;
 using ECommerce.Common.Utils;
+using ECommerce.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
 
 namespace ECommerce.Auth
 {
@@ -34,6 +33,7 @@ namespace ECommerce.Auth
             };
 
             var result = await _userManager.CreateAsync(user, signUpWithPasswordRequestDto.Password);
+            _logger.LogInformation((await _userManager.AddToRoleAsync(user, "client")).ToString());
 
             return Ok(result.Errors);
         }

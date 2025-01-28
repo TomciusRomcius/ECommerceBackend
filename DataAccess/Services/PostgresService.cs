@@ -33,11 +33,20 @@ namespace ECommerce.DataAccess.Services
             {
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                    if (parameter.Key is not null)
+                    {
+                        cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                    }
+
+                    else
+                    {
+                        cmd.Parameters.Add(new NpgsqlParameter { Value = parameter.Value });
+                    }
                 }
             }
 
             await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
 
             while (await reader.ReadAsync())
@@ -62,10 +71,17 @@ namespace ECommerce.DataAccess.Services
             {
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                    if (parameter.Key is not null)
+                    {
+                        cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                    }
+
+                    else
+                    {
+                        cmd.Parameters.Add(new NpgsqlParameter { Value = parameter.Value });
+                    }
                 }
             }
-
             return await cmd.ExecuteScalarAsync();
         }
     }

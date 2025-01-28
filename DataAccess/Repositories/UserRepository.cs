@@ -62,13 +62,14 @@ namespace ECommerce.DataAccess.Repositories
 
             if (rows.Count != 0)
             {
+                // TODO: implement a helper method for null-safety
                 string? userId = rows[0]["userid"].ToString();
                 string? email = rows[0]["email"].ToString();
-                string? passwordHash = rows[0]["passwordHash"].ToString();
+                string? passwordHash = rows[0]["passwordhash"].ToString();
                 string? firstname = rows[0]["firstname"].ToString();
                 string? lastname = rows[0]["lastname"].ToString();
-                if (userId is null)
 
+                if (userId is null)
                 {
                     errors.Add("userId is null!");
                 }

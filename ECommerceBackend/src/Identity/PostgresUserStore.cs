@@ -2,16 +2,21 @@ using ECommerce.DataAccess.Models;
 using ECommerce.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Auth
+namespace ECommerce.Identity
 {
-    public class PostgresUserStore : IUserEmailStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>
+    public class PostgresUserStore :
+        IUserEmailStore<ApplicationUser>,
+        IUserPasswordStore<ApplicationUser>,
+        IUserRoleStore<ApplicationUser>
     {
         readonly IUserRepository _userRepository;
+        readonly IUserRoleRepository _userRoleRepository;
         readonly ILogger _logger;
 
-        public PostgresUserStore(IUserRepository userRepository, ILogger logger)
+        public PostgresUserStore(IUserRepository userRepository, IUserRoleRepository userRoleRepository, ILogger logger)
         {
             _userRepository = userRepository;
+            _userRoleRepository = userRoleRepository;
             _logger = logger;
         }
 
@@ -209,6 +214,40 @@ namespace ECommerce.Auth
             return Task.FromResult(
                 (user.PasswordHash != null) && (user.PasswordHash.Length > 0)
             );
+        }
+
+        public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("User copse");
+            await _userRoleRepository.AddToRoleAsync(user.Id, roleName);
+        }
+
+        public async Task RemoveFromRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+        {
+            await _userRoleRepository.RemoveFromRoleAsync(user.Id, roleName);
+        }
+
+        public async Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken)
+        {
+            return await _userRoleRepository.GetRolesAsync(user.Id);
+        }
+
+        public async Task<bool> IsInRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+        {
+            return await _userRoleRepository.IsInRoleAsync(user.Id, roleName);
+        }
+
+        public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            var dbResult = await _userRoleRepository.GetUsersInRoleAsync(roleName);
+            List<ApplicationUser> users = new List<ApplicationUser>();
+
+            foreach (var user in dbResult)
+            {
+                users.Add(new ApplicationUser(user.UserId, user.Email, user.PasswordHash));
+            }
+
+            return users;
         }
     }
 }

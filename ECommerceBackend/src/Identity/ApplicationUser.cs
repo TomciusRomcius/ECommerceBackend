@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Auth
+namespace ECommerce.Identity
 {
     public class ApplicationUser : IdentityUser
     {

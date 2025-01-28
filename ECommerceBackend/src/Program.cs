@@ -1,8 +1,8 @@
-using ECommerce.Auth;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Services;
+using ECommerce.Identity;
 using ECommerce.Manufacturers;
 using ECommerce.Product;
 using Microsoft.AspNetCore.Identity;
@@ -20,16 +20,27 @@ if (connectionString == null)
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
 builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new PostgresService(connectionString));
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IRoleTypeRepository, RoleTypeRepository>();
+builder.Services.AddSingleton<IUserRoleRepository, UserRoleRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";
 
 // Auth setup
+
+builder.Services.AddTransient<IUserStore<ApplicationUser>, PostgresUserStore>();
+builder.Services.AddTransient<IUserPasswordStore<ApplicationUser>, PostgresUserStore>();
+builder.Services.AddTransient<IUserEmailStore<ApplicationUser>, PostgresUserStore>();
+builder.Services.AddTransient<IUserRoleStore<ApplicationUser>, PostgresUserStore>();
+
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.Tokens.AuthenticatorIssuer = issuer;
 })
     .AddUserStore<PostgresUserStore>()
+    .AddRoles<ApplicationUserRole>()
+    .AddRoleStore<PostgresRoleStore>()
+    .AddRoleManager<RoleManager<ApplicationUserRole>>()
     .AddSignInManager<SignInManager<ApplicationUser>>()
     .AddUserManager<UserManager<ApplicationUser>>();
 
@@ -55,6 +66,26 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+// Create default roles
+using (var scope = app.Services.CreateScope())
+{
+    var defaultRoles = new[] { "Client", "Product manager", "Administrator" };
+
+    var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationUserRole>>();
+    if (roleManager is null)
+    {
+        throw new InvalidOperationException("Role manager is null!");
+    }
+    foreach (var role in defaultRoles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
+        }
+    }
+}
+
 
 app.UseAuthentication();
 app.UseAuthorization();
