@@ -33,7 +33,6 @@ namespace ECommerce.Auth
             };
 
             var result = await _userManager.CreateAsync(user, signUpWithPasswordRequestDto.Password);
-            _logger.LogInformation((await _userManager.AddToRoleAsync(user, "client")).ToString());
 
             return Ok(result.Errors);
         }

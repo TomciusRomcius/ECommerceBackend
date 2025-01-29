@@ -70,7 +70,7 @@ if (app.Environment.IsDevelopment())
 // Create default roles
 using (var scope = app.Services.CreateScope())
 {
-    var defaultRoles = new[] { "Client", "Product manager", "Administrator" };
+    var defaultRoles = new[] { "Product manager", "Administrator" };
 
     var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationUserRole>>();
     if (roleManager is null)
