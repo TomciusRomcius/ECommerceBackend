@@ -37,10 +37,10 @@ namespace ECommerce.DataAccess.Repositories
         public async Task DeleteAsync(string userId)
         {
             string query = @$"
-                DELETE FROM users WHERE userId = @id 
+                DELETE FROM users WHERE userId = $1 
             ";
 
-            QueryParameter[] parameters = [new QueryParameter("id", userId)];
+            QueryParameter[] parameters = [new QueryParameter(new Guid(userId))];
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
