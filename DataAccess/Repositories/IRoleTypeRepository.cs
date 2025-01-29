@@ -4,10 +4,10 @@ namespace ECommerce.DataAccess.Repositories
 {
     public interface IRoleTypeRepository
     {
-        public Task CreateAsync(RoleTypeModel roleType);
-        public Task UpdateAsync(RoleTypeModel roleType);
-        public Task DeleteAsync(string roleTypeId);
-        public Task<RoleTypeModel?> FindByIdAsync(string roleTypeId);
+        public Task<RoleTypeModel> CreateAsync(CreateRoleTypeModel roleType);
+        public Task UpdateAsync(UpdateRoleTypeModel roleType);
+        public Task DeleteAsync(int roleTypeId);
+        public Task<RoleTypeModel?> FindByIdAsync(int roleTypeId);
         public Task<RoleTypeModel?> FindByNameAsync(string roleTypeName);
     }
 }

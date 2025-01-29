@@ -22,14 +22,14 @@ namespace ECommerce.DataAccess.Repositories
             _logger.LogInformation("User role repository");
             string query = @" 
                 INSERT INTO userRoles (userId, roleTypeId)
-                VALUES (($2), (
-                    SELECT roleTypeId FROM roleTypes WHERE name = ($1)
+                VALUES ($1, (
+                    SELECT roleTypeId FROM roleTypes WHERE name = $2
                 ));
             ";
 
             QueryParameter[] parameters = [
-                new QueryParameter(roleName),
                 new QueryParameter(new Guid(userid)),
+                new QueryParameter(roleName)
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);

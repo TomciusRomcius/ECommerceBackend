@@ -1,11 +1,11 @@
 namespace ECommerce.DataAccess.Models
 {
-    public class RoleTypeModel
+    public class UpdateRoleTypeModel
     {
         public int RoleTypeId { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public RoleTypeModel(int roleTypeId, string name)
+        public UpdateRoleTypeModel(int roleTypeId, string? name)
         {
             RoleTypeId = roleTypeId;
             Name = name;

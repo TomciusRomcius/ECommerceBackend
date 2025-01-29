@@ -1,3 +1,4 @@
+using System.Data;
 using ECommerce.DataAccess.Models;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -7,7 +8,7 @@ namespace ECommerce.DataAccess.Repositories
     public class RoleTypeRepository(IPostgresService _postgresService) : IRoleTypeRepository
     {
 
-        public async Task CreateAsync(RoleTypeModel roleType)
+        public async Task<RoleTypeModel> CreateAsync(CreateRoleTypeModel roleType)
         {
             if (roleType.Name.Length == 0)
             {
@@ -15,19 +16,39 @@ namespace ECommerce.DataAccess.Repositories
             }
 
             string query = @"
-                INSERT INTO roleTypes (name) VALUES (@name);
+                INSERT INTO roleTypes (name) 
+                VALUES (@name) 
+                RETURNING roleTypeId; 
             ";
             QueryParameter[] parameters = [new QueryParameter("name", roleType.Name)];
-            await _postgresService.ExecuteScalarAsync(query, parameters);
+            object? dbId = await _postgresService.ExecuteScalarAsync(query, parameters);
 
+            if (dbId is int)
+            {
+                return new RoleTypeModel(Convert.ToInt32(dbId), roleType.Name);
+            }
+
+            else
+            {
+                throw new DataException("Failed to create role type");
+            }
         }
 
-        public Task DeleteAsync(string roleTypeId)
+        public async Task DeleteAsync(int roleTypeId)
         {
-            throw new NotImplementedException();
+            string query = @"
+                DELETE ONLY FROM roleTypes
+                WHERE roleTypeId = $1
+            ";
+
+            QueryParameter[] parameters = [
+                new QueryParameter(roleTypeId)
+            ];
+
+            await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<RoleTypeModel?> FindByIdAsync(string roleTypeId)
+        public async Task<RoleTypeModel?> FindByIdAsync(int roleTypeId)
         {
             RoleTypeModel? result = null;
 
@@ -62,16 +83,29 @@ namespace ECommerce.DataAccess.Repositories
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
             if (rows.Count > 0 && rows[0].ContainsKey("roletypeid"))
             {
-                string roleTypeId = rows[0]["roletypeid"].ToString()!;
+
+                int roleTypeId = Convert.ToInt32(rows[0]["roletypeid"]);
                 result = new RoleTypeModel(roleTypeId, roleTypeName);
             }
 
             return result;
         }
 
-        public Task UpdateAsync(RoleTypeModel roleType)
+        public async Task UpdateAsync(UpdateRoleTypeModel roleType)
         {
-            throw new NotImplementedException();
+            string query = @"
+                UPDATE roleTypes
+                SET
+                    name = COALESCE($1, email),
+                WHERE roleTypeId = $2;
+            ";
+
+            QueryParameter[] parameters = [
+                new QueryParameter(roleType.Name),
+                new QueryParameter(roleType.RoleTypeId)
+            ];
+
+            await _postgresService.ExecuteScalarAsync(query, parameters);
         }
     }
 }

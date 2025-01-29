@@ -24,7 +24,7 @@ namespace ECommerce.Identity
 
             try
             {
-                await _roleTypeRepository.CreateAsync(new RoleTypeModel(role.Id, role.NormalizedName));
+                await _roleTypeRepository.CreateAsync(new CreateRoleTypeModel(role.NormalizedName));
             }
 
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace ECommerce.Identity
 
         public Task<string> GetRoleIdAsync(ApplicationUserRole role, CancellationToken cancellationToken)
         {
-            return Task.FromResult(role.Id);
+            return Task.FromResult(role.Id.ToString());
         }
 
         public Task<string?> GetRoleNameAsync(ApplicationUserRole role, CancellationToken cancellationToken)
@@ -115,7 +115,7 @@ namespace ECommerce.Identity
                 throw new InvalidOperationException("Role name is null!");
             }
 
-            _roleTypeRepository.UpdateAsync(new RoleTypeModel(role.Id, role.Name));
+            _roleTypeRepository.UpdateAsync(new UpdateRoleTypeModel(role.Id, role.Name));
             throw new NotImplementedException();
         }
     }
