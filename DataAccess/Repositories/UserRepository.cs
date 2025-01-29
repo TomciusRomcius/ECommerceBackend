@@ -20,16 +20,15 @@ namespace ECommerce.DataAccess.Repositories
         {
             string query = @"
                 INSERT INTO users (userId, email, passwordHash, firstname, lastname)
-                VALUES (@userId, @email, @passwordHash, @firstname, @lastname)
+                VALUES ($1, $2, $3, $4, $5)
             ";
 
-
             QueryParameter[] parameters = [
-                new("userId", new Guid(user.UserId)),
-                new("email", user.Email),
-                new("passwordHash", user.PasswordHash),
-                new("firstname", user.Firstname),
-                new("lastname", user.Lastname)
+                new(new Guid(user.UserId)),
+                new(user.Email),
+                new(user.PasswordHash),
+                new(user.Firstname),
+                new(user.Lastname)
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);
