@@ -112,23 +112,24 @@ namespace ECommerce.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task UpdateAsync(UserModel user)
+        public async Task UpdateAsync(UpdateUserModel user)
         {
             string query = @"
                 UPDATE USERS
                 SET
-                    email = COALESCE(@email, email),
-                    passwordHash = COALESCE(@passwordHash, passwordHash),
-                    firstname = COALESCE(@firstname, firstmane),
-                    lastname = COALESCE(@lastname, lastname),
-                WHERE userid = @userId
+                    email = COALESCE($1, email),
+                    passwordHash = COALESCE($2, passwordHash),
+                    firstname = COALESCE($3, firstmane),
+                    lastname = COALESCE($4, lastname),
+                WHERE userid = $5;
             ";
 
             QueryParameter[] parameters = [
-                new QueryParameter("email", user.Email),
-                new QueryParameter("passwordHash", user.PasswordHash),
-                new QueryParameter("firstname", user.Firstname),
-                new QueryParameter("lastname", user.Lastname)
+                new QueryParameter(user?.Email),
+                new QueryParameter(user?.PasswordHash),
+                new QueryParameter(user?.Firstname),
+                new QueryParameter(user?.Lastname),
+                new QueryParameter(new Guid(user.UserId))
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);

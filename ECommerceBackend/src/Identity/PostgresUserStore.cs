@@ -122,7 +122,7 @@ namespace ECommerce.Identity
 
             try
             {
-                var userModel = new UserModel(
+                var userModel = new UpdateUserModel(
                     user.Id,
                     user.NormalizedEmail,
                     user.PasswordHash,
