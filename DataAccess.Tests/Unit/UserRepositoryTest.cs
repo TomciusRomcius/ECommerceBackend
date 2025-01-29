@@ -9,9 +9,9 @@ namespace DataAccess.Test;
 
 public class UserRepositoryTest
 {
-    Mock<IPostgresService> _postgresService = new Mock<IPostgresService>();
-    Mock<ILogger> _logger = new Mock<ILogger>();
-    IUserRepository _userRepository;
+    readonly Mock<IPostgresService> _postgresService = new Mock<IPostgresService>();
+    readonly Mock<ILogger> _logger = new Mock<ILogger>();
+    readonly IUserRepository _userRepository;
 
     public UserRepositoryTest()
     {
