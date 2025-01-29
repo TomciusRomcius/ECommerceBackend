@@ -115,12 +115,12 @@ namespace ECommerce.DataAccess.Repositories
         public async Task UpdateAsync(UpdateUserModel user)
         {
             string query = @"
-                UPDATE USERS
+                UPDATE users
                 SET
                     email = COALESCE($1, email),
                     passwordHash = COALESCE($2, passwordHash),
-                    firstname = COALESCE($3, firstmane),
-                    lastname = COALESCE($4, lastname),
+                    firstname = COALESCE($3, firstname),
+                    lastname = COALESCE($4, lastname)
                 WHERE userid = $5;
             ";
 
