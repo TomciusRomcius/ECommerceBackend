@@ -1,13 +1,13 @@
-namespace ECommerce.Categories
+namespace ECommerce.DataAccess.Models
 {
     public class CategoryModel
     {
         public int CategoryId { get; set; }
         public string Name { get; set; }
 
-        public CategoryModel(int id, string name)
+        public CategoryModel(int categoryId, string name)
         {
-            CategoryId = id;
+            CategoryId = categoryId;
             Name = name;
         }
     }

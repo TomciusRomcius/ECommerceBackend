@@ -1,3 +1,4 @@
+using ECommerce.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Categories
@@ -17,14 +18,14 @@ namespace ECommerce.Categories
         public async Task<IActionResult> GetAllCategories()
         {
             List<CategoryModel> categories = await _categoriesService.GetAllCategories();
-            return Ok(new ResponseGetAllCategoriesDto() { Categories = categories });
+            return Ok(categories);
         }
 
         [HttpPost()]
-        public async Task<IActionResult> CreateCategories([FromBody()] RequestCreateCategoriesDto createCategoriesDto)
+        public async Task<IActionResult> CreateCategory([FromBody()] RequestCreateCategoryDto createCategoryDto)
         {
-            List<int> res = await _categoriesService.CreateCategories(createCategoriesDto);
-            return Ok(new ResponseCreateCategoriesDto() { Ids = res });
+            CategoryModel? res = await _categoriesService.CreateCategory(createCategoryDto);
+            return Created(nameof(CreateCategory), res);
         }
     }
 }
