@@ -71,14 +71,16 @@ namespace ECommerce.DataAccess.Services
             {
                 foreach (var parameter in parameters)
                 {
+                    object value = parameter.Value is null ? DBNull.Value : parameter.Value;
+
                     if (parameter.Key is not null)
                     {
-                        cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, parameter.Value));
+                        cmd.Parameters.Add(new NpgsqlParameter(parameter.Key, value));
                     }
 
                     else
                     {
-                        cmd.Parameters.Add(new NpgsqlParameter { Value = parameter.Value });
+                        cmd.Parameters.Add(new NpgsqlParameter { Value = value });
                     }
                 }
             }
