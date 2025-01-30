@@ -1,5 +1,7 @@
 using System.Text;
 using ECommerce.Common.Utils;
+using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 
@@ -7,50 +9,38 @@ namespace ECommerce.Product
 {
     public interface IProductService
     {
-        public Task GetAllProducts();
-        public Task<string[]> CreateProducts(RequestCreateProductsDto createProductsDto);
+        public Task<List<ProductModel>> GetAllProducts();
+        public Task<ProductModel?> CreateProduct(RequestCreateProductDto createProductDto);
     }
 
     public class ProductService : IProductService
     {
-        private readonly IPostgresService _postgresService;
-        private ILogger logger = LoggerManager.GetInstance().CreateLogger("ProductService");
+        private readonly IProductRepository _productRepository;
 
-        public ProductService(IPostgresService postgresService)
+        public ProductService(IProductRepository productRepository)
         {
-            _postgresService = postgresService;
+            _productRepository = productRepository;
         }
 
-        public Task GetAllProducts()
+        public async Task<List<ProductModel>> GetAllProducts()
         {
-            throw new NotImplementedException();
+            return await _productRepository.GetAll();
         }
 
-        public async Task<string[]> CreateProducts(RequestCreateProductsDto createProductsDto)
+        public async Task<ProductModel?> CreateProduct(RequestCreateProductDto createProductDto)
         {
-            StringBuilder query = new StringBuilder();
-            List<QueryParameter> parameters = new List<QueryParameter>();
+            ProductModel? result = await _productRepository.CreateAsync(
+                new ProductModel(
+                 createProductDto.Name,
+                 createProductDto.Description,
+                 createProductDto.Price,
+                 createProductDto.Stock,
+                 createProductDto.ManufacturerId,
+                 createProductDto.CategoryId
+                )
+            );
 
-            int i = 0;
-            foreach (ProductDto productDto in createProductsDto.Products)
-            {
-                string queryLine = @$"
-                    INSERT INTO products(name, description, price, manufacturerId, categoryId) 
-                    VALUES (@name{i}, @description{i}, @price{i}, @manufacturerId{i}, @categoryId{i})
-                    RETURNING productId;
-                ";
-
-                query.AppendLine(queryLine);
-                parameters.Add(new QueryParameter($"name{i}", productDto.Name));
-                parameters.Add(new QueryParameter($"description{i}", productDto.Description));
-                parameters.Add(new QueryParameter($"price{i}", productDto.Price));
-                parameters.Add(new QueryParameter($"manufacturerId{i}", productDto.ManufacturerId));
-                parameters.Add(new QueryParameter($"categoryId{i}", productDto.CategoryId));
-            }
-
-            List<Dictionary<string, object>> results = await _postgresService.ExecuteAsync(query.ToString(), parameters.ToArray());
-
-            throw new NotImplementedException();
+            return result;
         }
     }
 }

@@ -1,4 +1,6 @@
+using ECommerce.DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Product
@@ -18,15 +20,15 @@ namespace ECommerce.Product
         [Authorize()]
         public async Task<IActionResult> GetAllProducts()
         {
-            return Ok("Hello");
+            return Ok(await _productService.GetAllProducts());
         }
 
         [HttpPost()]
         [Authorize()]
-        public async Task<IActionResult> CreateProducts([FromBody()] RequestCreateProductsDto createProductsDto)
+        public async Task<IActionResult> CreateProducts([FromBody()] RequestCreateProductDto createProductDto)
         {
-            string[] res = await _productService.CreateProducts(createProductsDto);
-            return Ok(res);
+            ProductModel? res = await _productService.CreateProduct(createProductDto);
+            return Created(nameof(CreateProducts), res);
         }
     }
 }
