@@ -1,13 +1,13 @@
-namespace ECommerce.Manufacturers
+namespace ECommerce.DataAccess.Models
 {
     public class ManufacturerModel
     {
         public int ManufacturerId { get; set; }
         public string Name { get; set; }
 
-        public ManufacturerModel(int id, string name)
+        public ManufacturerModel(int manufacturerId, string name)
         {
-            ManufacturerId = id;
+            ManufacturerId = manufacturerId;
             Name = name;
         }
     }

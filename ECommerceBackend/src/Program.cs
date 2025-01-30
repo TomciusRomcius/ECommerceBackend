@@ -24,6 +24,7 @@ builder.Services.AddSingleton<IRoleTypeRepository, RoleTypeRepository>();
 builder.Services.AddSingleton<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";

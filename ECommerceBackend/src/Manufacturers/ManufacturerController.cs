@@ -1,3 +1,4 @@
+using ECommerce.DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,15 +20,15 @@ namespace ECommerce.Manufacturers
         public async Task<IActionResult> GetAllManufacturers()
         {
             List<ManufacturerModel> manufacturers = await _manufacturerService.GetAllManufacturers();
-            return Ok(new ResponseGetManufacturersDto() { Manufacturers = manufacturers });
+            return Ok(manufacturers);
         }
 
         [HttpPost()]
         [Authorize()]
         public async Task<IActionResult> CreateManufacturer([FromBody()] RequestCreateManufacturerDto createProductsDto)
         {
-            int id = await _manufacturerService.CreateManufacturer(createProductsDto);
-            return Created(nameof(CreateManufacturer), new ResponseCreateManufacturerDto { ManufacturerId = id });
+            ManufacturerModel? model = await _manufacturerService.CreateManufacturer(createProductsDto);
+            return Created(nameof(CreateManufacturer), model);
         }
     }
 }
