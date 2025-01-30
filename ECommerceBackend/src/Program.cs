@@ -1,3 +1,4 @@
+using ECommerce.Address;
 using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
@@ -27,6 +28,7 @@ builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>();
+builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";
@@ -57,6 +59,7 @@ builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
 builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
 builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddSingleton<IAddressService, AddressService>();
 
 builder.Services.AddControllers();
 

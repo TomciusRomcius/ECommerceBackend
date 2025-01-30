@@ -1,12 +1,3 @@
-DO
-$$
-BEGIN
-  IF NOT EXISTS(SELECT 1 FROM pg_type WHERE typname = 'addressTypeEnum') THEN
-    CREATE TYPE addressTypeEnum as ENUM ('Billing', 'Shipping');
-  END IF;
-END
-$$;
-
 CREATE TABLE manufacturers(
   manufacturerId SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL UNIQUE
@@ -40,14 +31,18 @@ CREATE TABLE userRoles(
 );
 
 CREATE TABLE addresses(
-  addressId SERIAL PRIMARY KEY,
-  userId uuid NOT NULL,
-  addressType addressTypeEnum NOT NULL,
+  userId uuid NOT NULL UNIQUE,
+  isShipping BOOLEAN NOT NULL, -- 0 - billing, 1 - shipping
+  recipientName varchar(100) NOT NULL,
+  streetAddress varchar(255) NOT NULL,
+  apartmentUnit varchar(255),
   country varchar(255) NOT NULL,
   city varchar(255) NOT NULL,
-  location varchar(255) NOT NULL,
-  zipCode varchar(15) NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "users"(userId)
+  state varchar(255) NOT NULL,
+  postalCode varchar(15) NOT NULL,
+  mobileNumber varchar(50) NOT NULL,
+  PRIMARY KEY (userId, isShipping),
+  FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE
 );
 
 CREATE TABLE paymentDetails(
