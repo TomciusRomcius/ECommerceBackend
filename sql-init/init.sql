@@ -74,10 +74,10 @@ CREATE TABLE products(
 );
 
 CREATE TABLE cartProducts(
-  cartProductId SERIAL PRIMARY KEY,
   userId uuid NOT NULL,
-  productId int NOT NULL,
-  quantity int NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "users"(userId),
-  FOREIGN KEY (productId) REFERENCES products(productId)
+  productId int NOT NULL UNIQUE,
+  quantity int NOT NULL CHECK (quantity > 0),
+  PRIMARY KEY (userId, productId),
+  FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE,
+  FOREIGN KEY (productId) REFERENCES products(productId) ON DELETE CASCADE
 );

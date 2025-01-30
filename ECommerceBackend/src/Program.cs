@@ -1,3 +1,4 @@
+using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
 using ECommerce.DataAccess.Repositories;
@@ -25,17 +26,12 @@ builder.Services.AddSingleton<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>();
+builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";
 
 // Auth setup
-
-builder.Services.AddTransient<IUserStore<ApplicationUser>, PostgresUserStore>();
-builder.Services.AddTransient<IUserPasswordStore<ApplicationUser>, PostgresUserStore>();
-builder.Services.AddTransient<IUserEmailStore<ApplicationUser>, PostgresUserStore>();
-builder.Services.AddTransient<IUserRoleStore<ApplicationUser>, PostgresUserStore>();
-
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.Tokens.AuthenticatorIssuer = issuer;
@@ -43,8 +39,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddRoles<ApplicationUserRole>()
     .AddUserStore<PostgresUserStore>()
     .AddUserManager<UserManager<ApplicationUser>>()
-    .AddSignInManager<SignInManager<ApplicationUser>>()
     .AddRoleStore<PostgresRoleStore>()
+    .AddSignInManager<SignInManager<ApplicationUser>>()
     .AddRoleManager<RoleManager<ApplicationUserRole>>();
 
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
@@ -60,6 +56,7 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
 builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
+builder.Services.AddSingleton<ICartService, CartService>();
 
 builder.Services.AddControllers();
 
@@ -69,10 +66,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseHttpsRedirection();
 
 // Create default roles
 using (var scope = app.Services.CreateScope())
@@ -129,4 +122,7 @@ using (var scope = app.Services.CreateScope())
 
 app.MapControllers();
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseHttpsRedirection();
 await app.RunAsync();
