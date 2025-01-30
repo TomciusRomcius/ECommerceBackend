@@ -37,12 +37,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.Tokens.AuthenticatorIssuer = issuer;
 })
-    .AddUserStore<PostgresUserStore>()
     .AddRoles<ApplicationUserRole>()
-    .AddRoleStore<PostgresRoleStore>()
-    .AddRoleManager<RoleManager<ApplicationUserRole>>()
+    .AddUserStore<PostgresUserStore>()
+    .AddUserManager<UserManager<ApplicationUser>>()
     .AddSignInManager<SignInManager<ApplicationUser>>()
-    .AddUserManager<UserManager<ApplicationUser>>();
+    .AddRoleStore<PostgresRoleStore>()
+    .AddRoleManager<RoleManager<ApplicationUserRole>>();
 
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
     .AddCookie("Identity.Application", o =>
@@ -67,10 +67,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseHttpsRedirection();
+
 // Create default roles
 using (var scope = app.Services.CreateScope())
 {
-    var defaultRoles = new[] { "Product manager", "Administrator" };
+    var defaultRoles = new[] { "MERCHANT", "ADMINISTRATOR" };
 
     var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationUserRole>>();
     if (roleManager is null)
@@ -83,13 +87,42 @@ using (var scope = app.Services.CreateScope())
         {
             await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
         }
+
+        // Create master account
+        // TODO: super unsafe, use env variables for this
+        var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+
+        if (userManager is null)
+        {
+            throw new InvalidOperationException("User manager is null!");
+        }
+
+
+        ApplicationUser? user = await userManager.FindByEmailAsync("masteruser@gmail.com");
+
+        if (user is null)
+        {
+            user = new ApplicationUser()
+            {
+                Email = "masteruser@gmail.com",
+                UserName = "masteruser@gmail.com",
+                Firstname = "master",
+                Lastname = "master"
+            };
+
+            var result = await userManager.CreateAsync(user, "Masterpassword.55");
+            if (result.Errors.Count() > 0)
+            {
+                throw new Exception(result.Errors.ToString());
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(user, "ADMINISTRATOR"))
+        {
+            await userManager.AddToRolesAsync(user, ["MERCHANT", "ADMINISTRATOR"]);
+        }
     }
 }
-
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseHttpsRedirection();
 
 app.MapControllers();
 
