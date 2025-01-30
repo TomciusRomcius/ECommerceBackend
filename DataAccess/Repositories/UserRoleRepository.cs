@@ -35,9 +35,28 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public Task<IList<string>> GetRolesAsync(string userId)
+        public async Task<IList<string>> GetRolesAsync(string userId)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM userRoles
+                INNER JOIN roleTypes ON userRoles.roleTypeId = roleTypes.roleTypeId
+                WHERE userId = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(new Guid(userId))];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            List<string> result = new List<string>();
+
+            foreach (var row in rows)
+            {
+                // TODO: null safety
+                _logger.LogInformation(row.ToString());
+                result.Add(row["roletypes.roletypeid"].ToString());
+            }
+
+            _logger.LogInformation(result.ToString());
+            return result;
         }
 
         public Task<IList<UserModel>> GetUsersInRoleAsync(string roleName)
