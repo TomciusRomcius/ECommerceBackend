@@ -181,8 +181,11 @@ namespace ECommerce.Identity
 
             return new ApplicationUser
             {
+                UserName = normalizedEmail,
                 NormalizedEmail = userModel!.Email!,
                 PasswordHash = userModel.PasswordHash!,
+                Firstname = userModel.Firstname,
+                Lastname = userModel.Lastname,
                 Id = userModel.UserId.ToString()!
             };
         }

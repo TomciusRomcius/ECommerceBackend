@@ -40,13 +40,7 @@ namespace ECommerce.Auth
         [HttpPost("sign-in-with-password")]
         public async Task<IActionResult> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto)
         {
-            ApplicationUser? user = await _userManager.FindByEmailAsync(signInWithPasswordRequestDto.Email);
-            if (user == null)
-            {
-                return Unauthorized("Bad email");
-            }
-            var res = await _signInManager.PasswordSignInAsync(user, signInWithPasswordRequestDto.Password, true, false);
-
+            var res = await _signInManager.PasswordSignInAsync(signInWithPasswordRequestDto.Email, signInWithPasswordRequestDto.Password, true, false);
             return Ok(res.ToString());
         }
     }
