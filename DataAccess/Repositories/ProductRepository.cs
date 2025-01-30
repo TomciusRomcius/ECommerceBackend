@@ -16,7 +16,7 @@ namespace ECommerce.DataAccess.Repositories
         public async Task<ProductModel?> CreateAsync(ProductModel product)
         {
             string query = @"
-                    INSERT INTO products(name, description, price, manufacturerId, categoryId) 
+                    INSERT INTO products(name, description, price, stock, manufacturerId, categoryId) 
                     VALUES ($1, $2, $3, $4, $5, $6)
                     RETURNING productId;
                 ";
@@ -110,8 +110,8 @@ namespace ECommerce.DataAccess.Repositories
                     row["description"].ToString(),
                     Convert.ToInt32(row["price"]),
                     Convert.ToInt32(row["stock"]),
-                    Convert.ToInt32(row["manufacturerId"]),
-                    Convert.ToInt32(row["categoryId"])
+                    Convert.ToInt32(row["manufacturerid"]),
+                    Convert.ToInt32(row["categoryid"])
                 ));
             }
 
