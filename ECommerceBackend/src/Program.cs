@@ -22,6 +22,8 @@ builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new Postgr
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IRoleTypeRepository, RoleTypeRepository>();
 builder.Services.AddSingleton<IUserRoleRepository, UserRoleRepository>();
+builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";
