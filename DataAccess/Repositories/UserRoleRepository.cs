@@ -51,11 +51,9 @@ namespace ECommerce.DataAccess.Repositories
             foreach (var row in rows)
             {
                 // TODO: null safety
-                _logger.LogInformation(row.ToString());
-                result.Add(row["roletypes.roletypeid"].ToString());
+                result.Add(row["name"].ToString());
             }
 
-            _logger.LogInformation(result.ToString());
             return result;
         }
 
