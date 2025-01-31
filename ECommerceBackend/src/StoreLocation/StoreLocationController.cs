@@ -1,4 +1,5 @@
 using ECommerce.DataAccess.Models.StoreLocation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.StoreLocation
@@ -15,13 +16,14 @@ namespace ECommerce.StoreLocation
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLocationsd()
+        public async Task<IActionResult> GetLocations()
         {
             List<StoreLocationModel> result = await _storeLocationService.GetLocations();
             return Ok(result);
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateStoreLocation([FromBody] RequestCreateLocationDto createLocationDto)
         {
             StoreLocationModel result = await _storeLocationService.CreateStoreLocation(
@@ -32,6 +34,7 @@ namespace ECommerce.StoreLocation
         }
 
         [HttpPatch]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> ModifyStoreLocation([FromBody] RequestModifyLocationDto modifyLocationDto)
         {
             await _storeLocationService.UpdateStoreLocation(
@@ -42,6 +45,7 @@ namespace ECommerce.StoreLocation
         }
 
         [HttpDelete]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> RemoveLocation([FromBody] RequestRemoveLocationDto removeLocationDto)
         {
             await _storeLocationService.RemoveLocation(removeLocationDto.StoreLocationId);

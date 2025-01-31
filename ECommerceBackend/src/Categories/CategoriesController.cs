@@ -1,4 +1,5 @@
 using ECommerce.DataAccess.Models.Category;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Categories
@@ -22,6 +23,7 @@ namespace ECommerce.Categories
         }
 
         [HttpPost()]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateCategory([FromBody()] RequestCreateCategoryDto createCategoryDto)
         {
             CategoryModel? res = await _categoriesService.CreateCategory(createCategoryDto);

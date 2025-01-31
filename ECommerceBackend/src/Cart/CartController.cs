@@ -49,6 +49,7 @@ namespace ECommerce.Cart
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<IActionResult> UpdateItemQuantity([FromBody] RequestAddItemDto addItemDto)
         {
             string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

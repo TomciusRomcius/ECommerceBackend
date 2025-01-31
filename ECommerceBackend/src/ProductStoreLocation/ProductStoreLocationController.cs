@@ -1,4 +1,5 @@
 using ECommerce.DataAccess.Models.ProductStoreLocation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.ProductStoreLocation
@@ -34,6 +35,7 @@ namespace ECommerce.ProductStoreLocation
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> AddProductToStore([FromBody] AddProductToStoreDto addProductToStoreDto)
         {
             var model = new ProductStoreLocationModel(
@@ -48,6 +50,7 @@ namespace ECommerce.ProductStoreLocation
         }
 
         [HttpDelete]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> RemoveProductFromStore([FromBody] RemoveProductFromStoreDto removeProductFromStoreDto)
         {
             await _productStoreLocationService.RemoveProductFromStore(removeProductFromStoreDto.StoreLocationId, removeProductFromStoreDto.ProductId);
@@ -56,6 +59,7 @@ namespace ECommerce.ProductStoreLocation
 
 
         [HttpPatch]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> ModifyProductFromStore([FromBody] AddProductToStoreDto addProductToStoreDto)
         {
             var model = new ProductStoreLocationModel(

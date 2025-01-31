@@ -24,7 +24,7 @@ namespace ECommerce.Manufacturers
         }
 
         [HttpPost()]
-        [Authorize()]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateManufacturer([FromBody()] RequestCreateManufacturerDto createProductsDto)
         {
             ManufacturerModel? model = await _manufacturerService.CreateManufacturer(createProductsDto);

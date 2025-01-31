@@ -15,15 +15,14 @@ namespace ECommerce.Product
             _productService = productService;
         }
 
-        [HttpGet()]
-        [Authorize()]
+        [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             return Ok(await _productService.GetAllProducts());
         }
 
-        [HttpPost()]
-        [Authorize()]
+        [HttpPost]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateProducts([FromBody()] RequestCreateProductDto createProductDto)
         {
             ProductModel? res = await _productService.CreateProduct(createProductDto);
