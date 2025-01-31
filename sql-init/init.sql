@@ -74,10 +74,12 @@ CREATE TABLE storeLocations(
 );
 
 CREATE TABLE productStoreLocations(
-  productId INT NOT NULL,
   storeLocationId INT NOT NULL,
+  productId INT NOT NULL,
   stock INT NOT NULL,
-  PRIMARY KEY (productId, storeLocationId)
+  PRIMARY KEY (productId, storeLocationId),
+  FOREIGN KEY (storeLocationId) REFERENCES storeLocations(storeLocationId) ON DELETE CASCADE,
+  FOREIGN KEY (productId) REFERENCES products(productId) ON DELETE CASCADE
 );
 
 CREATE TABLE cartProducts(

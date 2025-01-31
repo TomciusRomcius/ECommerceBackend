@@ -3,11 +3,13 @@ using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Repositories.ProductStoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.Identity;
 using ECommerce.Manufacturers;
 using ECommerce.Product;
+using ECommerce.ProductStoreLocation;
 using ECommerce.StoreLocation;
 using Microsoft.AspNetCore.Identity;
 
@@ -32,6 +34,7 @@ builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>()
 builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>();
 builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
 builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
+builder.Services.AddSingleton<IProductStoreLocationRepository, ProductStoreLocationRepository>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";
@@ -64,6 +67,7 @@ builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
 builder.Services.AddSingleton<ICartService, CartService>();
 builder.Services.AddSingleton<IAddressService, AddressService>();
 builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
+builder.Services.AddSingleton<IProductStoreLocationService, ProductStoreLocationService>();
 
 builder.Services.AddControllers();
 
