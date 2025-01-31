@@ -34,7 +34,6 @@ namespace ECommerce.Product
                  createProductDto.Name,
                  createProductDto.Description,
                  createProductDto.Price,
-                 createProductDto.Stock,
                  createProductDto.ManufacturerId,
                  createProductDto.CategoryId
                 )
