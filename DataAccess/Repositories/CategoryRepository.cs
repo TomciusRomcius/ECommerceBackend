@@ -1,5 +1,4 @@
-using ECommerce.DataAccess.Models;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 

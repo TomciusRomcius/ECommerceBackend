@@ -1,4 +1,4 @@
-namespace ECommerce.DataAccess.Models
+namespace ECommerce.DataAccess.Models.Manufacturer
 {
     public class ManufacturerModel
     {

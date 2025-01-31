@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Repositories;
 
 namespace ECommerce.Categories

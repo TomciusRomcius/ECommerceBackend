@@ -1,4 +1,4 @@
-namespace ECommerce.DataAccess.Models
+namespace ECommerce.DataAccess.Models.Product
 {
     public class UpdateProductModel
     {

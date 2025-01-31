@@ -1,5 +1,4 @@
-
-namespace ECommerce.DataAccess.Models
+namespace ECommerce.DataAccess.Models.User
 {
     public class UpdateUserModel
     {

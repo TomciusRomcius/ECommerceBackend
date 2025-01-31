@@ -1,6 +1,5 @@
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.Product;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Product

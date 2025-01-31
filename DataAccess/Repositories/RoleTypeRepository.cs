@@ -1,5 +1,5 @@
 using System.Data;
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.RoleType;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 

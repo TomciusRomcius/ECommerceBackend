@@ -1,4 +1,4 @@
-namespace ECommerce.DataAccess.Models
+namespace ECommerce.DataAccess.Models.Category
 {
     public class CategoryModel
     {

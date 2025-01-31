@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.RoleType;
 
 namespace ECommerce.DataAccess.Repositories
 {

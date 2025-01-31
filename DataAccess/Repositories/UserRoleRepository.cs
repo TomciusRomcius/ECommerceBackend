@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using Microsoft.Extensions.Logging;

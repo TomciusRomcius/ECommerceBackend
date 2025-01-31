@@ -1,8 +1,5 @@
-using System.Data;
-using ECommerce.DataAccess.Models;
+using ECommerce.DataAccess.Models.Manufacturer;
 using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
 
 namespace ECommerce.Manufacturers
 {
