@@ -72,7 +72,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// Create default roles
+// Create default roles and create master account
 using (var scope = app.Services.CreateScope())
 {
     var defaultRoles = new[] { "MERCHANT", "ADMINISTRATOR" };
@@ -88,13 +88,9 @@ using (var scope = app.Services.CreateScope())
         {
             await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
         }
-
-
     }
 
-
-    // Create master account
-    // TODO: super unsafe, use env variables for this
+    // TODO: use secrets for this
     var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
 
     if (userManager is null)
