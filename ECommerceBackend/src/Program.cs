@@ -87,39 +87,41 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
         }
 
-        // Create master account
-        // TODO: super unsafe, use env variables for this
-        var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
 
-        if (userManager is null)
+    }
+
+
+    // Create master account
+    // TODO: super unsafe, use env variables for this
+    var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+
+    if (userManager is null)
+    {
+        throw new InvalidOperationException("User manager is null!");
+    }
+
+    ApplicationUser? user = await userManager.FindByEmailAsync("masteruser@gmail.com");
+
+    if (user is null)
+    {
+        user = new ApplicationUser()
         {
-            throw new InvalidOperationException("User manager is null!");
-        }
+            Email = "masteruser@gmail.com",
+            UserName = "masteruser@gmail.com",
+            Firstname = "master",
+            Lastname = "master"
+        };
 
-
-        ApplicationUser? user = await userManager.FindByEmailAsync("masteruser@gmail.com");
-
-        if (user is null)
+        var result = await userManager.CreateAsync(user, "Masterpassword.55");
+        if (result.Errors.Count() > 0)
         {
-            user = new ApplicationUser()
-            {
-                Email = "masteruser@gmail.com",
-                UserName = "masteruser@gmail.com",
-                Firstname = "master",
-                Lastname = "master"
-            };
-
-            var result = await userManager.CreateAsync(user, "Masterpassword.55");
-            if (result.Errors.Count() > 0)
-            {
-                throw new Exception(result.Errors.ToString());
-            }
+            throw new Exception(result.Errors.ToString());
         }
+    }
 
-        if (!await userManager.IsInRoleAsync(user, "ADMINISTRATOR"))
-        {
-            await userManager.AddToRolesAsync(user, ["MERCHANT", "ADMINISTRATOR"]);
-        }
+    if (!await userManager.IsInRoleAsync(user, "ADMINISTRATOR"))
+    {
+        await userManager.AddToRolesAsync(user, ["MERCHANT", "ADMINISTRATOR"]);
     }
 }
 
