@@ -16,8 +16,8 @@ namespace ECommerce.DataAccess.Repositories
         public async Task<ProductModel?> CreateAsync(ProductModel product)
         {
             string query = @"
-                    INSERT INTO products(name, description, price, stock, manufacturerId, categoryId) 
-                    VALUES ($1, $2, $3, $4, $5, $6)
+                    INSERT INTO products(name, description, price, manufacturerId, categoryId) 
+                    VALUES ($1, $2, $3, $4, $5)
                     RETURNING productId;
                 ";
 
@@ -25,7 +25,6 @@ namespace ECommerce.DataAccess.Repositories
                 new QueryParameter(product.Name),
                 new QueryParameter(product.Description),
                 new QueryParameter(product.Price),
-                new QueryParameter(product.Stock),
                 new QueryParameter(product.ManufacturerId),
                 new QueryParameter(product.CategoryId)
             ];
@@ -50,17 +49,15 @@ namespace ECommerce.DataAccess.Repositories
                     SET name = COALESCE($1, name)
                     SET description = COALESCE($2, description)
                     SET price = COALESCE($3, price)
-                    SET stock = COALESCE($4, stock)
-                    SET manufacturerId = COALESCE($5, manufacturerId)
-                    SET categoryId = COALESCE($6, categoryId)
-                    WHERE productId = $7;
+                    SET manufacturerId = COALESCE($4, manufacturerId)
+                    SET categoryId = COALESCE($5, categoryId)
+                    WHERE productId = $6;
                 ";
 
             QueryParameter[] parameters = [
                 new QueryParameter(product.Name),
                 new QueryParameter(product.Description),
                 new QueryParameter(product.Price),
-                new QueryParameter(product.Stock),
                 new QueryParameter(product.ManufacturerId),
                 new QueryParameter(product.CategoryId),
                 new QueryParameter(product.ProductId),
@@ -109,7 +106,6 @@ namespace ECommerce.DataAccess.Repositories
                     row["name"].ToString(),
                     row["description"].ToString(),
                     Convert.ToInt32(row["price"]),
-                    Convert.ToInt32(row["stock"]),
                     Convert.ToInt32(row["manufacturerid"]),
                     Convert.ToInt32(row["categoryid"])
                 ));
