@@ -81,25 +81,5 @@ namespace ECommerce.DataAccess.Repositories
         {
             throw new NotImplementedException();
         }
-
-        Task<ManufacturerModel?> IManufacturerRepository.CreateAsync(string manufacturerName)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ManufacturerModel?> IManufacturerRepository.FindByIdAsync(int manufacturerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ManufacturerModel?> IManufacturerRepository.FindByNameAsync(string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<List<ManufacturerModel>> IManufacturerRepository.GetAll()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
