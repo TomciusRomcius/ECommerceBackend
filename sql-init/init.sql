@@ -68,7 +68,7 @@ CREATE TABLE products(
 );
 
 CREATE TABLE storeLocations(
-  storeLocationId INT PRIMARY KEY,
+  storeLocationId SERIAL PRIMARY KEY,
   displayName VARCHAR(255) UNIQUE,
   address VARCHAR(255) UNIQUE
 );

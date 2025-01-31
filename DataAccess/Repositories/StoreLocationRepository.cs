@@ -134,12 +134,14 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
                 UPDATE storeLocations
                 SET
                 displayName = COALESCE($1, displayName),
-                address = COALESCE($2, address),
+                address = COALESCE($2, address)
+                WHERE storeLocationId = $3
             ";
 
             QueryParameter[] parameters = [
                 new QueryParameter(updateModel.DisplayName),
                 new QueryParameter(updateModel.Address),
+                new QueryParameter(updateModel.StoreLocationId),
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);
