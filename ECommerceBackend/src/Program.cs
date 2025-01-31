@@ -3,6 +3,7 @@ using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.Identity;
 using ECommerce.Manufacturers;
@@ -60,6 +61,7 @@ builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
 builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
 builder.Services.AddSingleton<ICartService, CartService>();
 builder.Services.AddSingleton<IAddressService, AddressService>();
+builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
 
 builder.Services.AddControllers();
 
