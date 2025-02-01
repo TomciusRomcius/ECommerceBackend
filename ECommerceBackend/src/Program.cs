@@ -6,8 +6,10 @@ using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
+using ECommerce.DataAccess.Utils;
 using ECommerce.Identity;
 using ECommerce.Manufacturers;
+using ECommerce.PaymentSession;
 using ECommerce.Product;
 using ECommerce.ProductStoreLocation;
 using ECommerce.StoreLocation;
@@ -15,6 +17,11 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
+
+builder.Services.AddSingleton<StripeSettings>(_ => new StripeSettings
+{
+    ApiKey = builder.Configuration["STRIPE_API_KEY"]
+});
 
 // Create database service
 string? connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
@@ -35,6 +42,9 @@ builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>()
 builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
 builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
 builder.Services.AddSingleton<IProductStoreLocationRepository, ProductStoreLocationRepository>();
+
+
+builder.Services.AddSingleton<IStripeSessionService, StripeSessionService>();
 
 // TODO: define issuer in appsettings
 string issuer = "localhost";

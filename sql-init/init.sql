@@ -30,9 +30,9 @@ CREATE TABLE userRoles(
   FOREIGN KEY (roleTypeId) REFERENCES roleTypes(roleTypeId) 
 );
 
-CREATE TABLE addresses(
+CREATE TABLE shippingAddresses(
+  shippingAddressId BIGSERIAL PRIMARY KEY,
   userId uuid NOT NULL UNIQUE,
-  isShipping BOOLEAN NOT NULL, -- 0 - billing, 1 - shipping
   recipientName VARCHAR(100) NOT NULL,
   streetAddress VARCHAR(255) NOT NULL,
   apartmentUnit VARCHAR(255),
@@ -41,7 +41,7 @@ CREATE TABLE addresses(
   state VARCHAR(255) NOT NULL,
   postalCode VARCHAR(15) NOT NULL,
   mobileNumber VARCHAR(50) NOT NULL,
-  PRIMARY KEY (userId, isShipping),
+  isDefault BOOLEAN DEFAULT false,
   FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE
 );
 
@@ -90,4 +90,30 @@ CREATE TABLE cartProducts(
   PRIMARY KEY (userId, productId),
   FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE,
   FOREIGN KEY (productId, storeLocationId) REFERENCES productStoreLocations(productId, storeLocationId) ON DELETE CASCADE
+);
+
+CREATE TABLE orders (
+  orderId SERIAL NOT NULL,
+  userId UUID NOT NULL,
+  shippingAddressId INT NOT NULL,
+  placedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fulfilled BOOLEAN NOT NULL,
+  PRIMARY KEY (userId, orderId),
+  FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE,
+  FOREIGN KEY (shippingAddressId) REFERENCES shippingAddresses(shippingAddressId)
+);
+
+CREATE TABLE orderProducts(
+  userId UUID NOT NULL UNIQUE,
+  orderId SERIAL NOT NULL UNIQUE,
+  -- Store product information again because the product can be updated
+  -- as time goes on 
+  name VARCHAR(255) NOT NULL UNIQUE,
+  price DECIMAL(6, 2) NOT NULL,
+  quantity INT NOT NULL CHECK (quantity > 0),
+  productId INT NOT NULL UNIQUE,
+  PRIMARY KEY (userId, orderId),
+  FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE,
+  FOREIGN KEY (userId, orderId) REFERENCES orders(userId, orderId) ON DELETE CASCADE,
+  FOREIGN KEY (productId) REFERENCES products(productId) ON DELETE CASCADE
 );
