@@ -3,6 +3,7 @@ using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Common.Utils;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Repositories.PaymentSession;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
@@ -42,6 +43,7 @@ builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>()
 builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
 builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
 builder.Services.AddSingleton<IProductStoreLocationRepository, ProductStoreLocationRepository>();
+builder.Services.AddSingleton<IPaymentSessionRepository, PaymentSessionRepository>();
 
 
 builder.Services.AddSingleton<IStripeSessionService, StripeSessionService>();
