@@ -76,13 +76,10 @@ namespace ECommerce.PaymentSession
 
             if (stripeEvent.Type == EventTypes.ChargeSucceeded)
             {
-                if (stripeEvent.Data.Object is Charge)
-                {
-                    var intent = stripeEvent.Data.Object as Charge;
-                    string? userId = intent?.Metadata["userId"];
-                    _logger.LogInformation("Payment succeeded");
-                    _logger.LogInformation(userId);
-                }
+                var charge = stripeEvent.Data.Object as Charge;
+                string? userId = charge?.Metadata["userId"];
+                _logger.LogInformation("Payment succeeded");
+                _logger.LogInformation(userId);
             }
         }
     }
