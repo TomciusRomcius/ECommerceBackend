@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using ECommerce.PaymentSession;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,31 +14,31 @@ namespace ECommerce.Order
             _stripeSessionService = stripeSessionService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPaymentSession()
-        {
-            string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId is null)
-            {
-                return new UnauthorizedObjectResult("You must be logged in to create payment session!");
-            }
+        // [HttpGet]
+        // public async Task<IActionResult> GetPaymentSession()
+        // {
+        //     string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (userId is null)
+        //     {
+        //         return new UnauthorizedObjectResult("You must be logged in to create payment session!");
+        //     }
 
-            var res = _stripeSessionService.GeneratePaymentSession(userId);
-            return Ok(res);
-        }
+        //     var res = _stripeSessionService.GeneratePaymentSession(userId);
+        //     return Ok(res);
+        // }
 
-        [HttpPost]
-        public async Task<IActionResult> CreatePaymentSession()
-        {
-            string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId is null)
-            {
-                return new UnauthorizedObjectResult("You must be logged in to create payment session!");
-            }
+        // [HttpPost]
+        // public async Task<IActionResult> CreatePaymentSession()
+        // {
+        //     string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (userId is null)
+        //     {
+        //         return new UnauthorizedObjectResult("You must be logged in to create payment session!");
+        //     }
 
-            var res = _stripeSessionService.GeneratePaymentSession(userId);
-            return Ok(res);
-        }
+        //     var res = _stripeSessionService.GeneratePaymentSession(userId);
+        //     return Ok(res);
+        // }
 
         [HttpPost("webhook")]
         public async Task<IActionResult> TestFulfillPayment()

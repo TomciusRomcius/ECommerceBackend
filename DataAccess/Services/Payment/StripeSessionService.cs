@@ -16,37 +16,74 @@ namespace ECommerce.PaymentSession
             StripeConfiguration.ApiKey = _stripeSettings.ApiKey;
         }
 
-        public PaymentIntent GeneratePaymentSession(string userId)
+        public PaymentIntent GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
         {
-
             var options = new PaymentIntentCreateOptions
             {
-                Amount = 10 * 100,
+                Amount = sessionOptions.Price,
                 Currency = "usd",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", userId }
+                    { "userId", sessionOptions.UserId }
+                },
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
+                {
+                    Enabled = true,
+                    AllowRedirects = "never"
                 }
             };
 
             var service = new PaymentIntentService();
+            var result = service.Create(options);
 
-            return service.Create(options);
+            service.Confirm(result.Id, new()
+            {
+                PaymentMethod = "pm_card_visa"
+            });
+
+            return result;
+        }
+
+        public void GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions)
+        {
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = sessionOptions.Price,
+                Currency = "usd",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userId", sessionOptions.UserId }
+                },
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
+                {
+                    Enabled = true,
+                    AllowRedirects = "never"
+                }
+            };
+
+            var service = new PaymentIntentService();
+            var result = service.Create(options);
+
+            service.Confirm(result.Id, new()
+            {
+                PaymentMethod = "pm_card_visa"
+            });
         }
 
         public void HandleWebhook(string json)
         {
             var stripeEvent = EventUtility.ParseEvent(json, false);
 
-            if (stripeEvent.Type == EventTypes.PaymentIntentSucceeded)
+            if (stripeEvent.Type == EventTypes.ChargeSucceeded)
             {
-                var intent = stripeEvent.Data.Object as PaymentIntent;
-                string? userId = intent.Metadata["userId"];
-                _logger.LogInformation("Payment succeeded");
-                _logger.LogInformation("Uid {UserId}", userId);
+                if (stripeEvent.Data.Object is Charge)
+                {
+                    var intent = stripeEvent.Data.Object as Charge;
+                    string? userId = intent?.Metadata["userId"];
+                    _logger.LogInformation("Payment succeeded");
+                    _logger.LogInformation(userId);
+                }
             }
-
-            else _logger.LogInformation(stripeEvent.Type);
         }
     }
 }
