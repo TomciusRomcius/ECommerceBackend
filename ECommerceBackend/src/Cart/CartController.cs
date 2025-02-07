@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.CartProduct;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace ECommerce.Cart
 
 
             await _cartService.AddItem(
-                new CartProductModel(userId, addItemDto.ProductId, addItemDto.Quantity)
+                new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
             );
 
             return Created(nameof(AddItem), null);
@@ -59,7 +60,7 @@ namespace ECommerce.Cart
             }
 
             await _cartService.UpdateItemQuantity(
-                new CartProductModel(userId, addItemDto.ProductId, addItemDto.Quantity)
+                new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
             );
 
             return Ok();

@@ -1,3 +1,4 @@
+using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.CartProduct;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -13,28 +14,33 @@ namespace ECommerce.DataAccess.Repositories
             _postgresService = postgresService;
         }
 
-        public async Task<CartProductModel?> AddItemAsync(CartProductModel cartProductModel)
+        public async Task<CartProductEntity?> AddItemAsync(CartProductEntity cartProduct)
         {
             string query = @"
-                INSERT INTO cartProducts (userId, productId, quantity)
-                VALUES ($1, $2, $3);
+                INSERT INTO cartProducts (userId, productId, storeLocationId, quantity)
+                VALUES ($1, $2, $3, $4);
             ";
 
             QueryParameter[] parameters = [
-                new QueryParameter(new Guid(cartProductModel.UserId)),
-                new QueryParameter(cartProductModel.ProductId),
-                new QueryParameter(cartProductModel.Quantity),
+                new QueryParameter(new Guid(cartProduct.UserId)),
+                new QueryParameter(cartProduct.ProductId),
+                new QueryParameter(cartProduct.StoreLocationId),
+                new QueryParameter(cartProduct.Quantity),
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            return cartProductModel;
+            return cartProduct;
         }
 
         public async Task<List<CartProductModel>> GetUserCartProductsAsync(string userId)
         {
             string query = @"
-                SELECT * from cartProducts WHERE userId = $1;
+                SELECT cartProducts.userid, cartProducts.productid, cartProducts.storelocationid, cartProducts.quantity, products.price 
+                FROM cartProducts 
+                INNER JOIN products
+                ON products.productId = cartProducts.productId
+                WHERE userId = $1;
             ";
 
             QueryParameter[] parameters = [
@@ -50,7 +56,9 @@ namespace ECommerce.DataAccess.Repositories
                 result.Add(new CartProductModel(
                     row["userid"].ToString(),
                     Convert.ToInt32(row["productid"]),
-                    Convert.ToInt32(row["quantity"])
+                    Convert.ToInt32(row["storelocationid"]),
+                    Convert.ToInt32(row["quantity"]),
+                    Convert.ToDouble(row["price"])
                 ));
             }
 
@@ -84,7 +92,7 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<CartProductModel?> UpdateItemAsync(CartProductModel cartProduct)
+        public async Task<CartProductEntity?> UpdateItemAsync(CartProductEntity cartProduct)
         {
             string query = @"
                 UPDATE cartProducts
