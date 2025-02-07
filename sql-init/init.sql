@@ -17,6 +17,14 @@ CREATE TABLE "users"(
   PRIMARY KEY (userId)
 );
 
+CREATE TABLE paymentSessions(
+  userId UUID NOT NULL UNIQUE,
+  paymentSessionId varchar(255) NOT NULL UNIQUE,
+  paymentSessionProvider varchar(50) NOT NULL,
+  PRIMARY KEY (paymentSessionId),
+  FOREIGN KEY (userId) REFERENCES "users"(userId)
+);
+
 CREATE TABLE roleTypes(
   roleTypeId SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE
@@ -43,17 +51,6 @@ CREATE TABLE shippingAddresses(
   mobileNumber VARCHAR(50) NOT NULL,
   isDefault BOOLEAN DEFAULT false,
   FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE
-);
-
-CREATE TABLE paymentDetails(
-  paymentDetailsId SERIAL PRIMARY KEY,
-  userId uuid NOT NULL,
-  paymentToken VARCHAR(4) NOT NULL,
-  cardholderName VARCHAR(255) NOT NULL,
-  cardType VARCHAR(50) NOT NULL,
-  lastFourDigits VARCHAR(4) NOT NULL,
-  expDate Date NOT NULL,
-  FOREIGN KEY (userId) REFERENCES "users"(userId)
 );
 
 CREATE TABLE products(
