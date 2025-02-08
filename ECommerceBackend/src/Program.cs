@@ -1,3 +1,4 @@
+using System.Data;
 using ECommerce.Address;
 using ECommerce.Cart;
 using ECommerce.Categories;
@@ -24,15 +25,31 @@ builder.Services.AddSingleton<StripeSettings>(_ => new StripeSettings
     ApiKey = builder.Configuration["STRIPE_API_KEY"]
 });
 
-// Create database service
-string? connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
-if (connectionString == null)
-{
-    throw new ArgumentException("Connection string is empty");
-}
 
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
-builder.Services.AddSingleton<IPostgresService, PostgresService>(_ => new PostgresService(connectionString));
+
+// TODO: make a separate method
+{
+    // EXTERNAL_DB is set when running on docker-compose. If thats the case, set host to db dns name
+    string? host = Environment.GetEnvironmentVariable("EXTERNAL_DB") is null ? builder.Configuration.GetValue<string>("PostgreSQL:Host") : "db";
+
+    string? user = builder.Configuration.GetValue<string>("PostgreSQL:Username");
+    string? password = builder.Configuration.GetValue<string>("PostgreSQL:Password");
+    string? database = builder.Configuration.GetValue<string>("PostgreSQL:Database");
+
+    if (host is null || user is null || password is null || database is null)
+    {
+        throw new DataException(
+            @"Configuration: PostgreSQL:Host, PostgreSQL:User, 
+        PostgreSQL:Password, PostgreSQL:Database must be defined!"
+        );
+    }
+
+    builder.Services.AddSingleton<PostgresConfiguration>(_ => new(host, user, password, database));
+}
+
+builder.Services.AddSingleton<IPostgresService, PostgresService>();
+
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IRoleTypeRepository, RoleTypeRepository>();
 builder.Services.AddSingleton<IUserRoleRepository, UserRoleRepository>();

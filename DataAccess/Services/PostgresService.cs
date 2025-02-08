@@ -18,10 +18,17 @@ namespace ECommerce.DataAccess.Services
     public class PostgresService : IPostgresService
     {
         public NpgsqlConnection Connection { get; }
+        PostgresConfiguration _postgresConfiguration;
 
-        public PostgresService(string connectionString)
+        public PostgresService(PostgresConfiguration postgresConfiguration)
         {
-            Connection = new NpgsqlConnection(connectionString);
+            _postgresConfiguration = postgresConfiguration;
+            Connection = new NpgsqlConnection($@"
+                HOST={postgresConfiguration.Host};
+                USERNAME={postgresConfiguration.Username};
+                PASSWORD={postgresConfiguration.Password};
+                DATABASE={postgresConfiguration.Database};
+            ");
             Connection.Open();
         }
 

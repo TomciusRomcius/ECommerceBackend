@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - EXTERNAL_DB=1
     volumes:
       - ./ECommerceBackend.sln:/app/ECommerceBackend.sln
       - ./ECommerceBackend:/app/ECommerceBackend
