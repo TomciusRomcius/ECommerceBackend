@@ -1,4 +1,19 @@
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./ECommerceBackend.sln:/app/ECommerceBackend.sln
+      - ./ECommerceBackend:/app/ECommerceBackend
+      - ./DataAccess:/app/DataAccess
+      - /app/ECommerceBackend/bin
+      - /app/ECommerceBackend/obj
+      - /app/DataAccess/bin
+      - /app/DataAccess/obj
+    ports:
+      - 5042:5042
+
   db:
     image: postgres:17.2
     environment:

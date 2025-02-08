@@ -1,0 +1,9 @@
+.vscode
+DataAccess.Tests
+sql-init
+
+bin
+obj
+
+.git
+.gitignore
