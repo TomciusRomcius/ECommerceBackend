@@ -5,13 +5,13 @@ namespace ECommerce.DataAccess.Entities.PaymentSession
         public string PaymentSessionId { get; set; }
         public Guid UserId { get; set; }
         // TODO: get rid of magical strings
-        public string PaymentSessionType { get; set; }
+        public string PaymentSessionProvider { get; set; }
 
-        public PaymentSessionEntity(string paymentSessionId, Guid userId, string paymentSessionType)
+        public PaymentSessionEntity(string paymentSessionId, Guid userId, string paymentSessionProvider)
         {
             PaymentSessionId = paymentSessionId;
             UserId = userId;
-            PaymentSessionType = paymentSessionType;
+            PaymentSessionProvider = paymentSessionProvider;
         }
     }
 }
