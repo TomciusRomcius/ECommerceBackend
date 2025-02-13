@@ -70,8 +70,8 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
 
                 result = new StoreLocationModel(
                     Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString(),
-                    row["address"].ToString()
+                    row["displayname"].ToString()!,
+                    row["address"].ToString()!
                 );
             }
 
@@ -98,8 +98,8 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
 
                 result = new StoreLocationModel(
                     Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString(),
-                    row["address"].ToString()
+                    row["displayname"].ToString()!,
+                    row["address"].ToString()!
                 );
             }
 
@@ -120,8 +120,8 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
                 // TODO: null safety
                 result.Add(new StoreLocationModel(
                     Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString(),
-                    row["address"].ToString()
+                    row["displayname"].ToString()!,
+                    row["address"].ToString()!
                 ));
             }
 

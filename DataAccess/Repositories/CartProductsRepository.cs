@@ -52,9 +52,8 @@ namespace ECommerce.DataAccess.Repositories
 
             foreach (var row in rows)
             {
-                // TODO: null safety
                 result.Add(new CartProductModel(
-                    row["userid"].ToString(),
+                    row["userid"].ToString()!,
                     Convert.ToInt32(row["productid"]),
                     Convert.ToInt32(row["storelocationid"]),
                     Convert.ToInt32(row["quantity"]),

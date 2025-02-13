@@ -103,8 +103,8 @@ namespace ECommerce.DataAccess.Repositories
                 // TODO: implement safe access
                 result.Add(new ProductModel(
                     Convert.ToInt32(row["productid"]),
-                    row["name"].ToString(),
-                    row["description"].ToString(),
+                    row["name"].ToString()!,
+                    row["description"].ToString()!,
                     Convert.ToInt32(row["price"]),
                     Convert.ToInt32(row["manufacturerid"]),
                     Convert.ToInt32(row["categoryid"])

@@ -70,7 +70,7 @@ namespace ECommerce.DataAccess.Repositories
             {
                 // TODO: null safety
                 result.Add(
-                    new ManufacturerModel(Convert.ToInt32(row["manufacturerid"]), row["name"].ToString())
+                    new ManufacturerModel(Convert.ToInt32(row["manufacturerid"]), row["name"].ToString()!)
                 );
             }
 

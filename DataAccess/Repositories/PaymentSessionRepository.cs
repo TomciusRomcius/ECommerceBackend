@@ -51,9 +51,9 @@ namespace ECommerce.DataAccess.Repositories.PaymentSession
 
                 // TODO: null safety
                 result = new PaymentSessionEntity(
-                    row["paymentsessionid"].ToString(),
+                    row["paymentsessionid"].ToString()!,
                     userId,
-                    row["paymentsessionprovider"].ToString()
+                    row["paymentsessionprovider"].ToString()!
                 );
             }
 

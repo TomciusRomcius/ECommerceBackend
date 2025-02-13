@@ -67,26 +67,25 @@ namespace ECommerce.DataAccess.Repositories
 
             if (rows.Count > 2)
             {
-                // Handle
+                // TODO: Handle
             }
 
             List<AddressModel> result = new List<AddressModel>();
 
             foreach (var row in rows)
             {
-                // TODO: null safety
                 var address = new AddressModel
                 {
                     UserId = userId,
                     IsShipping = (bool)row["isshipping"],
-                    RecipientName = row["recipientname"].ToString(),
-                    StreetAddress = row["streetaddress"].ToString(),
+                    RecipientName = row["recipientname"].ToString()!,
+                    StreetAddress = row["streetaddress"].ToString()!,
                     ApartmentUnit = row["apartmentunit"].ToString(),
-                    City = row["city"].ToString(),
-                    State = row["state"].ToString(),
-                    PostalCode = row["postalcode"].ToString(),
-                    Country = row["country"].ToString(),
-                    MobileNumber = row["mobilenumber"].ToString(),
+                    City = row["city"].ToString()!,
+                    State = row["state"].ToString()!,
+                    PostalCode = row["postalcode"].ToString()!,
+                    Country = row["country"].ToString()!,
+                    MobileNumber = row["mobilenumber"].ToString()!,
                 };
 
                 result.Add(address);

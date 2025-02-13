@@ -58,9 +58,8 @@ namespace ECommerce.DataAccess.Repositories
             List<CategoryModel> result = new List<CategoryModel>();
             foreach (var row in rows)
             {
-                // TODO: safe access
                 result.Add(
-                    new CategoryModel(Convert.ToInt32(row["categoryid"]), row["name"].ToString())
+                    new CategoryModel(Convert.ToInt32(row["categoryid"]), row["name"].ToString()!)
                 );
             }
 

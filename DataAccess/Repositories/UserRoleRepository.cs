@@ -51,7 +51,7 @@ namespace ECommerce.DataAccess.Repositories
             foreach (var row in rows)
             {
                 // TODO: null safety
-                result.Add(row["name"].ToString());
+                result.Add(row["name"].ToString()!);
             }
 
             return result;

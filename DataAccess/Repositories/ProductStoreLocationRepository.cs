@@ -68,8 +68,8 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
                 // TODO: null safety
                 var model = new DetailedProductModel(
                     Convert.ToInt32(row["productid"]),
-                    row["name"].ToString(),
-                    row["description"].ToString(),
+                    row["name"].ToString()!,
+                    row["description"].ToString()!,
                     Convert.ToInt32(row["price"]),
                     Convert.ToInt32(row["manufacturerid"]),
                     Convert.ToInt32(row["categoryid"]),
