@@ -35,5 +35,10 @@ namespace ECommerce.Cart
         {
             await _cartProductsRepository.UpdateItemAsync(cartProductModel);
         }
+
+        public async Task WipeAsync(Guid userId)
+        {
+            await _cartProductsRepository.RemoveAllCartItemsAsync(userId);
+        }
     }
 }
