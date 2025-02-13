@@ -9,6 +9,6 @@ namespace ECommerce.DataAccess.Repositories
         public Task<CartProductEntity?> UpdateItemAsync(CartProductEntity cartProduct);
         public Task RemoveItemAsync(string userId, int productId);
         public Task<List<CartProductModel>> GetUserCartProductsAsync(string userId);
-        public Task RemoveAllCartItemsAsync(string userId);
+        public Task RemoveAllCartItemsAsync(Guid userId);
     }
 }

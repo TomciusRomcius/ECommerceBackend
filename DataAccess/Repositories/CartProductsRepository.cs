@@ -65,14 +65,14 @@ namespace ECommerce.DataAccess.Repositories
             return result;
         }
 
-        public async Task RemoveAllCartItemsAsync(string userId)
+        public async Task RemoveAllCartItemsAsync(Guid userId)
         {
             string query = @"
                 DELETE FROM cartProducts WHERE userId = $1;
             ";
 
             QueryParameter[] parameters = [
-                new QueryParameter(new Guid(userId)),
+                new QueryParameter(userId),
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);

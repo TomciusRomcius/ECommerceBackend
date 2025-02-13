@@ -9,6 +9,7 @@ namespace ECommerce.Cart
         public Task<List<CartProductModel>> GetAllUserItems(string userId);
         public Task<CartProductEntity?> AddItem(CartProductEntity cartProductModel);
         public Task UpdateItemQuantity(CartProductEntity cartProductModel);
+        public Task WipeAsync(Guid userId);
     }
 
     public class CartService : ICartService
