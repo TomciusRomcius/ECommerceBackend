@@ -17,14 +17,14 @@ namespace ECommerce.DataAccess.Repositories.PaymentSession
         public async Task CreatePaymentSessionAsync(PaymentSessionEntity paymentSessionEntity)
         {
             string query = @"
-                INSERT INTO paymentSessions (paymentSessionId, userId, paymentSessionType)
+                INSERT INTO paymentSessions (paymentSessionId, userId, paymentSessionProvider)
                 VALUES ($1, $2, $3);
             ";
 
             QueryParameter[] parameters = [
                 new(paymentSessionEntity.PaymentSessionId),
                 new(paymentSessionEntity.UserId),
-                new(paymentSessionEntity.PaymentSessionType),
+                new(paymentSessionEntity.PaymentSessionProvider),
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);
@@ -32,7 +32,7 @@ namespace ECommerce.DataAccess.Repositories.PaymentSession
         public async Task<PaymentSessionEntity?> GetPaymentSession(Guid userId)
         {
             string query = @"
-                SELECT paymentSessionId, paymentSessionType 
+                SELECT paymentSessionId, paymentSessionProvider
                 FROM paymentSessions
                 WHERE userId = $1; 
             ";
@@ -53,17 +53,23 @@ namespace ECommerce.DataAccess.Repositories.PaymentSession
                 result = new PaymentSessionEntity(
                     row["paymentsessionid"].ToString(),
                     userId,
-                    row["paymentsessiontype"].ToString()
+                    row["paymentsessionprovider"].ToString()
                 );
             }
 
             return result;
         }
 
-        public Task DeletePaymentSession(Guid userId)
+        public async Task DeletePaymentSession(Guid userId)
         {
-            // TODO: implement
-            throw new NotImplementedException();
+            string query = @"
+                DELETE FROM paymentSessions
+                WHERE userId = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(userId)];
+
+            await _postgresService.ExecuteScalarAsync(query, parameters);
         }
     }
 }

@@ -1,5 +1,6 @@
 using ECommerce.PaymentSession;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace ECommerce.Order
 {
@@ -7,44 +8,38 @@ namespace ECommerce.Order
     [Route("[controller]")]
     public class PaymentSessionController : ControllerBase
     {
-        IStripeSessionService _stripeSessionService;
+        readonly IStripeSessionService _stripeSessionService;
+        readonly IOrderService _orderService;
+        readonly ILogger _logger;
 
-        public PaymentSessionController(IStripeSessionService stripeSessionService)
+        public PaymentSessionController(IStripeSessionService stripeSessionService, IOrderService orderService, ILogger logger)
         {
             _stripeSessionService = stripeSessionService;
+            _orderService = orderService;
+            _logger = logger;
         }
 
-        // [HttpGet]
-        // public async Task<IActionResult> GetPaymentSession()
-        // {
-        //     string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     if (userId is null)
-        //     {
-        //         return new UnauthorizedObjectResult("You must be logged in to create payment session!");
-        //     }
-
-        //     var res = _stripeSessionService.GeneratePaymentSession(userId);
-        //     return Ok(res);
-        // }
-
-        // [HttpPost]
-        // public async Task<IActionResult> CreatePaymentSession()
-        // {
-        //     string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     if (userId is null)
-        //     {
-        //         return new UnauthorizedObjectResult("You must be logged in to create payment session!");
-        //     }
-
-        //     var res = _stripeSessionService.GeneratePaymentSession(userId);
-        //     return Ok(res);
-        // }
-
         [HttpPost("webhook")]
-        public async Task<IActionResult> TestFulfillPayment()
+        public async Task<IActionResult> StripeWebhook()
         {
             string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            _stripeSessionService.HandleWebhook(json);
+            var stripeEvent = _stripeSessionService.ParseWebhookEvent(json);
+
+            if (stripeEvent.Type == EventTypes.ChargeSucceeded)
+            {
+                var charge = stripeEvent.Data.Object as Charge;
+                string? userId = charge?.Metadata["userId"];
+                if (userId is not null)
+                {
+                    await _orderService.OnCharge(new Guid(userId));
+                }
+
+                else
+                {
+                    _logger.LogCritical("Payment intent metadata:userId is null!");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
             return Ok();
         }
     }

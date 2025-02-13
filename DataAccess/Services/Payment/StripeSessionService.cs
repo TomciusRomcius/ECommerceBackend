@@ -70,17 +70,9 @@ namespace ECommerce.PaymentSession
             });
         }
 
-        public void HandleWebhook(string json)
+        public Event ParseWebhookEvent(string json)
         {
-            var stripeEvent = EventUtility.ParseEvent(json, false);
-
-            if (stripeEvent.Type == EventTypes.ChargeSucceeded)
-            {
-                var charge = stripeEvent.Data.Object as Charge;
-                string? userId = charge?.Metadata["userId"];
-                _logger.LogInformation("Payment succeeded");
-                _logger.LogInformation(userId);
-            }
+            return EventUtility.ParseEvent(json, false);
         }
     }
 }

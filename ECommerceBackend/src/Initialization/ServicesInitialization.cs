@@ -3,6 +3,7 @@ using ECommerce.Cart;
 using ECommerce.Categories;
 using ECommerce.Identity;
 using ECommerce.Manufacturers;
+using ECommerce.Order;
 using ECommerce.Product;
 using ECommerce.ProductStoreLocation;
 using ECommerce.StoreLocation;
@@ -21,6 +22,7 @@ namespace ECommerce.Initialization
             builder.Services.AddSingleton<IAddressService, AddressService>();
             builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
             builder.Services.AddSingleton<IProductStoreLocationService, ProductStoreLocationService>();
+            builder.Services.AddSingleton<IOrderService, OrderService>();
         }
 
         public static void InitializeIdentity(WebApplicationBuilder builder)
