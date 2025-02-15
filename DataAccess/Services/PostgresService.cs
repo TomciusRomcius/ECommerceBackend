@@ -25,10 +25,19 @@ namespace ECommerce.DataAccess.Services
             _postgresConfiguration = postgresConfiguration;
             Connection = new NpgsqlConnection($@"
                 HOST={postgresConfiguration.Host};
+                PORT={postgresConfiguration.Port};
                 USERNAME={postgresConfiguration.Username};
                 PASSWORD={postgresConfiguration.Password};
                 DATABASE={postgresConfiguration.Database};
             ");
+            Connection.Open();
+        }
+
+        // Mostly used during integration tests
+        public PostgresService(string connectionString)
+        {
+            _postgresConfiguration = null;
+            Connection = new NpgsqlConnection(connectionString);
             Connection.Open();
         }
 
