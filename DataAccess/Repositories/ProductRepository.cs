@@ -84,9 +84,30 @@ namespace ECommerce.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<ProductModel?> FindByNameAsync(string productName)
+        public async Task<ProductModel?> FindByNameAsync(string productName)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM products;
+            ";
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query.ToString());
+            ProductModel? result = null;
+
+            var row = rows[0];
+
+            if (row is not null)
+            {
+                result = new ProductModel(
+                    Convert.ToInt32(row["productid"]),
+                    row["name"].ToString()!,
+                    row["description"].ToString()!,
+                    Convert.ToDouble(row["price"]),
+                    Convert.ToInt32(row["manufacturerid"]),
+                    Convert.ToInt32(row["categoryid"])
+                );
+            }
+
+            return result;
         }
 
         public async Task<List<ProductModel>> GetAll()
