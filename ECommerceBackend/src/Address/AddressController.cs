@@ -1,6 +1,5 @@
 using System.Security.Claims;
-using ECommerce.DataAccess.Models.Address;
-using Microsoft.AspNetCore.Authorization;
+using ECommerce.DataAccess.Models.ShippingAddress;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Address
@@ -38,10 +37,9 @@ namespace ECommerce.Address
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            var address = new AddressModel
+            var address = new ShippingAddressModel
             {
                 UserId = userId,
-                IsShipping = setAddressDto.IsShipping,
                 RecipientName = setAddressDto.RecipientName,
                 StreetAddress = setAddressDto.StreetAddress,
                 ApartmentUnit = setAddressDto.ApartmentUnit,
@@ -65,10 +63,10 @@ namespace ECommerce.Address
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            var updateModel = new UpdateAddressModel
+            var updateModel = new UpdateShippingAddressModel
             {
+                ShippingAddressId = updateAddressDto.ShippingAddressId,
                 UserId = userId,
-                IsShipping = updateAddressDto.IsShipping,
                 RecipientName = updateAddressDto.RecipientName,
                 StreetAddress = updateAddressDto.StreetAddress,
                 ApartmentUnit = updateAddressDto.ApartmentUnit,

@@ -1,9 +1,9 @@
-namespace ECommerce.DataAccess.Models.Address
+namespace ECommerce.DataAccess.Models.ShippingAddress
 {
-    public class UpdateAddressModel
+    public class UpdateShippingAddressModel
     {
+        public required long ShippingAddressId { get; set; }
         public required string UserId { get; set; }
-        public required bool IsShipping { get; set; }
         public required string? RecipientName { get; set; }
         public required string? StreetAddress { get; set; }
         public required string? ApartmentUnit { get; set; }

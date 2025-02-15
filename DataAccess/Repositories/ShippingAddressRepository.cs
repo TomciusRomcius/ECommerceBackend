@@ -1,30 +1,29 @@
-using ECommerce.DataAccess.Models.Address;
+using ECommerce.DataAccess.Models.ShippingAddress;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 
-namespace ECommerce.DataAccess.Repositories
+namespace ECommerce.DataAccess.Repositories.ShippingAddress
 {
-    public class AddressRepository : IAddressRepository
+    public class ShippingAddressRepository : IShippingAddressRepository
     {
         readonly IPostgresService _postgresService;
 
-        public AddressRepository(IPostgresService postgresService)
+        public ShippingAddressRepository(IPostgresService postgresService)
         {
             _postgresService = postgresService;
         }
 
-        public async Task AddAddressAsync(AddressModel addressModel)
+        public async Task AddAddressAsync(ShippingAddressModel addressModel)
         {
             string query = @"
                 INSERT INTO addresses
-                (userId, isShipping, recipientName, streetAddress, apartmentUnit, country, city, state, postalCode, mobileNumber)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+                (userId, recipientName, streetAddress, apartmentUnit, country, city, state, postalCode, mobileNumber)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
             ";
 
             // TODO: add apartment
             QueryParameter[] parameters = [
                 new QueryParameter(new Guid(addressModel.UserId)),
-                new QueryParameter(addressModel.IsShipping),
                 new QueryParameter(addressModel.RecipientName),
                 new QueryParameter(addressModel.StreetAddress),
                 new QueryParameter(addressModel.ApartmentUnit),
@@ -53,7 +52,7 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteAsync(query, parameters);
         }
 
-        public async Task<List<AddressModel>> GetAddresses(string userId)
+        public async Task<List<ShippingAddressModel>> GetAddresses(string userId)
         {
             string query = @"
                 SELECT * from addresses WHERE userId = $1;
@@ -70,14 +69,14 @@ namespace ECommerce.DataAccess.Repositories
                 // TODO: Handle
             }
 
-            List<AddressModel> result = new List<AddressModel>();
+            List<ShippingAddressModel> result = new List<ShippingAddressModel>();
 
             foreach (var row in rows)
             {
-                var address = new AddressModel
+                var address = new ShippingAddressModel
                 {
+                    ShippingAddressId = Convert.ToInt64(row["shippingaddressid"]),
                     UserId = userId,
-                    IsShipping = (bool)row["isshipping"],
                     RecipientName = row["recipientname"].ToString()!,
                     StreetAddress = row["streetaddress"].ToString()!,
                     ApartmentUnit = row["apartmentunit"].ToString(),
@@ -94,7 +93,7 @@ namespace ECommerce.DataAccess.Repositories
             return result;
         }
 
-        public async Task UpdateAddressAsync(UpdateAddressModel updateAddressModel)
+        public async Task UpdateAddressAsync(UpdateShippingAddressModel updateAddressModel)
         {
             string query = @"
                 UPDATE addresses
@@ -107,10 +106,9 @@ namespace ECommerce.DataAccess.Repositories
                 state = COALESCE($6, state),
                 postalCode = COALESCE($7, postalCode),
                 mobileNumber = COALESCE($8, mobileNumber)
-                WHERE userId = $9 AND isShipping = $10;
+                WHERE userId = $9 AND addressId = $10;
             ";
 
-            // TODO: add apartment
             QueryParameter[] parameters = [
                 new QueryParameter(updateAddressModel.RecipientName),
                 new QueryParameter(updateAddressModel.StreetAddress),
@@ -121,7 +119,7 @@ namespace ECommerce.DataAccess.Repositories
                 new QueryParameter(updateAddressModel.PostalCode),
                 new QueryParameter(updateAddressModel.MobileNumber),
                 new QueryParameter(new Guid(updateAddressModel.UserId)),
-                new QueryParameter(updateAddressModel.IsShipping)
+                new QueryParameter(updateAddressModel.ShippingAddressId)
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);

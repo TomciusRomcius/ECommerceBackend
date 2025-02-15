@@ -2,6 +2,7 @@ using System.Data;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.PaymentSession;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
+using ECommerce.DataAccess.Repositories.ShippingAddress;
 using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -39,7 +40,7 @@ public static class DataAccessInitialization
         builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
         builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>();
         builder.Services.AddSingleton<ICartProductsRepository, CartProductsRepository>();
-        builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
+        builder.Services.AddSingleton<IShippingAddressRepository, ShippingAddressRepository>();
         builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
         builder.Services.AddSingleton<IProductStoreLocationRepository, ProductStoreLocationRepository>();
         builder.Services.AddSingleton<IPaymentSessionRepository, PaymentSessionRepository>();

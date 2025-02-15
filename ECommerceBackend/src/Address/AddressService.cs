@@ -1,27 +1,27 @@
-using ECommerce.DataAccess.Models.Address;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.DataAccess.Models.ShippingAddress;
+using ECommerce.DataAccess.Repositories.ShippingAddress;
 
 namespace ECommerce.Address
 {
     public interface IAddressService
     {
         /// <returns>A billing and shipping address</returns>
-        public Task<List<AddressModel>> GetAddresses(string userId);
-        public Task AddAddress(AddressModel address);
-        public Task UpdateAddress(UpdateAddressModel updateAddressModel);
+        public Task<List<ShippingAddressModel>> GetAddresses(string userId);
+        public Task AddAddress(ShippingAddressModel address);
+        public Task UpdateAddress(UpdateShippingAddressModel updateAddressModel);
         public Task DeleteAddress(string userId, bool isShipping);
     }
 
     public class AddressService : IAddressService
     {
-        readonly IAddressRepository _addressRepository;
+        readonly IShippingAddressRepository _addressRepository;
 
-        public AddressService(IAddressRepository addressRepository)
+        public AddressService(IShippingAddressRepository addressRepository)
         {
             _addressRepository = addressRepository;
         }
 
-        public async Task AddAddress(AddressModel address)
+        public async Task AddAddress(ShippingAddressModel address)
         {
             await _addressRepository.AddAddressAsync(address);
         }
@@ -31,12 +31,12 @@ namespace ECommerce.Address
             await _addressRepository.DeleteAddressAsync(userId, isShipping);
         }
 
-        public async Task<List<AddressModel>> GetAddresses(string userId)
+        public async Task<List<ShippingAddressModel>> GetAddresses(string userId)
         {
             return await _addressRepository.GetAddresses(userId);
         }
 
-        public async Task UpdateAddress(UpdateAddressModel updateAddressModel)
+        public async Task UpdateAddress(UpdateShippingAddressModel updateAddressModel)
         {
             await _addressRepository.UpdateAddressAsync(updateAddressModel);
         }

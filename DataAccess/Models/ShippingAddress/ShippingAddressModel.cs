@@ -1,9 +1,9 @@
-namespace ECommerce.DataAccess.Models.Address
+namespace ECommerce.DataAccess.Models.ShippingAddress
 {
-    public class AddressModel
+    public class ShippingAddressModel
     {
+        public long ShippingAddressId { get; set; } = -1;
         public required string UserId { get; set; }
-        public required bool IsShipping { get; set; }
         public required string RecipientName { get; set; }
         public required string StreetAddress { get; set; }
         public required string? ApartmentUnit { get; set; }
@@ -13,6 +13,6 @@ namespace ECommerce.DataAccess.Models.Address
         public required string Country { get; set; }
         public required string MobileNumber { get; set; }
 
-        public AddressModel() { }
+        public ShippingAddressModel() { }
     }
 }
