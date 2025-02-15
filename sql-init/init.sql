@@ -40,7 +40,7 @@ CREATE TABLE userRoles(
 
 CREATE TABLE shippingAddresses(
   shippingAddressId BIGSERIAL PRIMARY KEY,
-  userId uuid NOT NULL UNIQUE,
+  userId uuid NOT NULL,
   recipientName VARCHAR(100) NOT NULL,
   streetAddress VARCHAR(255) NOT NULL,
   apartmentUnit VARCHAR(255),

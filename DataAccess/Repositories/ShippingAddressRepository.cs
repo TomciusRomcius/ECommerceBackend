@@ -16,7 +16,7 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
         public async Task AddAddressAsync(ShippingAddressModel addressModel)
         {
             string query = @"
-                INSERT INTO addresses
+                INSERT INTO shippingAddresses
                 (userId, recipientName, streetAddress, apartmentUnit, country, city, state, postalCode, mobileNumber)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
             ";
@@ -40,9 +40,8 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
         public async Task DeleteAddressAsync(string userId, bool isShipping)
         {
             string query = @"
-                DELETE FROM addresses WHERE userId = $1 AND isShipping = $2;
+                DELETE FROM shippingAddress WHERE userId = $1 AND isShipping = $2;
             ";
-
 
             QueryParameter[] parameters = [
                 new QueryParameter(new Guid(userId)),
@@ -55,7 +54,7 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
         public async Task<List<ShippingAddressModel>> GetAddresses(string userId)
         {
             string query = @"
-                SELECT * from addresses WHERE userId = $1;
+                SELECT * from shippingAddresses WHERE userId = $1;
             ";
 
             QueryParameter[] parameters = [
@@ -63,12 +62,6 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             ];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-
-            if (rows.Count > 2)
-            {
-                // TODO: Handle
-            }
-
             List<ShippingAddressModel> result = new List<ShippingAddressModel>();
 
             foreach (var row in rows)
@@ -96,7 +89,7 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
         public async Task UpdateAddressAsync(UpdateShippingAddressModel updateAddressModel)
         {
             string query = @"
-                UPDATE addresses
+                UPDATE shippingAddresses
                 SET
                 recipientName = COALESCE($1, recipientName),
                 streetAddress = COALESCE($2, streetAddress),
