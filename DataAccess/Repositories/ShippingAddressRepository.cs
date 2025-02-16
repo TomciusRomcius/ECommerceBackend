@@ -1,3 +1,4 @@
+using System.Data;
 using ECommerce.DataAccess.Models.ShippingAddress;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -18,7 +19,8 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             string query = @"
                 INSERT INTO shippingAddresses
                 (userId, recipientName, streetAddress, apartmentUnit, country, city, state, postalCode, mobileNumber)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                RETURNING shippingAddressId;
             ";
 
             // TODO: add apartment
@@ -34,7 +36,14 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
                 new QueryParameter(addressModel.MobileNumber),
             ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
+            object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+
+            if (id is not null)
+            {
+                addressModel.ShippingAddressId = Convert.ToInt64(id);
+            }
+
+            else throw new DataException("shippingAddressId is null!");
         }
 
         public async Task DeleteAddressAsync(string userId, bool isShipping)
