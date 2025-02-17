@@ -47,14 +47,44 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public Task<ManufacturerModel?> FindByIdAsync(int manufacturerId)
+        public async Task<ManufacturerModel?> FindByIdAsync(int manufacturerId)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM manufacturers WHERE manufacturerId = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(manufacturerId)];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            ManufacturerModel? result = null;
+
+            if (rows.Count == 1)
+            {
+                var row = rows[0];
+                result = new ManufacturerModel(manufacturerId, row["name"].ToString()!);
+            }
+
+            return result;
         }
 
-        public Task<ManufacturerModel?> FindByNameAsync(string name)
+        public async Task<ManufacturerModel?> FindByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM manufacturers WHERE name = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(name)];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            ManufacturerModel? result = null;
+
+            if (rows.Count == 1)
+            {
+                var row = rows[0];
+                result = new ManufacturerModel(Convert.ToInt32(row["manufacturerid"]), name);
+            }
+
+            return result;
         }
 
         public async Task<List<ManufacturerModel>> GetAll()
