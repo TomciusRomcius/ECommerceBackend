@@ -40,14 +40,44 @@ namespace ECommerce.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<CategoryModel?> FindByIdAsync(int categoryId)
+        public async Task<CategoryModel?> FindByIdAsync(int categoryId)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM categories WHERE categoryId = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(categoryId)];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            CategoryModel? result = null;
+
+            if (rows.Count == 1)
+            {
+                var row = rows[0];
+                result = new CategoryModel(categoryId, row["name"].ToString());
+            }
+
+            return result;
         }
 
-        public Task<CategoryModel?> FindByNameAsync(string categoryName)
+        public async Task<CategoryModel?> FindByNameAsync(string categoryName)
         {
-            throw new NotImplementedException();
+            string query = @"
+                SELECT * FROM categories WHERE name = $1;
+            ";
+
+            QueryParameter[] parameters = [new QueryParameter(categoryName)];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            CategoryModel? result = null;
+
+            if (rows.Count == 1)
+            {
+                var row = rows[0];
+                result = new CategoryModel(Convert.ToInt32(row["categoryid"]), categoryName);
+            }
+
+            return result;
         }
 
         public async Task<List<CategoryModel>> GetAll()
