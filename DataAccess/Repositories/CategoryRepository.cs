@@ -16,7 +16,9 @@ namespace ECommerce.DataAccess.Repositories
         public async Task<CategoryModel?> CreateAsync(string categoryName)
         {
             string query = @"
-            INSERT INTO categories (name) VALUES ($1);
+            INSERT INTO categories (name) 
+            VALUES ($1)
+            RETURNING categoryId;
         ";
 
             QueryParameter[] parameters = [new QueryParameter(categoryName)];
