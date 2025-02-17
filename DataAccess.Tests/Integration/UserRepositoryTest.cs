@@ -4,7 +4,7 @@ using ECommerce.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace DataAccess.Test
+namespace DataAccess.Tests.Integration
 {
     public class UserRepositoryIntegrationTest
     {
@@ -12,7 +12,7 @@ namespace DataAccess.Test
         public async Task ShouldSuccesfullyCreateAndRetrieveTheUser()
         {
             IUserRepository userRepository;
-            var testContainer = await TestContainerPostgresServiceWrapper.CreateAsync();
+            var testContainer = new TestDatabase();
             userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
 
             var id = new Guid();
