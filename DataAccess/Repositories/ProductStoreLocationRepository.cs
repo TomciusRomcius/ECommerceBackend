@@ -1,3 +1,4 @@
+using System.Text;
 using ECommerce.DataAccess.Models.ProductStoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -73,6 +74,42 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
                     Convert.ToInt32(row["price"]),
                     Convert.ToInt32(row["manufacturerid"]),
                     Convert.ToInt32(row["categoryid"]),
+                    Convert.ToInt32(row["stock"])
+                );
+
+                result.Add(model);
+            }
+
+            return result;
+        }
+
+        public async Task<List<ProductStoreLocationModel>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId)
+        {
+            var queryBuilder = new StringBuilder();
+            queryBuilder.AppendLine(@"
+                SELECT * FROM productStoreLocations
+                WHERE (storeLocationId = $1 AND productId = $2)
+            ");
+
+            List<QueryParameter> parameters = [];
+            int index = 3;
+            foreach ((int, int) entry in storeLocationIdProductId)
+            {
+                queryBuilder.AppendLine($"OR (storeLocationId = ${index} AND productId = ${index + 1})");
+                parameters.Add(new QueryParameter(entry.Item1));
+                parameters.Add(new QueryParameter(entry.Item2));
+                index += 2;
+            }
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(queryBuilder.ToString(), parameters.ToArray());
+            List<ProductStoreLocationModel> result = new List<ProductStoreLocationModel>();
+
+            foreach (var row in rows)
+            {
+                // TODO: null safety
+                var model = new ProductStoreLocationModel(
+                    Convert.ToInt32(row["storelocationid"]),
+                    Convert.ToInt32(row["productid"]),
                     Convert.ToInt32(row["stock"])
                 );
 

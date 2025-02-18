@@ -1,6 +1,6 @@
-using DataAccess.Test.Integration.Utils;
 using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.TestUtils.TestDatabase;
 
 namespace DataAccess.Tests.Integration
 {

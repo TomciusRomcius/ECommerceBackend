@@ -1,4 +1,4 @@
-using DataAccess.Test.Integration.Utils;
+using ECommerce.TestUtils.TestDatabase;
 using ECommerce.DataAccess.Entities.PaymentSession;
 using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;

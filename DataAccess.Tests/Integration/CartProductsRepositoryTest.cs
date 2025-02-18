@@ -1,5 +1,4 @@
 using System.Data;
-using DataAccess.Test.Integration.Utils;
 using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.CartProduct;
 using ECommerce.DataAccess.Models.Product;
@@ -9,7 +8,7 @@ using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
-using ECommerce.ProductStoreLocation;
+using ECommerce.TestUtils.TestDatabase;
 using Microsoft.Extensions.Logging;
 using Moq;
 

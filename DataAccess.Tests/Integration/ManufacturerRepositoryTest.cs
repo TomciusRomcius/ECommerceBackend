@@ -1,4 +1,4 @@
-using DataAccess.Test.Integration.Utils;
+using ECommerce.TestUtils.TestDatabase;
 using ECommerce.DataAccess.Models.Manufacturer;
 using ECommerce.DataAccess.Repositories;
 

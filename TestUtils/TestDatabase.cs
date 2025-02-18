@@ -1,7 +1,7 @@
 using ECommerce.DataAccess.Services;
 using Testcontainers.PostgreSql;
 
-namespace DataAccess.Test.Integration.Utils
+namespace ECommerce.TestUtils.TestDatabase
 {
     public class TestDatabase
     {

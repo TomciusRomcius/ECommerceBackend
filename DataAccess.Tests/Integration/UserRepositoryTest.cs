@@ -1,4 +1,4 @@
-using DataAccess.Test.Integration.Utils;
+using ECommerce.TestUtils.TestDatabase;
 using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;

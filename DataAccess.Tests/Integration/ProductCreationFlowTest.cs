@@ -1,5 +1,5 @@
 using System.Data;
-using DataAccess.Test.Integration.Utils;
+using ECommerce.TestUtils.TestDatabase;
 using ECommerce.DataAccess.Models.Product;
 using ECommerce.DataAccess.Repositories;
 

@@ -9,6 +9,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
         public Task RemoveProductFromStore(int storeLocationId, int productId);
         public Task UpdateProduct(ProductStoreLocationModel model);
         public Task<List<DetailedProductModel>> GetProductsFromStoreAsync(int storeLocationId);
+        public Task<List<ProductStoreLocationModel>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId);
         public Task<List<int>> GetProductIdsFromStoreAsync(int storeLocationId);
     }
 }

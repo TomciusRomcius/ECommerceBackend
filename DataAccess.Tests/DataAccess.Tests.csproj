@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="../DataAccess/DataAccess.csproj" />
     <ProjectReference Include="../ECommerceBackend/ECommerceBackend.csproj" />
+    <ProjectReference Include="../TestUtils/TestUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

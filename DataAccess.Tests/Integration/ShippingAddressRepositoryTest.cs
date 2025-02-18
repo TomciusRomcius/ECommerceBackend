@@ -1,5 +1,5 @@
 using System.Data;
-using DataAccess.Test.Integration.Utils;
+using ECommerce.TestUtils.TestDatabase;
 using ECommerce.DataAccess.Models.ShippingAddress;
 using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;

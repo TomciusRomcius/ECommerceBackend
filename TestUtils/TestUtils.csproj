@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UserSecretsId>c74070c0-ee8c-4b40-b990-ef826d89347b</UserSecretsId>
   </PropertyGroup>
-  
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="9.0.2" />
-    <PackageReference Include="Stripe.net" Version="47.3.0" />
+    <ProjectReference Include="../ECommerceBackend/ECommerceBackend.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.2.0" />
+  </ItemGroup>
 </Project>
