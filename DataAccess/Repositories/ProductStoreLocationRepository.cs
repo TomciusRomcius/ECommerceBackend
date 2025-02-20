@@ -1,4 +1,5 @@
 using System.Text;
+using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.ProductStoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
@@ -149,6 +150,50 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
             ];
 
             await _postgresService.ExecuteScalarAsync(query, parameters);
+        }
+
+        public async Task<int> UpdateStock(List<CartProductEntity> cartProducts)
+        {
+            StringBuilder queryValues = new StringBuilder();
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+
+            queryValues.Append("VALUES ");
+
+            for (int i = 0; i < cartProducts.Count(); i++)
+            {
+                queryValues.Append($"(${(i * 3) + 1}, ${(i * 3) + 2}, ${(i * 3) + 3})");
+
+                if (i != cartProducts.Count() - 1)
+                {
+                    queryValues.Append(",");
+                }
+
+                var entry = cartProducts[i];
+
+                parameters.Add(new QueryParameter(entry.StoreLocationId));
+                parameters.Add(new QueryParameter(entry.ProductId));
+                parameters.Add(new QueryParameter(entry.Quantity));
+            }
+
+            string queryBuilder = @$"
+                UPDATE productStoreLocations as a
+                SET stock = GREATEST(0, stock - b.dStock)
+                FROM (
+                    {queryValues}
+                ) AS b(storeLocationId, productId, dStock)
+                WHERE a.storeLocationId = b.storeLocationId AND a.productId = b.productId;
+            ";
+
+            // TODO: fix copy
+            object? stock = await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
+
+            if (stock is int)
+            {
+                return Convert.ToInt32(stock);
+            }
+
+            else return -1;
         }
     }
 }
