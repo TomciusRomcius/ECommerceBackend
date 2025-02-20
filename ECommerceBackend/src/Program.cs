@@ -1,8 +1,17 @@
+using System.Reflection;
 using ECommerce.Common.Utils;
 using ECommerce.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen((setup) =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    setup.IncludeXmlComments(xmlPath);
+});
 
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
 
@@ -19,6 +28,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapOpenApi();
 }
 
