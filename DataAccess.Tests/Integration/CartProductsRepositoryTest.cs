@@ -83,7 +83,7 @@ namespace DataAccess.Tests.Integration
             );
 
             // Get user cart products
-            var items = await cartProductsRepository.GetUserCartProductsAsync(user.UserId);
+            var items = await cartProductsRepository.GetUserCartProductsDetailedAsync(user.UserId);
             CartProductModel? targetItem = items.FirstOrDefault();
 
             Assert.NotNull(targetItem);
