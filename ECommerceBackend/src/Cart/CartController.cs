@@ -27,7 +27,7 @@ namespace ECommerce.Cart
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            List<CartProductModel> result = await _cartService.GetAllUserItems(userId);
+            List<CartProductModel> result = await _cartService.GetAllUserItemsDetailed(userId);
             return Ok(result);
         }
 

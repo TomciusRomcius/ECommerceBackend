@@ -33,7 +33,7 @@ namespace ECommerce.DataAccess.Repositories
             return cartProduct;
         }
 
-        public async Task<List<CartProductModel>> GetUserCartProductsAsync(string userId)
+        public async Task<List<CartProductModel>> GetUserCartProductsDetailedAsync(string userId)
         {
             string query = @"
                 SELECT cartProducts.userid, cartProducts.productid, cartProducts.storelocationid, cartProducts.quantity, products.price 
@@ -58,6 +58,34 @@ namespace ECommerce.DataAccess.Repositories
                     Convert.ToInt32(row["storelocationid"]),
                     Convert.ToInt32(row["quantity"]),
                     Convert.ToDouble(row["price"])
+                ));
+            }
+
+            return result;
+        }
+
+        public async Task<List<CartProductEntity>> GetUserCartProductsAsync(string userId)
+        {
+            string query = @"
+                SELECT cartProducts.userid, cartProducts.productid, cartProducts.storelocationid, cartProducts.quantity 
+                FROM cartProducts 
+                WHERE userId = $1;
+            ";
+
+            QueryParameter[] parameters = [
+                new QueryParameter(new Guid(userId)),
+            ];
+
+            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+            List<CartProductEntity> result = new List<CartProductEntity>();
+
+            foreach (var row in rows)
+            {
+                result.Add(new CartProductEntity(
+                    row["userid"].ToString()!,
+                    Convert.ToInt32(row["productid"]),
+                    Convert.ToInt32(row["storelocationid"]),
+                    Convert.ToInt32(row["quantity"])
                 ));
             }
 

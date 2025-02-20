@@ -58,7 +58,7 @@ namespace ECommerce.Order
                 return BadRequest("Cannot create a new payment session because there is a pending one!");
             }
 
-            var items = await _cartService.GetAllUserItems(userId);
+            var items = await _cartService.GetAllUserItemsDetailed(userId);
 
             if (items.Count == 0)
             {

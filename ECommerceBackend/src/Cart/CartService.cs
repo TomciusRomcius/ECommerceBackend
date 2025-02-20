@@ -6,7 +6,8 @@ namespace ECommerce.Cart
 {
     public interface ICartService
     {
-        public Task<List<CartProductModel>> GetAllUserItems(string userId);
+        public Task<List<CartProductEntity>> GetAllUserItems(string userId);
+        public Task<List<CartProductModel>> GetAllUserItemsDetailed(string userId);
         public Task<CartProductEntity?> AddItem(CartProductEntity cartProductModel);
         public Task UpdateItemQuantity(CartProductEntity cartProductModel);
         public Task WipeAsync(Guid userId);
@@ -26,9 +27,14 @@ namespace ECommerce.Cart
             return await _cartProductsRepository.AddItemAsync(cartProductModel);
         }
 
-        public async Task<List<CartProductModel>> GetAllUserItems(string userId)
+        public async Task<List<CartProductEntity>> GetAllUserItems(string userId)
         {
             return await _cartProductsRepository.GetUserCartProductsAsync(userId);
+        }
+
+        public async Task<List<CartProductModel>> GetAllUserItemsDetailed(string userId)
+        {
+            return await _cartProductsRepository.GetUserCartProductsDetailedAsync(userId);
         }
 
         public async Task UpdateItemQuantity(CartProductEntity cartProductModel)
