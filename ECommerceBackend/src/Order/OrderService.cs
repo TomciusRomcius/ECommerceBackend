@@ -31,11 +31,10 @@ namespace ECommerce.Order
         {
             if (await _paymentSessionRepository.GetPaymentSession(userId) is not null)
             {
-                // Throw
                 throw new InvalidOperationException("Cannot create a payment session: there is an existing payment session!");
             }
 
-            var items = await _cartService.GetAllUserItems(userId.ToString());
+            var items = await _cartService.GetAllUserItemsDetailed(userId.ToString());
 
             if (items.Count == 0)
             {
@@ -84,6 +83,8 @@ namespace ECommerce.Order
         }
         public async Task OnCharge(Guid userId)
         {
+            var cartItems = await _cartService.GetAllUserItems(userId.ToString());
+            await _productStoreLocationRepository.UpdateStock(cartItems);
             await _cartService.WipeAsync(userId);
             await _paymentSessionRepository.DeletePaymentSession(userId);
         }
