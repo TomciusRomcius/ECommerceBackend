@@ -63,7 +63,7 @@ namespace ECommerce.DataAccess.Repositories
                 var row = rows[0];
 
                 user = new UserModel(
-                    row.GetColumn<string>("userId"),
+                    row.GetColumn<Guid>("userId").ToString(),
                     row.GetColumn<string>("email"),
                     row.GetColumn<string>("passwordhash"),
                     row.GetColumn<string>("firstname"),

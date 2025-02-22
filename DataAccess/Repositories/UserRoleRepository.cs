@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.DataAccess.Repositories
@@ -50,8 +51,7 @@ namespace ECommerce.DataAccess.Repositories
 
             foreach (var row in rows)
             {
-                // TODO: null safety
-                result.Add(row["name"].ToString()!);
+                result.Add(row.GetColumn<string>("name"));
             }
 
             return result;

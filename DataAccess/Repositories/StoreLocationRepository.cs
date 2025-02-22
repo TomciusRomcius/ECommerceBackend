@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Models.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories.StoreLocation
 {
@@ -69,9 +70,9 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
                 var row = rows[0];
 
                 result = new StoreLocationModel(
-                    Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString()!,
-                    row["address"].ToString()!
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<string>("displayname"),
+                    row.GetColumn<string>("address")
                 );
             }
 
@@ -93,13 +94,12 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
 
             if (rows.Count == 1)
             {
-                // TODO: null safety
                 var row = rows[0];
 
                 result = new StoreLocationModel(
-                    Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString()!,
-                    row["address"].ToString()!
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<string>("displayname"),
+                    row.GetColumn<string>("address")
                 );
             }
 
@@ -119,9 +119,9 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             {
                 // TODO: null safety
                 result.Add(new StoreLocationModel(
-                    Convert.ToInt32(row["storelocationid"]),
-                    row["displayname"].ToString()!,
-                    row["address"].ToString()!
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<string>("displayname"),
+                    row.GetColumn<string>("address")
                 ));
             }
 

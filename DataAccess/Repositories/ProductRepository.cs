@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Models.Product;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -98,12 +99,12 @@ namespace ECommerce.DataAccess.Repositories
             if (row is not null)
             {
                 result = new ProductModel(
-                    Convert.ToInt32(row["productid"]),
-                    row["name"].ToString()!,
-                    row["description"].ToString()!,
-                    Convert.ToDouble(row["price"]),
-                    Convert.ToInt32(row["manufacturerid"]),
-                    Convert.ToInt32(row["categoryid"])
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<string>("name"),
+                    row.GetColumn<string>("description"),
+                    (double)row.GetColumn<decimal>("price"), // TODO: decimal
+                    row.GetColumn<int>("manufacturerid"),
+                    row.GetColumn<int>("categoryid")
                 );
             }
 
@@ -121,14 +122,13 @@ namespace ECommerce.DataAccess.Repositories
 
             foreach (var row in rows)
             {
-                // TODO: implement safe access
                 result.Add(new ProductModel(
-                    Convert.ToInt32(row["productid"]),
-                    row["name"].ToString()!,
-                    row["description"].ToString()!,
-                    Convert.ToInt32(row["price"]),
-                    Convert.ToInt32(row["manufacturerid"]),
-                    Convert.ToInt32(row["categoryid"])
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<string>("name"),
+                    row.GetColumn<string>("description"),
+                    (double)row.GetColumn<decimal>("price"), // TODO: decimal
+                    row.GetColumn<int>("manufacturerid"),
+                    row.GetColumn<int>("categoryid")
                 ));
             }
 

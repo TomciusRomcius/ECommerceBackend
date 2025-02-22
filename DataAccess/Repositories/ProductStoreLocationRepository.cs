@@ -3,6 +3,7 @@ using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.ProductStoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 {
@@ -44,8 +45,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 
             foreach (var row in rows)
             {
-                // TODO: null safety
-                result.Add(Convert.ToInt32(row["productid"]));
+                result.Add(row.GetColumn<int>("productid"));
             }
 
             return result;
@@ -67,15 +67,14 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 
             foreach (var row in rows)
             {
-                // TODO: null safety
                 var model = new DetailedProductModel(
-                    Convert.ToInt32(row["productid"]),
-                    row["name"].ToString()!,
-                    row["description"].ToString()!,
-                    Convert.ToInt32(row["price"]),
-                    Convert.ToInt32(row["manufacturerid"]),
-                    Convert.ToInt32(row["categoryid"]),
-                    Convert.ToInt32(row["stock"])
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<string>("name"),
+                    row.GetColumn<string>("description"),
+                    (double)row.GetColumn<decimal>("price"), // TODO: decimal
+                    row.GetColumn<int>("manufacturerid"),
+                    row.GetColumn<int>("categoryid"),
+                    row.GetColumn<int>("stock")
                 );
 
                 result.Add(model);
@@ -107,11 +106,10 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 
             foreach (var row in rows)
             {
-                // TODO: null safety
                 var model = new ProductStoreLocationModel(
-                    Convert.ToInt32(row["storelocationid"]),
-                    Convert.ToInt32(row["productid"]),
-                    Convert.ToInt32(row["stock"])
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<int>("stock")
                 );
 
                 result.Add(model);

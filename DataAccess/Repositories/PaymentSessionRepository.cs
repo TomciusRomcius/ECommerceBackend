@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Entities.PaymentSession;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories.PaymentSession
 {
@@ -48,11 +49,10 @@ namespace ECommerce.DataAccess.Repositories.PaymentSession
             {
                 var row = rows[0];
 
-                // TODO: null safety
                 result = new PaymentSessionEntity(
-                    row["paymentsessionid"].ToString()!,
+                    row.GetColumn<string>("paymentsessionid"),
                     userId,
-                    row["paymentsessionprovider"].ToString()!
+                    row.GetColumn<string>("paymentsessionprovider")
                 );
             }
 

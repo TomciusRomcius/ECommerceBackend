@@ -2,6 +2,7 @@ using System.Data;
 using ECommerce.DataAccess.Models.Manufacturer;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -61,7 +62,7 @@ namespace ECommerce.DataAccess.Repositories
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new ManufacturerModel(manufacturerId, row["name"].ToString()!);
+                result = new ManufacturerModel(manufacturerId, row.GetColumn<string>("name"));
             }
 
             return result;
@@ -81,7 +82,7 @@ namespace ECommerce.DataAccess.Repositories
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new ManufacturerModel(Convert.ToInt32(row["manufacturerid"]), name);
+                result = new ManufacturerModel(row.GetColumn<int>("manufacturerid"), name);
             }
 
             return result;
@@ -100,7 +101,10 @@ namespace ECommerce.DataAccess.Repositories
             {
                 // TODO: null safety
                 result.Add(
-                    new ManufacturerModel(Convert.ToInt32(row["manufacturerid"]), row["name"].ToString()!)
+                    new ManufacturerModel(
+                        row.GetColumn<int>("manufacturerid"),
+                        row.GetColumn<string>("name")
+                    )
                 );
             }
 

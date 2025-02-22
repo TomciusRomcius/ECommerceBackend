@@ -2,6 +2,7 @@ using System.Data;
 using ECommerce.DataAccess.Models.ShippingAddress;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories.ShippingAddress
 {
@@ -77,16 +78,16 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             {
                 var address = new ShippingAddressModel
                 {
-                    ShippingAddressId = Convert.ToInt64(row["shippingaddressid"]),
-                    UserId = userId,
-                    RecipientName = row["recipientname"].ToString()!,
-                    StreetAddress = row["streetaddress"].ToString()!,
-                    ApartmentUnit = row["apartmentunit"].ToString(),
-                    City = row["city"].ToString()!,
-                    State = row["state"].ToString()!,
-                    PostalCode = row["postalcode"].ToString()!,
-                    Country = row["country"].ToString()!,
-                    MobileNumber = row["mobilenumber"].ToString()!,
+                    ShippingAddressId = row.GetColumn<Int64>("shippingaddressid"),
+                    UserId = row.GetColumn<Guid>("userid").ToString(),
+                    RecipientName = row.GetColumn<string>("recipientname"),
+                    StreetAddress = row.GetColumn<string>("streetaddress"),
+                    ApartmentUnit = row.GetColumn<string?>("apartmentunit"),
+                    City = row.GetColumn<string>("city"),
+                    State = row.GetColumn<string>("state"),
+                    PostalCode = row.GetColumn<string>("postalcode"),
+                    Country = row.GetColumn<string>("country"),
+                    MobileNumber = row.GetColumn<string>("mobilenumber"),
                 };
 
                 result.Add(address);

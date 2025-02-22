@@ -17,7 +17,7 @@ namespace DataAccess.Tests.Integration
 
             // Create test user
             var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
-            var userModel = new UserModel(new Guid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
+            var userModel = new UserModel(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
             await userRepository.CreateAsync(userModel);
 
             var paymentSessionRepository = new PaymentSessionRepository(testContainer._postgresService);

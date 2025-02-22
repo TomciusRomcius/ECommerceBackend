@@ -92,7 +92,7 @@ namespace ECommerce.DataAccess.Repositories
             foreach (var row in rows)
             {
                 result.Add(
-                    new CategoryModel(Convert.ToInt32(row["categoryid"]), row["name"].ToString()!)
+                    new CategoryModel(row.GetColumn<int>("categoryid"), row.GetColumn<string>("name"))
                 );
             }
 
