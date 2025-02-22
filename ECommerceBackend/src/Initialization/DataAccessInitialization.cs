@@ -49,15 +49,22 @@ public static class DataAccessInitialization
     public static void InitStripe(WebApplicationBuilder builder)
     {
         string? stripeApiKey = builder.Configuration["STRIPE_API_KEY"];
+        string? webhookSignature = builder.Configuration["STRIPE_WEBHOOK_SIGNATURE"];
 
         if (stripeApiKey is null)
         {
             throw new DataException("Stripe api key is undefined!");
         }
 
+        if (webhookSignature is null)
+        {
+            throw new DataException("Stripe webhook signature is undefined!");
+        }
+
         builder.Services.AddSingleton<StripeSettings>(_ => new StripeSettings
         {
-            ApiKey = stripeApiKey
+            ApiKey = stripeApiKey,
+            WebhookSignature = webhookSignature,
         });
 
         builder.Services.AddSingleton<IStripeSessionService, StripeSessionService>();
