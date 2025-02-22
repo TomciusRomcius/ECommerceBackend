@@ -6,9 +6,9 @@ namespace ECommerce.DataAccess.Models.CartProduct
         public int ProductId { get; set; }
         public int StoreLocationId { get; set; }
         public int Quantity { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
-        public CartProductModel(string userId, int productId, int storeLocationId, int quantity, double price)
+        public CartProductModel(string userId, int productId, int storeLocationId, int quantity, decimal price)
         {
             UserId = userId;
             ProductId = productId;

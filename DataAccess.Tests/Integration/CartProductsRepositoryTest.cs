@@ -50,7 +50,7 @@ namespace DataAccess.Tests.Integration
 
             // Create product
             var productRepository = new ProductRepository(testContainer._postgresService);
-            var productDb = await productRepository.CreateAsync(new ProductModel("Product name", "Product descriptino", 5.99, 1, 1));
+            var productDb = await productRepository.CreateAsync(new ProductModel("Product name", "Product descriptino", 5.99m, 1, 1));
             if (productDb is null)
             {
                 throw new DataException("Failed to create product");

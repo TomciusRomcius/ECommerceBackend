@@ -65,7 +65,7 @@ namespace ECommerce.Order
                 return BadRequest("There must be at least one cart item to be able to create a payment session!");
             }
 
-            double finalPrice = 0;
+            decimal finalPrice = 0;
             items.ForEach(item => finalPrice += item.Price * item.Quantity);
 
             if (finalPrice > 0)
@@ -75,7 +75,7 @@ namespace ECommerce.Order
                     _logger.LogInformation("Testing charge webhook");
 
                     PaymentIntent intent = _stripeSessionService.GeneratePaymentSession(
-                        new() { UserId = userId, Price = (int)(finalPrice * 100.0) }
+                        new() { UserId = userId, Price = (int)(finalPrice * 100.0m) }
                     );
 
                     await _paymentSessionRepository.CreatePaymentSessionAsync(
@@ -86,7 +86,7 @@ namespace ECommerce.Order
                 else
                 {
                     _stripeSessionService.GeneratePaymentSessionAndConfirm(
-                        new() { UserId = userId, Price = (int)(finalPrice * 100.0) }
+                        new() { UserId = userId, Price = (int)(finalPrice * 100.0m) }
                     );
                 }
 

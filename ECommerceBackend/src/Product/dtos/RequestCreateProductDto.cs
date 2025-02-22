@@ -8,7 +8,7 @@ namespace ECommerce.Product
         public required string Name { get; set; }
         [Required(AllowEmptyStrings = false, ErrorMessage = "Description cannot be empty")]
         public required string Description { get; set; }
-        public required double Price { get; set; }
+        public required decimal Price { get; set; }
         public required int ManufacturerId { get; set; }
         public required int CategoryId { get; set; }
     }

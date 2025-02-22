@@ -10,7 +10,7 @@ namespace ECommerce.DataAccess.Models.ProductStoreLocation
             int productId,
             string name,
             string description,
-            double price,
+            decimal price,
             int manufacturerId,
             int categoryId,
             int stock) : base(productId, name, description, price, manufacturerId, categoryId)

@@ -36,7 +36,7 @@ namespace DataAccess.Tests.Integration
 
             string name = "New product name";
             string description = "New product description";
-            double price = 5.99;
+            decimal price = 5.99m;
 
             await productRepository.CreateAsync(new ProductModel(name, description, price, manufacturerId, categoryId));
 

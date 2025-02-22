@@ -21,7 +21,7 @@ namespace DataAccess.Tests.Integration
             CategoryModel? category = await new CategoryRepository(testContainer._postgresService).CreateAsync("Category");
 
             ProductModel? product = await new ProductRepository(testContainer._postgresService).CreateAsync(
-                new ProductModel("Name", "Description", 2.99, manufacturer!.ManufacturerId, category!.CategoryId
+                new ProductModel("Name", "Description", 2.99m, manufacturer!.ManufacturerId, category!.CategoryId
             ));
 
             StoreLocationModel? storeLocation = await new StoreLocationRepository(testContainer._postgresService).CreateAsync(

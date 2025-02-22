@@ -61,7 +61,7 @@ namespace ECommerce.Order
                 }
             }
 
-            double finalPrice = 0;
+            decimal finalPrice = 0;
             items.ForEach(item => finalPrice += item.Price * item.Quantity);
 
             PaymentIntent? intentSession = null;
@@ -71,7 +71,7 @@ namespace ECommerce.Order
                 _logger.LogInformation("Testing charge webhook");
 
                 intentSession = _stripeSessionService.GeneratePaymentSession(
-                    new() { UserId = userId.ToString(), Price = (int)(finalPrice * 100.0) }
+                    new() { UserId = userId.ToString(), Price = (int)(finalPrice * 100.0m) }
                 );
 
                 await _paymentSessionRepository.CreatePaymentSessionAsync(

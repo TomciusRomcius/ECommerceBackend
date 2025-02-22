@@ -58,7 +58,7 @@ namespace ECommerce.DataAccess.Repositories
                     row.GetColumn<int>("productid"),
                     row.GetColumn<int>("storelocationid"),
                     row.GetColumn<int>("quantity"),
-                    (double)row.GetColumn<decimal>("price") // TODO: decimal type
+                    row.GetColumn<decimal>("price") // TODO: decimal type
                 ));
             }
 

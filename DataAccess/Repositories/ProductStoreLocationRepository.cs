@@ -71,7 +71,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
                     row.GetColumn<int>("productid"),
                     row.GetColumn<string>("name"),
                     row.GetColumn<string>("description"),
-                    (double)row.GetColumn<decimal>("price"), // TODO: decimal
+                    row.GetColumn<decimal>("price"), // TODO: decimal
                     row.GetColumn<int>("manufacturerid"),
                     row.GetColumn<int>("categoryid"),
                     row.GetColumn<int>("stock")
