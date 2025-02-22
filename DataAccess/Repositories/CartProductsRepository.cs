@@ -2,6 +2,7 @@ using ECommerce.DataAccess.Entities.CartProduct;
 using ECommerce.DataAccess.Models.CartProduct;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -53,11 +54,11 @@ namespace ECommerce.DataAccess.Repositories
             foreach (var row in rows)
             {
                 result.Add(new CartProductModel(
-                    row["userid"].ToString()!,
-                    Convert.ToInt32(row["productid"]),
-                    Convert.ToInt32(row["storelocationid"]),
-                    Convert.ToInt32(row["quantity"]),
-                    Convert.ToDouble(row["price"])
+                    row.GetColumn<Guid>("userid").ToString(),
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<int>("quantity"),
+                    (double)row.GetColumn<decimal>("price") // TODO: decimal type
                 ));
             }
 
@@ -82,10 +83,10 @@ namespace ECommerce.DataAccess.Repositories
             foreach (var row in rows)
             {
                 result.Add(new CartProductEntity(
-                    row["userid"].ToString()!,
-                    Convert.ToInt32(row["productid"]),
-                    Convert.ToInt32(row["storelocationid"]),
-                    Convert.ToInt32(row["quantity"])
+                    row.GetColumn<Guid>("userid").ToString(),
+                    row.GetColumn<int>("productid"),
+                    row.GetColumn<int>("storelocationid"),
+                    row.GetColumn<int>("quantity")
                 ));
             }
 

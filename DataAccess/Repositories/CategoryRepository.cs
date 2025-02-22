@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -54,7 +55,7 @@ namespace ECommerce.DataAccess.Repositories
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new CategoryModel(categoryId, row["name"].ToString());
+                result = new CategoryModel(categoryId, row.GetColumn<string>("name"));
             }
 
             return result;
@@ -74,7 +75,7 @@ namespace ECommerce.DataAccess.Repositories
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new CategoryModel(Convert.ToInt32(row["categoryid"]), categoryName);
+                result = new CategoryModel(row.GetColumn<int>("categoryid"), categoryName);
             }
 
             return result;
