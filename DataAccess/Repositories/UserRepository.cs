@@ -1,6 +1,7 @@
 using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.DataAccess.Utils.DictionaryExtensions;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.DataAccess.Repositories
@@ -57,51 +58,17 @@ namespace ECommerce.DataAccess.Repositories
             UserModel? user = null;
             _logger.LogInformation(normalizedEmail);
 
-            List<string> errors = new List<string>();
-
             if (rows.Count != 0)
             {
-                // TODO: implement a helper method for null-safety
-                string? userId = rows[0]["userid"].ToString();
-                string? email = rows[0]["email"].ToString();
-                string? passwordHash = rows[0]["passwordhash"].ToString();
-                string? firstname = rows[0]["firstname"].ToString();
-                string? lastname = rows[0]["lastname"].ToString();
+                var row = rows[0];
 
-                if (userId is null)
-                {
-                    errors.Add("userId is null!");
-                }
-
-                if (email is null)
-                {
-                    errors.Add("email is null!");
-                }
-
-                if (passwordHash is null)
-                {
-                    errors.Add("passwordHash is null!");
-                }
-
-                if (firstname is null)
-                {
-                    errors.Add("firstname is null!");
-                }
-
-                if (lastname is null)
-                {
-                    errors.Add("lastname is null!");
-                }
-
-                if (errors.Count == 0)
-                {
-                    user = new UserModel(userId!, email!, passwordHash!, firstname!, lastname!);
-                }
-            }
-
-            foreach (var error in errors)
-            {
-                _logger.LogError(error);
+                user = new UserModel(
+                    row.GetColumn<string>("userId"),
+                    row.GetColumn<string>("email"),
+                    row.GetColumn<string>("passwordhash"),
+                    row.GetColumn<string>("firstname"),
+                    row.GetColumn<string>("lastname")
+                );
             }
 
             return user;
