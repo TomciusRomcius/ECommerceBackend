@@ -1,7 +1,9 @@
-using ECommerce.DataAccess.Models.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.StoreLocation;
+using ECommerce.Domain.Models.StoreLocation;
+using ECommerce.Domain.Repositories.StoreLocation;
 
 namespace ECommerce.DataAccess.Repositories.StoreLocation
 {
@@ -14,7 +16,7 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             _postgresService = postgresService;
         }
 
-        public async Task<StoreLocationModel?> CreateAsync(CreateStoreLocationModel storeLocation)
+        public async Task<StoreLocationEntity?> CreateAsync(CreateStoreLocationModel storeLocation)
         {
             string query = @"
                 INSERT INTO storeLocations (displayName, address)
@@ -31,7 +33,7 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
 
             if (id is int)
             {
-                var result = new StoreLocationModel(Convert.ToInt32(id), storeLocation.DisplayName, storeLocation.Address);
+                var result = new StoreLocationEntity(Convert.ToInt32(id), storeLocation.DisplayName, storeLocation.Address);
                 return result;
             }
 
@@ -51,7 +53,7 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<StoreLocationModel?> FindByIdAsync(int storeLocationId)
+        public async Task<StoreLocationEntity?> FindByIdAsync(int storeLocationId)
         {
             string query = @"
                 SELECT * FROM storeLocations WHERE storeLocationId = $1;
@@ -62,14 +64,14 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             ];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            StoreLocationModel? result = null;
+            StoreLocationEntity? result = null;
 
             if (rows.Count == 1)
             {
                 // TODO: null safety
                 var row = rows[0];
 
-                result = new StoreLocationModel(
+                result = new StoreLocationEntity(
                     row.GetColumn<int>("storelocationid"),
                     row.GetColumn<string>("displayname"),
                     row.GetColumn<string>("address")
@@ -79,7 +81,7 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             return result;
         }
 
-        public async Task<StoreLocationModel?> FindByNameAsync(string storeLocationName)
+        public async Task<StoreLocationEntity?> FindByNameAsync(string storeLocationName)
         {
             string query = @"
                 SELECT * FROM storeLocations WHERE displayname = $1;
@@ -90,13 +92,13 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             ];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            StoreLocationModel? result = null;
+            StoreLocationEntity? result = null;
 
             if (rows.Count == 1)
             {
                 var row = rows[0];
 
-                result = new StoreLocationModel(
+                result = new StoreLocationEntity(
                     row.GetColumn<int>("storelocationid"),
                     row.GetColumn<string>("displayname"),
                     row.GetColumn<string>("address")
@@ -106,19 +108,19 @@ namespace ECommerce.DataAccess.Repositories.StoreLocation
             return result;
         }
 
-        public async Task<List<StoreLocationModel>> GetAll()
+        public async Task<List<StoreLocationEntity>> GetAll()
         {
             string query = @"
                 SELECT * FROM storeLocations;
             ";
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
-            List<StoreLocationModel> result = new List<StoreLocationModel>();
+            List<StoreLocationEntity> result = new List<StoreLocationEntity>();
 
             foreach (var row in rows)
             {
                 // TODO: null safety
-                result.Add(new StoreLocationModel(
+                result.Add(new StoreLocationEntity(
                     row.GetColumn<int>("storelocationid"),
                     row.GetColumn<string>("displayname"),
                     row.GetColumn<string>("address")

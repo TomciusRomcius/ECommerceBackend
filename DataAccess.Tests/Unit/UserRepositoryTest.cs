@@ -1,8 +1,10 @@
 ﻿using ECommerce.Common.Utils;
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Models.User;
+using ECommerce.Domain.Repositories.User;
 using Microsoft.Extensions.Logging;
 using Moq;
 namespace DataAccess.Test;
@@ -27,7 +29,7 @@ public class UserRepositoryTest
         string firstname = "kestutis";
         string lastname = "butkevicius";
 
-        var userModel = new UserModel(userId, email, passwordHash, firstname, lastname);
+        var userModel = new UserEntity(userId, email, passwordHash, firstname, lastname);
 
         QueryParameter[] capturedParameters = [];
 

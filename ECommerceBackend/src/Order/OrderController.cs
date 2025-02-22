@@ -1,10 +1,8 @@
 using System.Security.Claims;
-using System.Web;
 using ECommerce.Cart;
-using ECommerce.DataAccess.Entities.PaymentSession;
-using ECommerce.DataAccess.Repositories.PaymentSession;
+using ECommerce.Domain.Entities.PaymentSession;
+using ECommerce.Domain.Repositories.PaymentSession;
 using ECommerce.PaymentSession;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 

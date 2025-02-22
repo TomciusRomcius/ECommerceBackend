@@ -1,11 +1,10 @@
 using System.Data;
 using ECommerce.Cart;
-using ECommerce.DataAccess.Entities.PaymentSession;
-using ECommerce.DataAccess.Models.ProductStoreLocation;
-using ECommerce.DataAccess.Repositories.PaymentSession;
-using ECommerce.DataAccess.Repositories.ProductStoreLocation;
+using ECommerce.Domain.Entities.PaymentSession;
+using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Repositories.PaymentSession;
+using ECommerce.Domain.Repositories.ProductStoreLocation;
 using ECommerce.PaymentSession;
-using ECommerce.ProductStoreLocation;
 using Stripe;
 
 namespace ECommerce.Order
@@ -47,7 +46,7 @@ namespace ECommerce.Order
 
             foreach (var cartItem in items)
             {
-                ProductStoreLocationModel? selected = products.Find((i) => i.StoreLocationId == cartItem.StoreLocationId && i.ProductId == cartItem.ProductId);
+                ProductStoreLocationEntity? selected = products.Find((i) => i.StoreLocationId == cartItem.StoreLocationId && i.ProductId == cartItem.ProductId);
                 if (selected is null)
                 {
                     throw new DataException("Product doesn't exist");

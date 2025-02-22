@@ -1,7 +1,7 @@
 using System.Data;
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.Product;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Product;
 
 /*
     Tests primarily product repository but also tests category and manufacturer repository CreateAsync methods
@@ -38,7 +38,7 @@ namespace DataAccess.Tests.Integration
             string description = "New product description";
             decimal price = 5.99m;
 
-            await productRepository.CreateAsync(new ProductModel(name, description, price, manufacturerId, categoryId));
+            await productRepository.CreateAsync(new ProductEntity(name, description, price, manufacturerId, categoryId));
 
             var retrieved = await productRepository.FindByNameAsync(name);
 

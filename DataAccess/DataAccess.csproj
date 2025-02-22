@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>c74070c0-ee8c-4b40-b990-ef826d89347b</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ECommerce.Domain/ECommerce.Domain.csproj" />
+  </ItemGroup>  
   
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.2" />

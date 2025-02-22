@@ -1,9 +1,10 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.RoleType;
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Models.RoleType;
+using ECommerce.Domain.Repositories.UserRole;
 
 namespace DataAccess.Tests.Integration
 {
@@ -16,7 +17,7 @@ namespace DataAccess.Tests.Integration
 
             // Create user
             UserRepository userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
-            var user = new UserModel(new Guid().ToString(), "email@gmail.com", "passwordhash", "John", "Doe");
+            var user = new UserEntity(new Guid().ToString(), "email@gmail.com", "passwordhash", "John", "Doe");
             await userRepository.CreateAsync(user);
 
             // Create role

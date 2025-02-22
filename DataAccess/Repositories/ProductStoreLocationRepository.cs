@@ -1,9 +1,11 @@
 using System.Text;
-using ECommerce.DataAccess.Entities.CartProduct;
-using ECommerce.DataAccess.Models.ProductStoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.CartProduct;
+using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Models.ProductStoreLocation;
+using ECommerce.Domain.Repositories.ProductStoreLocation;
 
 namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 {
@@ -16,7 +18,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
             _postgresService = postgresService;
         }
 
-        public async Task AddProductToStore(ProductStoreLocationModel model)
+        public async Task AddProductToStore(ProductStoreLocationEntity model)
         {
             string query = @"
                 INSERT INTO productStoreLocations (storeLocationId, productId, stock)
@@ -83,7 +85,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
             return result;
         }
 
-        public async Task<List<ProductStoreLocationModel>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId)
+        public async Task<List<ProductStoreLocationEntity>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.AppendLine(@"
@@ -102,11 +104,11 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
             }
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(queryBuilder.ToString(), parameters.ToArray());
-            List<ProductStoreLocationModel> result = new List<ProductStoreLocationModel>();
+            List<ProductStoreLocationEntity> result = new List<ProductStoreLocationEntity>();
 
             foreach (var row in rows)
             {
-                var model = new ProductStoreLocationModel(
+                var model = new ProductStoreLocationEntity(
                     row.GetColumn<int>("storelocationid"),
                     row.GetColumn<int>("productid"),
                     row.GetColumn<int>("stock")
@@ -132,7 +134,7 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task UpdateProduct(ProductStoreLocationModel model)
+        public async Task UpdateProduct(ProductStoreLocationEntity model)
         {
             string query = @"
                 UPDATE productStoreLocations

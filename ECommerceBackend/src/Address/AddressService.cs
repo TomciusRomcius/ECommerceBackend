@@ -1,13 +1,14 @@
-using ECommerce.DataAccess.Models.ShippingAddress;
-using ECommerce.DataAccess.Repositories.ShippingAddress;
+using ECommerce.Domain.Entities.ShippingAddress;
+using ECommerce.Domain.Models.ShippingAddress;
+using ECommerce.Domain.Repositories.ShippingAddress;
 
 namespace ECommerce.Address
 {
     public interface IAddressService
     {
         /// <returns>A billing and shipping address</returns>
-        public Task<List<ShippingAddressModel>> GetAddresses(string userId);
-        public Task AddAddress(ShippingAddressModel address);
+        public Task<List<ShippingAddressEntity>> GetAddresses(string userId);
+        public Task AddAddress(ShippingAddressEntity address);
         public Task UpdateAddress(UpdateShippingAddressModel updateAddressModel);
         public Task DeleteAddress(string userId, bool isShipping);
     }
@@ -21,7 +22,7 @@ namespace ECommerce.Address
             _addressRepository = addressRepository;
         }
 
-        public async Task AddAddress(ShippingAddressModel address)
+        public async Task AddAddress(ShippingAddressEntity address)
         {
             await _addressRepository.AddAddressAsync(address);
         }
@@ -31,7 +32,7 @@ namespace ECommerce.Address
             await _addressRepository.DeleteAddressAsync(userId, isShipping);
         }
 
-        public async Task<List<ShippingAddressModel>> GetAddresses(string userId)
+        public async Task<List<ShippingAddressEntity>> GetAddresses(string userId)
         {
             return await _addressRepository.GetAddresses(userId);
         }

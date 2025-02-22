@@ -1,4 +1,5 @@
-using ECommerce.DataAccess.Models.StoreLocation;
+using ECommerce.Domain.Entities.StoreLocation;
+using ECommerce.Domain.Models.StoreLocation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace ECommerce.StoreLocation
         [HttpGet]
         public async Task<IActionResult> GetLocations()
         {
-            List<StoreLocationModel> result = await _storeLocationService.GetLocations();
+            List<StoreLocationEntity> result = await _storeLocationService.GetLocations();
             return Ok(result);
         }
 
@@ -26,7 +27,7 @@ namespace ECommerce.StoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateStoreLocation([FromBody] RequestCreateLocationDto createLocationDto)
         {
-            StoreLocationModel result = await _storeLocationService.CreateStoreLocation(
+            StoreLocationEntity? result = await _storeLocationService.CreateStoreLocation(
                 new CreateStoreLocationModel(createLocationDto.DisplayName, createLocationDto.Address)
             );
 

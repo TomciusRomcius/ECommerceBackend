@@ -1,15 +1,15 @@
-using ECommerce.DataAccess.Models.Category;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Category;
+using ECommerce.Domain.Repositories.Category;
 
 namespace ECommerce.Categories
 {
     public interface ICategoriesService
     {
-        public Task<List<CategoryModel>> GetAllCategories();
+        public Task<List<CategoryEntity>> GetAllCategories();
         /// <summary>
         /// Returns a list of ids
         /// </summary>
-        public Task<CategoryModel?> CreateCategory(RequestCreateCategoryDto createCategoryDto);
+        public Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto);
     }
 
     public class CategoriesService : ICategoriesService
@@ -21,12 +21,12 @@ namespace ECommerce.Categories
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<List<CategoryModel>> GetAllCategories()
+        public async Task<List<CategoryEntity>> GetAllCategories()
         {
             return await _categoryRepository.GetAll();
         }
 
-        public async Task<CategoryModel?> CreateCategory(RequestCreateCategoryDto createCategoryDto)
+        public async Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto)
         {
             return await _categoryRepository.CreateAsync(
                 createCategoryDto.Name

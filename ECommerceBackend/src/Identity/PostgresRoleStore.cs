@@ -1,5 +1,6 @@
-using ECommerce.DataAccess.Models.RoleType;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.RoleType;
+using ECommerce.Domain.Models.RoleType;
+using ECommerce.Domain.Repositories.RoleType;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Identity
@@ -67,12 +68,12 @@ namespace ECommerce.Identity
         {
             ApplicationUserRole? result = null;
 
-            RoleTypeModel? roleTypeModel = await _roleTypeRepository.FindByNameAsync(normalizedRoleName);
-            if (roleTypeModel is not null)
+            RoleTypeEntity? roleType = await _roleTypeRepository.FindByNameAsync(normalizedRoleName);
+            if (roleType is not null)
             {
                 result = new ApplicationUserRole()
                 {
-                    Id = roleTypeModel.RoleTypeId,
+                    Id = roleType.RoleTypeId,
                     NormalizedName = normalizedRoleName,
                 };
             }

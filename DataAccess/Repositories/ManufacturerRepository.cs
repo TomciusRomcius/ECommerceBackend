@@ -1,8 +1,10 @@
 using System.Data;
-using ECommerce.DataAccess.Models.Manufacturer;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.Manufacturer;
+using ECommerce.Domain.Models.Manufacturer;
+using ECommerce.Domain.Repositories.Manufacturer;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -15,7 +17,7 @@ namespace ECommerce.DataAccess.Repositories
             _postgresService = postgresService;
         }
 
-        public async Task<ManufacturerModel?> CreateAsync(string manufacturerName)
+        public async Task<ManufacturerEntity?> CreateAsync(string manufacturerName)
         {
             string query = @"
                 INSERT INTO manufacturers (name)
@@ -34,7 +36,7 @@ namespace ECommerce.DataAccess.Repositories
 
             int id = Convert.ToInt32(res);
 
-            return new ManufacturerModel(id, manufacturerName);
+            return new ManufacturerEntity(id, manufacturerName);
         }
 
         public async Task DeleteAsync(int manufacturerId)
@@ -48,7 +50,7 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<ManufacturerModel?> FindByIdAsync(int manufacturerId)
+        public async Task<ManufacturerEntity?> FindByIdAsync(int manufacturerId)
         {
             string query = @"
                 SELECT * FROM manufacturers WHERE manufacturerId = $1;
@@ -57,18 +59,18 @@ namespace ECommerce.DataAccess.Repositories
             QueryParameter[] parameters = [new QueryParameter(manufacturerId)];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            ManufacturerModel? result = null;
+            ManufacturerEntity? result = null;
 
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new ManufacturerModel(manufacturerId, row.GetColumn<string>("name"));
+                result = new ManufacturerEntity(manufacturerId, row.GetColumn<string>("name"));
             }
 
             return result;
         }
 
-        public async Task<ManufacturerModel?> FindByNameAsync(string name)
+        public async Task<ManufacturerEntity?> FindByNameAsync(string name)
         {
             string query = @"
                 SELECT * FROM manufacturers WHERE name = $1;
@@ -77,31 +79,31 @@ namespace ECommerce.DataAccess.Repositories
             QueryParameter[] parameters = [new QueryParameter(name)];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            ManufacturerModel? result = null;
+            ManufacturerEntity? result = null;
 
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new ManufacturerModel(row.GetColumn<int>("manufacturerid"), name);
+                result = new ManufacturerEntity(row.GetColumn<int>("manufacturerid"), name);
             }
 
             return result;
         }
 
-        public async Task<List<ManufacturerModel>> GetAll()
+        public async Task<List<ManufacturerEntity>> GetAll()
         {
             string query = @"
                 SELECT * FROM manufacturers;
             ";
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
-            List<ManufacturerModel> result = new List<ManufacturerModel>();
+            List<ManufacturerEntity> result = new List<ManufacturerEntity>();
 
             foreach (var row in rows)
             {
                 // TODO: null safety
                 result.Add(
-                    new ManufacturerModel(
+                    new ManufacturerEntity(
                         row.GetColumn<int>("manufacturerid"),
                         row.GetColumn<string>("name")
                     )

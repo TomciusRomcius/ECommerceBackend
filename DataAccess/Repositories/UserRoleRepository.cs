@@ -1,7 +1,8 @@
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Repositories.UserRole;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.DataAccess.Repositories
@@ -57,7 +58,7 @@ namespace ECommerce.DataAccess.Repositories
             return result;
         }
 
-        public Task<IList<UserModel>> GetUsersInRoleAsync(string roleName)
+        public Task<IList<UserEntity>> GetUsersInRoleAsync(string roleName)
         {
             throw new NotImplementedException();
         }

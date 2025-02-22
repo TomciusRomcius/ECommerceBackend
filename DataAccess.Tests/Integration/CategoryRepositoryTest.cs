@@ -1,5 +1,5 @@
-using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Category;
 using ECommerce.TestUtils.TestDatabase;
 
 namespace DataAccess.Tests.Integration
@@ -15,13 +15,13 @@ namespace DataAccess.Tests.Integration
             string name = "category name";
 
             // Create category
-            CategoryModel? category = await categoryRepository.CreateAsync(name);
+            CategoryEntity? category = await categoryRepository.CreateAsync(name);
 
             Assert.NotNull(category);
             Assert.Equal(name, category.Name);
 
             // Find category
-            CategoryModel? retrieved = await categoryRepository.FindByNameAsync(name);
+            CategoryEntity? retrieved = await categoryRepository.FindByNameAsync(name);
 
             Assert.NotNull(retrieved);
             Assert.Equal(category.Name, retrieved.Name);

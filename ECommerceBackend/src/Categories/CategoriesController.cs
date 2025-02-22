@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models.Category;
+using ECommerce.Domain.Entities.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ namespace ECommerce.Categories
         [HttpGet()]
         public async Task<IActionResult> GetAllCategories()
         {
-            List<CategoryModel> categories = await _categoriesService.GetAllCategories();
+            List<CategoryEntity> categories = await _categoriesService.GetAllCategories();
             return Ok(categories);
         }
 
@@ -26,7 +26,7 @@ namespace ECommerce.Categories
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateCategory([FromBody()] RequestCreateCategoryDto createCategoryDto)
         {
-            CategoryModel? res = await _categoriesService.CreateCategory(createCategoryDto);
+            CategoryEntity? res = await _categoriesService.CreateCategory(createCategoryDto);
             return Created(nameof(CreateCategory), res);
         }
     }

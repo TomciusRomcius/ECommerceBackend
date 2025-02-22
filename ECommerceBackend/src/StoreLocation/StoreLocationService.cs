@@ -1,5 +1,6 @@
-using ECommerce.DataAccess.Models.StoreLocation;
-using ECommerce.DataAccess.Repositories.StoreLocation;
+using ECommerce.Domain.Entities.StoreLocation;
+using ECommerce.Domain.Models.StoreLocation;
+using ECommerce.Domain.Repositories.StoreLocation;
 
 namespace ECommerce.StoreLocation
 {
@@ -12,7 +13,7 @@ namespace ECommerce.StoreLocation
             _storeLocationRepository = storeLocationRepository;
         }
 
-        public async Task<StoreLocationModel?> CreateStoreLocation(CreateStoreLocationModel storeLocation)
+        public async Task<StoreLocationEntity?> CreateStoreLocation(CreateStoreLocationModel storeLocation)
         {
             return await _storeLocationRepository.CreateAsync(storeLocation);
         }
@@ -28,7 +29,7 @@ namespace ECommerce.StoreLocation
             await _storeLocationRepository.DeleteAsync(storeLocationId);
         }
 
-        public async Task<List<StoreLocationModel>> GetLocations()
+        public async Task<List<StoreLocationEntity>> GetLocations()
         {
             return await _storeLocationRepository.GetAll();
         }

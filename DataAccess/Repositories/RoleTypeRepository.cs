@@ -1,14 +1,16 @@
 using System.Data;
-using ECommerce.DataAccess.Models.RoleType;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.Domain.Entities.RoleType;
+using ECommerce.Domain.Models.RoleType;
+using ECommerce.Domain.Repositories.RoleType;
 
 namespace ECommerce.DataAccess.Repositories
 {
     public class RoleTypeRepository(IPostgresService _postgresService) : IRoleTypeRepository
     {
 
-        public async Task<RoleTypeModel> CreateAsync(CreateRoleTypeModel roleType)
+        public async Task<RoleTypeEntity> CreateAsync(CreateRoleTypeModel roleType)
         {
             if (roleType.Name.Length == 0)
             {
@@ -25,7 +27,7 @@ namespace ECommerce.DataAccess.Repositories
 
             if (dbId is int)
             {
-                return new RoleTypeModel(Convert.ToInt32(dbId), roleType.Name);
+                return new RoleTypeEntity(Convert.ToInt32(dbId), roleType.Name);
             }
 
             else
@@ -48,9 +50,9 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<RoleTypeModel?> FindByIdAsync(int roleTypeId)
+        public async Task<RoleTypeEntity?> FindByIdAsync(int roleTypeId)
         {
-            RoleTypeModel? result = null;
+            RoleTypeEntity? result = null;
 
             string query = @"
                 SELECT * FROM roleTypes WHERE roleTypeId = @roleId;
@@ -63,16 +65,16 @@ namespace ECommerce.DataAccess.Repositories
                 string? name = rows[0]["name"]?.ToString();
                 if (name is not null)
                 {
-                    result = new RoleTypeModel(roleTypeId, name);
+                    result = new RoleTypeEntity(roleTypeId, name);
                 }
             }
 
             return result;
         }
 
-        public async Task<RoleTypeModel?> FindByNameAsync(string roleTypeName)
+        public async Task<RoleTypeEntity?> FindByNameAsync(string roleTypeName)
         {
-            RoleTypeModel? result = null;
+            RoleTypeEntity? result = null;
 
             string query = @"
                 SELECT * FROM roleTypes WHERE name = @name;
@@ -85,7 +87,7 @@ namespace ECommerce.DataAccess.Repositories
             {
 
                 int roleTypeId = Convert.ToInt32(rows[0]["roletypeid"]);
-                result = new RoleTypeModel(roleTypeId, roleTypeName);
+                result = new RoleTypeEntity(roleTypeId, roleTypeName);
             }
 
             return result;

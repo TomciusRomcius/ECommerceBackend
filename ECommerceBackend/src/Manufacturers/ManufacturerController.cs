@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models.Manufacturer;
+using ECommerce.Domain.Entities.Manufacturer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +19,7 @@ namespace ECommerce.Manufacturers
         [Authorize()]
         public async Task<IActionResult> GetAllManufacturers()
         {
-            List<ManufacturerModel> manufacturers = await _manufacturerService.GetAllManufacturers();
+            List<ManufacturerEntity> manufacturers = await _manufacturerService.GetAllManufacturers();
             return Ok(manufacturers);
         }
 
@@ -27,7 +27,7 @@ namespace ECommerce.Manufacturers
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateManufacturer([FromBody()] RequestCreateManufacturerDto createProductsDto)
         {
-            ManufacturerModel? model = await _manufacturerService.CreateManufacturer(createProductsDto);
+            ManufacturerEntity? model = await _manufacturerService.CreateManufacturer(createProductsDto);
             return Created(nameof(CreateManufacturer), model);
         }
     }

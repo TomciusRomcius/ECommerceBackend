@@ -1,10 +1,10 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Entities.PaymentSession;
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.PaymentSession;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Entities.PaymentSession;
 
 namespace DataAccess.Tests.Integration
 {
@@ -17,7 +17,7 @@ namespace DataAccess.Tests.Integration
 
             // Create test user
             var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
-            var userModel = new UserModel(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
+            var userModel = new UserEntity(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
             await userRepository.CreateAsync(userModel);
 
             var paymentSessionRepository = new PaymentSessionRepository(testContainer._postgresService);

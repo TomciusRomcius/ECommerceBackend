@@ -1,6 +1,6 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.Manufacturer;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Manufacturer;
 
 namespace DataAccess.Tests.Integration
 {
@@ -15,13 +15,13 @@ namespace DataAccess.Tests.Integration
             string name = "manufacturer name";
 
             // Create manufacturer
-            ManufacturerModel? manufacturer = await manufacturerRepository.CreateAsync(name);
+            ManufacturerEntity? manufacturer = await manufacturerRepository.CreateAsync(name);
 
             Assert.NotNull(manufacturer);
             Assert.Equal(name, manufacturer.Name);
 
             // Find manufacturer
-            ManufacturerModel? retrieved = await manufacturerRepository.FindByNameAsync(name);
+            ManufacturerEntity? retrieved = await manufacturerRepository.FindByNameAsync(name);
 
             Assert.NotNull(retrieved);
             Assert.Equal(manufacturer.Name, retrieved.Name);

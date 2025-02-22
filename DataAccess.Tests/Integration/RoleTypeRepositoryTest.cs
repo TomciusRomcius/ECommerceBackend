@@ -1,6 +1,6 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.RoleType;
 using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Models.RoleType;
 
 namespace DataAccess.Tests.Integration
 {

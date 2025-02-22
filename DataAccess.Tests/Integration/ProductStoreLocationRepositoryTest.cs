@@ -1,30 +1,30 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.RoleType;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
-using ECommerce.DataAccess.Models.Product;
-using ECommerce.DataAccess.Models.Manufacturer;
-using ECommerce.DataAccess.Models.Category;
-using ECommerce.DataAccess.Models.ProductStoreLocation;
-using ECommerce.DataAccess.Models.StoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
-using ECommerce.DataAccess.Models.CartProduct;
-using ECommerce.DataAccess.Entities.CartProduct;
+using ECommerce.Domain.Entities.StoreLocation;
+using ECommerce.Domain.Entities.Manufacturer;
+using ECommerce.Domain.Entities.Category;
+using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.Models.StoreLocation;
+using ECommerce.Domain.Models.ProductStoreLocation;
+using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Entities.CartProduct;
 
 namespace DataAccess.Tests.Integration
 {
     public class ProductStoreLocationRepositoryTest
     {
-        private async Task<(StoreLocationModel, ProductModel)> CreateTestStoreLocationAndProductModel(TestDatabase testContainer)
+        private async Task<(StoreLocationEntity, ProductEntity)> CreateTestStoreLocationAndProductModel(TestDatabase testContainer)
         {
-            ManufacturerModel? manufacturer = await new ManufacturerRepository(testContainer._postgresService).CreateAsync("Manufacturer");
-            CategoryModel? category = await new CategoryRepository(testContainer._postgresService).CreateAsync("Category");
+            ManufacturerEntity? manufacturer = await new ManufacturerRepository(testContainer._postgresService).CreateAsync("Manufacturer");
+            CategoryEntity? category = await new CategoryRepository(testContainer._postgresService).CreateAsync("Category");
 
-            ProductModel? product = await new ProductRepository(testContainer._postgresService).CreateAsync(
-                new ProductModel("Name", "Description", 2.99m, manufacturer!.ManufacturerId, category!.CategoryId
+            ProductEntity? product = await new ProductRepository(testContainer._postgresService).CreateAsync(
+                new ProductEntity("Name", "Description", 2.99m, manufacturer!.ManufacturerId, category!.CategoryId
             ));
 
-            StoreLocationModel? storeLocation = await new StoreLocationRepository(testContainer._postgresService).CreateAsync(
+            StoreLocationEntity? storeLocation = await new StoreLocationRepository(testContainer._postgresService).CreateAsync(
                 new CreateStoreLocationModel("Display name", "Address")
             );
 
@@ -36,14 +36,14 @@ namespace DataAccess.Tests.Integration
         {
             var testContainer = new TestDatabase();
 
-            (StoreLocationModel, ProductModel) testData = await CreateTestStoreLocationAndProductModel(testContainer);
+            (StoreLocationEntity, ProductEntity) testData = await CreateTestStoreLocationAndProductModel(testContainer);
 
             var productStoreLocationRepository = new ProductStoreLocationRepository(testContainer._postgresService);
 
             int stock = 5;
 
             await productStoreLocationRepository.AddProductToStore(
-                new ProductStoreLocationModel(testData.Item1.StoreLocationId, testData.Item2.ProductId, stock)
+                new ProductStoreLocationEntity(testData.Item1.StoreLocationId, testData.Item2.ProductId, stock)
             );
 
             DetailedProductModel? retrieved = (await productStoreLocationRepository.GetProductsFromStoreAsync(testData.Item1.StoreLocationId)).FirstOrDefault();
@@ -59,14 +59,14 @@ namespace DataAccess.Tests.Integration
         {
             var testContainer = new TestDatabase();
 
-            (StoreLocationModel, ProductModel) testData = await CreateTestStoreLocationAndProductModel(testContainer);
+            (StoreLocationEntity, ProductEntity) testData = await CreateTestStoreLocationAndProductModel(testContainer);
 
             var productStoreLocationRepository = new ProductStoreLocationRepository(testContainer._postgresService);
 
             int stock = 5;
 
             await productStoreLocationRepository.AddProductToStore(
-                new ProductStoreLocationModel(testData.Item1.StoreLocationId, testData.Item2.ProductId, stock)
+                new ProductStoreLocationEntity(testData.Item1.StoreLocationId, testData.Item2.ProductId, stock)
             );
 
             int quantity = 3;

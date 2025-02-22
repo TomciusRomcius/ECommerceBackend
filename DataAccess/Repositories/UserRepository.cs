@@ -1,7 +1,9 @@
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Models.User;
+using ECommerce.Domain.Repositories.User;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.DataAccess.Repositories
@@ -17,7 +19,7 @@ namespace ECommerce.DataAccess.Repositories
             _logger = logger;
         }
 
-        public async Task CreateAsync(UserModel user)
+        public async Task CreateAsync(UserEntity user)
         {
             string query = @"
                 INSERT INTO users (userId, email, passwordHash, firstname, lastname)
@@ -45,7 +47,7 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<UserModel?> FindByEmailAsync(string normalizedEmail)
+        public async Task<UserEntity?> FindByEmailAsync(string normalizedEmail)
         {
             string query = @"
                 SELECT * FROM users WHERE email = @email 
@@ -55,14 +57,14 @@ namespace ECommerce.DataAccess.Repositories
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
 
-            UserModel? user = null;
+            UserEntity? user = null;
             _logger.LogInformation(normalizedEmail);
 
             if (rows.Count != 0)
             {
                 var row = rows[0];
 
-                user = new UserModel(
+                user = new UserEntity(
                     row.GetColumn<Guid>("userId").ToString(),
                     row.GetColumn<string>("email"),
                     row.GetColumn<string>("passwordhash"),
@@ -74,7 +76,7 @@ namespace ECommerce.DataAccess.Repositories
             return user;
         }
 
-        public Task<UserModel?> FindByIdAsync(string userId)
+        public Task<UserEntity?> FindByIdAsync(string userId)
         {
             throw new NotImplementedException();
         }

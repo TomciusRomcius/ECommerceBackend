@@ -1,7 +1,8 @@
-using ECommerce.DataAccess.Entities.PaymentSession;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.PaymentSession;
+using ECommerce.Domain.Repositories.PaymentSession;
 
 namespace ECommerce.DataAccess.Repositories.PaymentSession
 {

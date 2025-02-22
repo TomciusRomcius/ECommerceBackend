@@ -1,6 +1,6 @@
-using ECommerce.DataAccess.Entities.CartProduct;
-using ECommerce.DataAccess.Models.CartProduct;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.CartProduct;
+using ECommerce.Domain.Models.CartProduct;
+using ECommerce.Domain.Repositories.CartProducts;
 
 namespace ECommerce.Cart
 {

@@ -1,13 +1,13 @@
 using System.Data;
-using ECommerce.DataAccess.Entities.CartProduct;
-using ECommerce.DataAccess.Models.CartProduct;
-using ECommerce.DataAccess.Models.Product;
-using ECommerce.DataAccess.Models.ProductStoreLocation;
-using ECommerce.DataAccess.Models.StoreLocation;
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.ProductStoreLocation;
 using ECommerce.DataAccess.Repositories.StoreLocation;
+using ECommerce.Domain.Entities.CartProduct;
+using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Models.CartProduct;
+using ECommerce.Domain.Models.StoreLocation;
 using ECommerce.TestUtils.TestDatabase;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -23,7 +23,7 @@ namespace DataAccess.Tests.Integration
 
             // Create user
             var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
-            var user = new UserModel(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
+            var user = new UserEntity(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname");
             if (user is null)
             {
                 throw new DataException("Failed to create the user");
@@ -50,7 +50,7 @@ namespace DataAccess.Tests.Integration
 
             // Create product
             var productRepository = new ProductRepository(testContainer._postgresService);
-            var productDb = await productRepository.CreateAsync(new ProductModel("Product name", "Product descriptino", 5.99m, 1, 1));
+            var productDb = await productRepository.CreateAsync(new ProductEntity("Product name", "Product descriptino", 5.99m, 1, 1));
             if (productDb is null)
             {
                 throw new DataException("Failed to create product");
@@ -67,7 +67,7 @@ namespace DataAccess.Tests.Integration
             // Attach product to the store location
             var productStoreLocationRepository = new ProductStoreLocationRepository(testContainer._postgresService);
             await productStoreLocationRepository.AddProductToStore(
-                new ProductStoreLocationModel(storeLocationDb.StoreLocationId, productDb.ProductId, 5)
+                new ProductStoreLocationEntity(storeLocationDb.StoreLocationId, productDb.ProductId, 5)
             );
 
             // Create cart product

@@ -1,8 +1,10 @@
 using System.Data;
-using ECommerce.DataAccess.Models.ShippingAddress;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.ShippingAddress;
+using ECommerce.Domain.Models.ShippingAddress;
+using ECommerce.Domain.Repositories.ShippingAddress;
 
 namespace ECommerce.DataAccess.Repositories.ShippingAddress
 {
@@ -15,7 +17,7 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             _postgresService = postgresService;
         }
 
-        public async Task AddAddressAsync(ShippingAddressModel addressModel)
+        public async Task AddAddressAsync(ShippingAddressEntity addressModel)
         {
             string query = @"
                 INSERT INTO shippingAddresses
@@ -61,7 +63,7 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             await _postgresService.ExecuteAsync(query, parameters);
         }
 
-        public async Task<List<ShippingAddressModel>> GetAddresses(string userId)
+        public async Task<List<ShippingAddressEntity>> GetAddresses(string userId)
         {
             string query = @"
                 SELECT * from shippingAddresses WHERE userId = $1;
@@ -72,11 +74,11 @@ namespace ECommerce.DataAccess.Repositories.ShippingAddress
             ];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            List<ShippingAddressModel> result = new List<ShippingAddressModel>();
+            List<ShippingAddressEntity> result = new List<ShippingAddressEntity>();
 
             foreach (var row in rows)
             {
-                var address = new ShippingAddressModel
+                var address = new ShippingAddressEntity
                 {
                     ShippingAddressId = row.GetColumn<Int64>("shippingaddressid"),
                     UserId = row.GetColumn<Guid>("userid").ToString(),

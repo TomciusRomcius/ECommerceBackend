@@ -1,11 +1,11 @@
 using System.Data;
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Models.ShippingAddress;
-using ECommerce.DataAccess.Models.User;
 using ECommerce.DataAccess.Repositories;
 using ECommerce.DataAccess.Repositories.ShippingAddress;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Entities.ShippingAddress;
 
 namespace DataAccess.Tests.Integration
 {
@@ -25,13 +25,13 @@ namespace DataAccess.Tests.Integration
             var userId = new Guid();
 
             await userRepository.CreateAsync(
-                new UserModel(userId.ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname")
+                new UserEntity(userId.ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname")
             );
 
             // Create a shipping address
             var shippingAddressRepository = new ShippingAddressRepository(testContainer._postgresService);
 
-            var shippingAddress = new ShippingAddressModel
+            var shippingAddress = new ShippingAddressEntity
             {
                 UserId = userId.ToString(),
                 RecipientName = "RecipientName",

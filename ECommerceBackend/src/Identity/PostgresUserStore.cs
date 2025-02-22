@@ -1,5 +1,7 @@
-using ECommerce.DataAccess.Models.User;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Models.User;
+using ECommerce.Domain.Repositories.User;
+using ECommerce.Domain.Repositories.UserRole;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Identity
@@ -30,7 +32,7 @@ namespace ECommerce.Identity
             try
             {
                 await _userRepository.CreateAsync(
-                    new UserModel(user.Id, user.NormalizedEmail, user.PasswordHash, user.Firstname, user.Lastname)
+                    new UserEntity(user.Id, user.NormalizedEmail, user.PasswordHash, user.Firstname, user.Lastname)
                 );
             }
 
@@ -63,12 +65,12 @@ namespace ECommerce.Identity
 
         public async Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            UserModel? userModel = await _userRepository.FindByIdAsync(userId);
+            UserEntity? user = await _userRepository.FindByIdAsync(userId);
             ApplicationUser? result = null;
 
-            if (userModel is not null)
+            if (user is not null)
             {
-                result = new ApplicationUser(userModel.UserId, userModel.Email, userModel.PasswordHash);
+                result = new ApplicationUser(user.UserId, user.Email, user.PasswordHash);
             }
 
             return result;
@@ -122,7 +124,7 @@ namespace ECommerce.Identity
 
             try
             {
-                var userModel = new UpdateUserModel(
+                var UserEntity = new UpdateUserModel(
                     user.Id,
                     user.NormalizedEmail,
                     user.PasswordHash,
@@ -130,7 +132,7 @@ namespace ECommerce.Identity
                     user.Lastname
                 );
 
-                await _userRepository.UpdateAsync(userModel);
+                await _userRepository.UpdateAsync(UserEntity);
             }
 
             catch (Exception ex)
@@ -172,9 +174,9 @@ namespace ECommerce.Identity
 
         public async Task<ApplicationUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
-            UserModel? userModel = await _userRepository.FindByEmailAsync(normalizedEmail);
+            UserEntity? UserEntity = await _userRepository.FindByEmailAsync(normalizedEmail);
 
-            if (userModel is null)
+            if (UserEntity is null)
             {
                 return null;
             }
@@ -182,11 +184,11 @@ namespace ECommerce.Identity
             return new ApplicationUser
             {
                 UserName = normalizedEmail,
-                NormalizedEmail = userModel!.Email!,
-                PasswordHash = userModel.PasswordHash!,
-                Firstname = userModel.Firstname,
-                Lastname = userModel.Lastname,
-                Id = userModel.UserId.ToString()!
+                NormalizedEmail = UserEntity!.Email!,
+                PasswordHash = UserEntity.PasswordHash!,
+                Firstname = UserEntity.Firstname,
+                Lastname = UserEntity.Lastname,
+                Id = UserEntity.UserId.ToString()!
             };
         }
 

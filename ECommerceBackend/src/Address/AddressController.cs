@@ -1,5 +1,6 @@
 using System.Security.Claims;
-using ECommerce.DataAccess.Models.ShippingAddress;
+using ECommerce.Domain.Entities.ShippingAddress;
+using ECommerce.Domain.Models.ShippingAddress;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Address
@@ -37,7 +38,7 @@ namespace ECommerce.Address
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            var address = new ShippingAddressModel
+            var address = new ShippingAddressEntity
             {
                 UserId = userId,
                 RecipientName = setAddressDto.RecipientName,

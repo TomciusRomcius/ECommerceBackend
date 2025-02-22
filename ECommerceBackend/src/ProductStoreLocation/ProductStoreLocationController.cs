@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models.ProductStoreLocation;
+using ECommerce.Domain.Entities.ProductStoreLocation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +38,7 @@ namespace ECommerce.ProductStoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> AddProductToStore([FromBody] AddProductToStoreDto addProductToStoreDto)
         {
-            var model = new ProductStoreLocationModel(
+            var model = new ProductStoreLocationEntity(
                 addProductToStoreDto.StoreLocationId,
                 addProductToStoreDto.ProductId,
                 addProductToStoreDto.Stock
@@ -62,7 +62,7 @@ namespace ECommerce.ProductStoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> ModifyProductFromStore([FromBody] AddProductToStoreDto addProductToStoreDto)
         {
-            var model = new ProductStoreLocationModel(
+            var model = new ProductStoreLocationEntity(
                 addProductToStoreDto.StoreLocationId,
                 addProductToStoreDto.ProductId,
                 addProductToStoreDto.Stock

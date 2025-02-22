@@ -1,8 +1,9 @@
-using ECommerce.DataAccess.Entities.CartProduct;
-using ECommerce.DataAccess.Models.CartProduct;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.CartProduct;
+using ECommerce.Domain.Models.CartProduct;
+using ECommerce.Domain.Repositories.CartProducts;
 
 namespace ECommerce.DataAccess.Repositories
 {

@@ -1,7 +1,9 @@
-using ECommerce.DataAccess.Models.Product;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.Models.Product;
+using ECommerce.Domain.Repositories.Product;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -14,7 +16,7 @@ namespace ECommerce.DataAccess.Repositories
             _postgresService = postgresService;
         }
 
-        public async Task<ProductModel?> CreateAsync(ProductModel product)
+        public async Task<ProductEntity?> CreateAsync(ProductEntity product)
         {
             string query = @"
                     INSERT INTO products(name, description, price, manufacturerId, categoryId) 
@@ -30,7 +32,7 @@ namespace ECommerce.DataAccess.Repositories
                 new QueryParameter(product.CategoryId)
             ];
 
-            ProductModel? result = null;
+            ProductEntity? result = null;
 
             object? id = await _postgresService.ExecuteScalarAsync(query.ToString(), parameters.ToArray());
 
@@ -80,25 +82,25 @@ namespace ECommerce.DataAccess.Repositories
             await _postgresService.ExecuteScalarAsync(query.ToString(), parameters.ToArray());
         }
 
-        public Task<ProductModel?> FindByIdAsync(int productId)
+        public Task<ProductEntity?> FindByIdAsync(int productId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ProductModel?> FindByNameAsync(string productName)
+        public async Task<ProductEntity?> FindByNameAsync(string productName)
         {
             string query = @"
                 SELECT * FROM products;
             ";
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query.ToString());
-            ProductModel? result = null;
+            ProductEntity? result = null;
 
             var row = rows[0];
 
             if (row is not null)
             {
-                result = new ProductModel(
+                result = new ProductEntity(
                     row.GetColumn<int>("productid"),
                     row.GetColumn<string>("name"),
                     row.GetColumn<string>("description"),
@@ -111,18 +113,18 @@ namespace ECommerce.DataAccess.Repositories
             return result;
         }
 
-        public async Task<List<ProductModel>> GetAll()
+        public async Task<List<ProductEntity>> GetAll()
         {
             string query = @"
                 SELECT * FROM products;
             ";
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query.ToString());
-            List<ProductModel> result = new List<ProductModel>();
+            List<ProductEntity> result = new List<ProductEntity>();
 
             foreach (var row in rows)
             {
-                result.Add(new ProductModel(
+                result.Add(new ProductEntity(
                     row.GetColumn<int>("productid"),
                     row.GetColumn<string>("name"),
                     row.GetColumn<string>("description"),
@@ -135,7 +137,7 @@ namespace ECommerce.DataAccess.Repositories
             return result;
         }
 
-        public Task<List<ProductModel>> GetAllInCategory(int categoryId)
+        public Task<List<ProductEntity>> GetAllInCategory(int categoryId)
         {
             throw new NotImplementedException();
         }

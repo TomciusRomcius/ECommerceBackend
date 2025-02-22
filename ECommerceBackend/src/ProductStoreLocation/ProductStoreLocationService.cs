@@ -1,5 +1,6 @@
-using ECommerce.DataAccess.Models.ProductStoreLocation;
-using ECommerce.DataAccess.Repositories.ProductStoreLocation;
+using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Models.ProductStoreLocation;
+using ECommerce.Domain.Repositories.ProductStoreLocation;
 
 namespace ECommerce.ProductStoreLocation
 {
@@ -12,7 +13,7 @@ namespace ECommerce.ProductStoreLocation
             _productStoreLocationRepository = productStoreLocationRepository;
         }
 
-        public async Task AddProductToStore(ProductStoreLocationModel model)
+        public async Task AddProductToStore(ProductStoreLocationEntity model)
         {
             await _productStoreLocationRepository.AddProductToStore(model);
         }
@@ -27,7 +28,7 @@ namespace ECommerce.ProductStoreLocation
             return await _productStoreLocationRepository.GetProductIdsFromStoreAsync(storeLocationId);
         }
 
-        public async Task ModifyProductFromStore(ProductStoreLocationModel model)
+        public async Task ModifyProductFromStore(ProductStoreLocationEntity model)
         {
             await _productStoreLocationRepository.UpdateProduct(model);
         }

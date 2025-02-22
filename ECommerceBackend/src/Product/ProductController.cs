@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Models.Product;
+using ECommerce.Domain.Entities.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +25,7 @@ namespace ECommerce.Product
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateProducts([FromBody()] RequestCreateProductDto createProductDto)
         {
-            ProductModel? res = await _productService.CreateProduct(createProductDto);
+            ProductEntity? res = await _productService.CreateProduct(createProductDto);
             return Created(nameof(CreateProducts), res);
         }
     }

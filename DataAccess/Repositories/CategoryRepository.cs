@@ -1,7 +1,9 @@
-using ECommerce.DataAccess.Models.Category;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
 using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Domain.Entities.Category;
+using ECommerce.Domain.Models.Category;
+using ECommerce.Domain.Repositories.Category;
 
 namespace ECommerce.DataAccess.Repositories
 {
@@ -14,7 +16,7 @@ namespace ECommerce.DataAccess.Repositories
             _postgresService = postgresService;
         }
 
-        public async Task<CategoryModel?> CreateAsync(string categoryName)
+        public async Task<CategoryEntity?> CreateAsync(string categoryName)
         {
             string query = @"
             INSERT INTO categories (name) 
@@ -26,11 +28,11 @@ namespace ECommerce.DataAccess.Repositories
 
             object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            CategoryModel? result = null;
+            CategoryEntity? result = null;
 
             if (id is int)
             {
-                result = new CategoryModel(Convert.ToInt32(id), categoryName);
+                result = new CategoryEntity(Convert.ToInt32(id), categoryName);
             }
 
             return result;
@@ -41,7 +43,7 @@ namespace ECommerce.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<CategoryModel?> FindByIdAsync(int categoryId)
+        public async Task<CategoryEntity?> FindByIdAsync(int categoryId)
         {
             string query = @"
                 SELECT * FROM categories WHERE categoryId = $1;
@@ -50,18 +52,18 @@ namespace ECommerce.DataAccess.Repositories
             QueryParameter[] parameters = [new QueryParameter(categoryId)];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            CategoryModel? result = null;
+            CategoryEntity? result = null;
 
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new CategoryModel(categoryId, row.GetColumn<string>("name"));
+                result = new CategoryEntity(categoryId, row.GetColumn<string>("name"));
             }
 
             return result;
         }
 
-        public async Task<CategoryModel?> FindByNameAsync(string categoryName)
+        public async Task<CategoryEntity?> FindByNameAsync(string categoryName)
         {
             string query = @"
                 SELECT * FROM categories WHERE name = $1;
@@ -70,29 +72,29 @@ namespace ECommerce.DataAccess.Repositories
             QueryParameter[] parameters = [new QueryParameter(categoryName)];
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            CategoryModel? result = null;
+            CategoryEntity? result = null;
 
             if (rows.Count == 1)
             {
                 var row = rows[0];
-                result = new CategoryModel(row.GetColumn<int>("categoryid"), categoryName);
+                result = new CategoryEntity(row.GetColumn<int>("categoryid"), categoryName);
             }
 
             return result;
         }
 
-        public async Task<List<CategoryModel>> GetAll()
+        public async Task<List<CategoryEntity>> GetAll()
         {
             string query = @"
                 SELECT * FROM categories;
             ";
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
-            List<CategoryModel> result = new List<CategoryModel>();
+            List<CategoryEntity> result = new List<CategoryEntity>();
             foreach (var row in rows)
             {
                 result.Add(
-                    new CategoryModel(row.GetColumn<int>("categoryid"), row.GetColumn<string>("name"))
+                    new CategoryEntity(row.GetColumn<int>("categoryid"), row.GetColumn<string>("name"))
                 );
             }
 

@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using ECommerce.DataAccess.Entities.CartProduct;
-using ECommerce.DataAccess.Models.CartProduct;
+using ECommerce.Domain.Entities.CartProduct;
+using ECommerce.Domain.Models.CartProduct;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

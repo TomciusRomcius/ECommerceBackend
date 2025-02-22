@@ -1,12 +1,12 @@
-using ECommerce.DataAccess.Models.Product;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.Repositories.Product;
 
 namespace ECommerce.Product
 {
     public interface IProductService
     {
-        public Task<List<ProductModel>> GetAllProducts();
-        public Task<ProductModel?> CreateProduct(RequestCreateProductDto createProductDto);
+        public Task<List<ProductEntity>> GetAllProducts();
+        public Task<ProductEntity?> CreateProduct(RequestCreateProductDto createProductDto);
     }
 
     public class ProductService : IProductService
@@ -18,15 +18,15 @@ namespace ECommerce.Product
             _productRepository = productRepository;
         }
 
-        public async Task<List<ProductModel>> GetAllProducts()
+        public async Task<List<ProductEntity>> GetAllProducts()
         {
             return await _productRepository.GetAll();
         }
 
-        public async Task<ProductModel?> CreateProduct(RequestCreateProductDto createProductDto)
+        public async Task<ProductEntity?> CreateProduct(RequestCreateProductDto createProductDto)
         {
-            ProductModel? result = await _productRepository.CreateAsync(
-                new ProductModel(
+            ProductEntity? result = await _productRepository.CreateAsync(
+                new ProductEntity(
                  createProductDto.Name,
                  createProductDto.Description,
                  createProductDto.Price,

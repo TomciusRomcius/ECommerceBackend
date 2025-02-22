@@ -1,12 +1,12 @@
-using ECommerce.DataAccess.Models.Manufacturer;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Domain.Entities.Manufacturer;
+using ECommerce.Domain.Repositories.Manufacturer;
 
 namespace ECommerce.Manufacturers
 {
     public interface IManufacturerService
     {
-        public Task<List<ManufacturerModel>> GetAllManufacturers();
-        public Task<ManufacturerModel?> CreateManufacturer(RequestCreateManufacturerDto createManufacturerDto);
+        public Task<List<ManufacturerEntity>> GetAllManufacturers();
+        public Task<ManufacturerEntity?> CreateManufacturer(RequestCreateManufacturerDto createManufacturerDto);
     }
 
     public class ManufacturerService : IManufacturerService
@@ -18,12 +18,12 @@ namespace ECommerce.Manufacturers
             _manufacturerRepository = manufacturerRepository;
         }
 
-        public async Task<List<ManufacturerModel>> GetAllManufacturers()
+        public async Task<List<ManufacturerEntity>> GetAllManufacturers()
         {
             return await _manufacturerRepository.GetAll();
         }
 
-        public async Task<ManufacturerModel?> CreateManufacturer(RequestCreateManufacturerDto createManufacturerDto)
+        public async Task<ManufacturerEntity?> CreateManufacturer(RequestCreateManufacturerDto createManufacturerDto)
         {
             return await _manufacturerRepository.CreateAsync(createManufacturerDto.Name);
         }
