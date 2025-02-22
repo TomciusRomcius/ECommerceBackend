@@ -17,7 +17,8 @@ namespace ECommerce.DataAccess.Utils.DictionaryExtensions
 
             if (result is not T)
             {
-                throw new DataException($"Column {col} does not satisfy expected type");
+                throw new DataException($@"Column '{col}' does not satisfy expected type.
+                                        Expected type: {typeof(T)} Received type: {result?.GetType()}");
             }
 
             return (T)result;
