@@ -36,15 +36,10 @@ namespace ECommerce.PaymentSession
             var service = new PaymentIntentService();
             var result = service.Create(options);
 
-            service.Confirm(result.Id, new()
-            {
-                PaymentMethod = "pm_card_visa"
-            });
-
             return result;
         }
 
-        public void GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions)
+        public PaymentIntent GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions)
         {
             var options = new PaymentIntentCreateOptions
             {
@@ -52,7 +47,7 @@ namespace ECommerce.PaymentSession
                 Currency = "usd",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", sessionOptions.UserId }
+                    { "userid", sessionOptions.UserId }
                 },
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
                 {
