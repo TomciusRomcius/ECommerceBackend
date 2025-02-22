@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../DataAccess/DataAccess.csproj" />
+    <ProjectReference Include="../ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
