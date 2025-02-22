@@ -68,6 +68,8 @@ namespace ECommerce.PaymentSession
             {
                 PaymentMethod = "pm_card_visa"
             });
+
+            return result;
         }
 
         public Event ParseWebhookEvent(string json)

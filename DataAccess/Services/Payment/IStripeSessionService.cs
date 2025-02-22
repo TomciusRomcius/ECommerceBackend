@@ -9,6 +9,6 @@ namespace ECommerce.PaymentSession
         /// <summary>
         /// Used for testing Stripe webhooks. Instantly confirms payment using a testing Stripe card.
         /// </summary>
-        public void GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions);
+        public PaymentIntent GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions);
     }
 }
