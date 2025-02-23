@@ -1,34 +1,37 @@
 using System.Data;
+using ECommerce.Application.UseCases.PaymentSession.Commands;
+using ECommerce.Application.UseCases.PaymentSession.Queries;
 using ECommerce.Cart;
 using ECommerce.Domain.Entities.PaymentSession;
 using ECommerce.Domain.Entities.ProductStoreLocation;
 using ECommerce.Domain.Repositories.PaymentSession;
 using ECommerce.Domain.Repositories.ProductStoreLocation;
 using ECommerce.PaymentSession;
+using MediatR;
 using Stripe;
 
 namespace ECommerce.Order
 {
     public class OrderService : IOrderService
     {
-        readonly IPaymentSessionRepository _paymentSessionRepository;
         readonly ICartService _cartService;
         readonly IProductStoreLocationRepository _productStoreLocationRepository;
         readonly IStripeSessionService _stripeSessionService;
+        readonly IMediator _mediator;
         readonly ILogger _logger;
 
-        public OrderService(IPaymentSessionRepository paymentSessionRepository, ICartService cartService, ILogger logger, IStripeSessionService stripeSessionService, IProductStoreLocationRepository productStoreLocationRepository)
+        public OrderService(ICartService cartService, ILogger logger, IStripeSessionService stripeSessionService, IProductStoreLocationRepository productStoreLocationRepository, IMediator mediator)
         {
-            _paymentSessionRepository = paymentSessionRepository;
             _cartService = cartService;
             _logger = logger;
             _stripeSessionService = stripeSessionService;
             _productStoreLocationRepository = productStoreLocationRepository;
+            _mediator = mediator;
         }
 
         public async Task<PaymentIntent?> CreateOrderPaymentSession(Guid userId)
         {
-            if (await _paymentSessionRepository.GetPaymentSession(userId) is not null)
+            if (await _mediator.Send(new GetPaymentSessionQuery(userId)) is not null)
             {
                 throw new InvalidOperationException("Cannot create a payment session: there is an existing payment session!");
             }
@@ -73,9 +76,9 @@ namespace ECommerce.Order
                     new() { UserId = userId.ToString(), Price = (int)(finalPrice * 100.0m) }
                 );
 
-                await _paymentSessionRepository.CreatePaymentSessionAsync(
+                await _mediator.Send(new CreatePaymentSessionCommand(
                     new PaymentSessionEntity(intentSession.Id, userId, "stripe")
-                );
+                ));
             }
 
             return intentSession;
@@ -85,7 +88,7 @@ namespace ECommerce.Order
             var cartItems = await _cartService.GetAllUserItems(userId.ToString());
             await _productStoreLocationRepository.UpdateStock(cartItems);
             await _cartService.WipeAsync(userId);
-            await _paymentSessionRepository.DeletePaymentSession(userId);
+            await _mediator.Send(new DeletePaymentSessionCommand(userId));
         }
     }
 }
