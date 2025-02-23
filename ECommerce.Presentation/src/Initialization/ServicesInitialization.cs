@@ -15,7 +15,6 @@ namespace ECommerce.Initialization
     {
         public static void InitializeServices(WebApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<IProductService, ProductService>();
             builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
             builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
             builder.Services.AddSingleton<ICartService, CartService>();

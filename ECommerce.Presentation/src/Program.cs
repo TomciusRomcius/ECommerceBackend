@@ -1,4 +1,5 @@
 using System.Reflection;
+using ECommerce.Application;
 using ECommerce.Common.Utils;
 using ECommerce.Initialization;
 
@@ -21,6 +22,8 @@ DataAccessInitialization.InitStripe(builder);
 
 ServicesInitialization.InitializeServices(builder);
 ServicesInitialization.InitializeIdentity(builder);
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
 builder.Services.AddControllers();
 
