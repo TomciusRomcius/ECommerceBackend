@@ -1,10 +1,10 @@
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.PaymentSession;
 using ECommerce.Domain.Repositories.PaymentSession;
 
-namespace ECommerce.DataAccess.Repositories.PaymentSession
+namespace ECommerce.Infrastructure.Repositories.PaymentSession
 {
     public class PaymentSessionRepository : IPaymentSessionRepository
     {

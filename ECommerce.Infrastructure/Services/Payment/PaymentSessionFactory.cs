@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Utils;
+using ECommerce.Infrastructure.Utils;
 using ECommerce.Domain.Enums.PaymentProvider;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.PaymentSession;

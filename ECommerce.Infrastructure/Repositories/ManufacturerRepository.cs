@@ -1,12 +1,12 @@
 using System.Data;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.Manufacturer;
 using ECommerce.Domain.Models.Manufacturer;
 using ECommerce.Domain.Repositories.Manufacturer;
 
-namespace ECommerce.DataAccess.Repositories
+namespace ECommerce.Infrastructure.Repositories
 {
     public class ManufacturerRepository : IManufacturerRepository
     {

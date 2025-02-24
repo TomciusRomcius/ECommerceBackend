@@ -1,13 +1,13 @@
 using System.Text;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.CartProduct;
 using ECommerce.Domain.Entities.ProductStoreLocation;
 using ECommerce.Domain.Models.ProductStoreLocation;
 using ECommerce.Domain.Repositories.ProductStoreLocation;
 
-namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
+namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
 {
     public class ProductStoreLocationRepository : IProductStoreLocationRepository
     {

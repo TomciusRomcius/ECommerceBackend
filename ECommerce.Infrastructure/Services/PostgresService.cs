@@ -1,7 +1,7 @@
-using ECommerce.DataAccess.Utils;
+using ECommerce.Infrastructure.Utils;
 using Npgsql;
 
-namespace ECommerce.DataAccess.Services
+namespace ECommerce.Infrastructure.Services
 {
     public interface IPostgresService
     {

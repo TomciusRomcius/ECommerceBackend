@@ -1,11 +1,11 @@
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.Product;
 using ECommerce.Domain.Models.Product;
 using ECommerce.Domain.Repositories.Product;
 
-namespace ECommerce.DataAccess.Repositories
+namespace ECommerce.Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {

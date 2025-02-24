@@ -1,4 +1,4 @@
-﻿namespace ECommerce.DataAccess
+﻿namespace ECommerce.Infrastructure
 {
 
 }

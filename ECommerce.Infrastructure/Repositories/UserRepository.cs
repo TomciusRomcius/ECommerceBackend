@@ -1,12 +1,12 @@
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Domain.Models.User;
 using ECommerce.Domain.Repositories.User;
 using Microsoft.Extensions.Logging;
 
-namespace ECommerce.DataAccess.Repositories
+namespace ECommerce.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {

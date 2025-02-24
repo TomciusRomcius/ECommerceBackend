@@ -1,11 +1,11 @@
 using System.Data;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
 using ECommerce.Domain.Entities.RoleType;
 using ECommerce.Domain.Models.RoleType;
 using ECommerce.Domain.Repositories.RoleType;
 
-namespace ECommerce.DataAccess.Repositories
+namespace ECommerce.Infrastructure.Repositories
 {
     public class RoleTypeRepository(IPostgresService _postgresService) : IRoleTypeRepository
     {

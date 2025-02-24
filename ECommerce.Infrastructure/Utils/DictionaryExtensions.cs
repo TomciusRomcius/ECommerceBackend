@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace ECommerce.DataAccess.Utils.DictionaryExtensions
+namespace ECommerce.Infrastructure.Utils.DictionaryExtensions
 {
     public static class DbDictionaryExtensions
     {

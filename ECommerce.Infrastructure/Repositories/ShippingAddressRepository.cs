@@ -1,12 +1,12 @@
 using System.Data;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 using ECommerce.Domain.Entities.ShippingAddress;
 using ECommerce.Domain.Models.ShippingAddress;
 using ECommerce.Domain.Repositories.ShippingAddress;
 
-namespace ECommerce.DataAccess.Repositories.ShippingAddress
+namespace ECommerce.Infrastructure.Repositories.ShippingAddress
 {
     public class ShippingAddressRepository : IShippingAddressRepository
     {
