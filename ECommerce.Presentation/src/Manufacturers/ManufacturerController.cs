@@ -1,4 +1,7 @@
+using ECommerce.Application.UseCases.Manufacturer.Commands;
+using ECommerce.Application.UseCases.Manufacturer.Queries;
 using ECommerce.Domain.Entities.Manufacturer;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,18 +11,18 @@ namespace ECommerce.Manufacturers
     [Route("[controller]")]
     public class ManufacturerController : ControllerBase
     {
-        private readonly IManufacturerService _manufacturerService;
+        private readonly IMediator _mediator;
 
-        public ManufacturerController(IManufacturerService manufacturerService)
+        public ManufacturerController(IMediator mediator)
         {
-            _manufacturerService = manufacturerService;
+            _mediator = mediator;
         }
 
         [HttpGet()]
         [Authorize()]
         public async Task<IActionResult> GetAllManufacturers()
         {
-            List<ManufacturerEntity> manufacturers = await _manufacturerService.GetAllManufacturers();
+            List<ManufacturerEntity> manufacturers = await _mediator.Send(new GetAllManufacturersQuery());
             return Ok(manufacturers);
         }
 
@@ -27,8 +30,11 @@ namespace ECommerce.Manufacturers
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateManufacturer([FromBody()] RequestCreateManufacturerDto createProductsDto)
         {
-            ManufacturerEntity? model = await _manufacturerService.CreateManufacturer(createProductsDto);
-            return Created(nameof(CreateManufacturer), model);
+            ManufacturerEntity manufacturer = await _mediator.Send(new CreateManufacturerCommand(
+                createProductsDto.Name
+            ));
+
+            return Created(nameof(CreateManufacturer), manufacturer);
         }
     }
 }
