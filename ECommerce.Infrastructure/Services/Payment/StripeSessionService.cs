@@ -1,22 +1,23 @@
+using System.Data;
 using ECommerce.DataAccess.Utils;
-using Microsoft.Extensions.Logging;
+using ECommerce.Domain.Enums.PaymentProvider;
+using ECommerce.Domain.Interfaces.Services;
+using ECommerce.Domain.Models.PaymentSession;
 using Stripe;
 
 namespace ECommerce.PaymentSession
 {
-    public class StripeSessionService : IStripeSessionService
+    public class StripeSessionService : IPaymentSessionService
     {
         readonly StripeSettings _stripeSettings;
-        readonly ILogger _logger;
 
-        public StripeSessionService(StripeSettings stripeSettings, ILogger logger)
+        public StripeSessionService(StripeSettings stripeSettings)
         {
             _stripeSettings = stripeSettings;
-            _logger = logger;
             StripeConfiguration.ApiKey = _stripeSettings.ApiKey;
         }
 
-        public PaymentIntent GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
+        public async Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
         {
             var options = new PaymentIntentCreateOptions
             {
@@ -34,42 +35,53 @@ namespace ECommerce.PaymentSession
             };
 
             var service = new PaymentIntentService();
-            var result = service.Create(options);
-
-            return result;
-        }
-
-        public PaymentIntent GeneratePaymentSessionAndConfirm(GeneratePaymentSessionOptions sessionOptions)
-        {
-            var options = new PaymentIntentCreateOptions
+            var result = await service.CreateAsync(options);
+            // TODO: have not hard coded currency
+            return new PaymentProviderSession
             {
-                Amount = sessionOptions.Price,
+                Provider = PaymentProvider.STRIPE,
+                UserId = sessionOptions.UserId,
+                ClientSecret = result.ClientSecret,
+                SessionId = result.Id,
                 Currency = "usd",
-                Metadata = new Dictionary<string, string>
-                {
-                    { "userid", sessionOptions.UserId }
-                },
-                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
-                {
-                    Enabled = true,
-                    AllowRedirects = "never"
-                }
             };
-
-            var service = new PaymentIntentService();
-            var result = service.Create(options);
-
-            service.Confirm(result.Id, new()
-            {
-                PaymentMethod = "pm_card_visa"
-            });
-
-            return result;
         }
 
-        public Event ParseWebhookEvent(string json)
+        public Task<PaymentProviderEvent> ParseWebhookEvent(string json, string signature)
         {
-            return EventUtility.ParseEvent(json, false);
+            // TODO: throwOnApiVersionMismatch = true on production
+            Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSignature, throwOnApiVersionMismatch: false);
+            PaymentProviderEvent? result = null;
+
+            if (ev.Type == EventTypes.ChargeSucceeded)
+            {
+                Charge? charge = ev.Data.Object as Charge;
+                if (charge is null)
+                {
+                    throw new DataException("Failed parsing charge");
+                }
+
+                if (!charge.Metadata.ContainsKey("userid"))
+                {
+                    throw new DataException("userid is null!");
+                }
+
+                // TODO: null safety
+                result = new PaymentProviderEvent
+                {
+                    UserId = charge.Metadata["userid"],
+                    Id = charge.Id,
+                    Provider = PaymentProvider.STRIPE,
+                    EventType = PaymentProviderEventType.CHARGE_SUCEEDED
+                };
+            }
+
+            if (result is null)
+            {
+                // TODO: log warning
+            }
+
+            return Task.FromResult(result);
         }
     }
 }

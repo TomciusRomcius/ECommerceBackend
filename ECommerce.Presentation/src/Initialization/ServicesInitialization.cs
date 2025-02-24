@@ -1,10 +1,11 @@
 using ECommerce.Address;
-using ECommerce.Cart;
+using ECommerce.Application.Interfaces.Services;
+using ECommerce.Application.Services;
 using ECommerce.Categories;
+using ECommerce.Domain.Interfaces.Services;
+using ECommerce.Domain.Services;
 using ECommerce.Identity;
 using ECommerce.Manufacturers;
-using ECommerce.Order;
-using ECommerce.Product;
 using ECommerce.ProductStoreLocation;
 using ECommerce.StoreLocation;
 using Microsoft.AspNetCore.Identity;
@@ -18,10 +19,17 @@ namespace ECommerce.Initialization
             builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
             builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
             builder.Services.AddSingleton<ICartService, CartService>();
+            builder.Services.AddSingleton<IOrderService, OrderService>();
             builder.Services.AddSingleton<IAddressService, AddressService>();
             builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
             builder.Services.AddSingleton<IProductStoreLocationService, ProductStoreLocationService>();
-            builder.Services.AddSingleton<IOrderService, OrderService>();
+
+            // Validators
+            builder.Services.AddSingleton<IOrderValidator, OrderValidator>();
+
+
+            // Utils
+            builder.Services.AddSingleton<IOrderPriceCalculator, OrderPriceCalculator>();
         }
 
         public static void InitializeIdentity(WebApplicationBuilder builder)

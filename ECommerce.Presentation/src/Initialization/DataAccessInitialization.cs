@@ -6,6 +6,7 @@ using ECommerce.DataAccess.Repositories.ShippingAddress;
 using ECommerce.DataAccess.Repositories.StoreLocation;
 using ECommerce.DataAccess.Services;
 using ECommerce.DataAccess.Utils;
+using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Repositories.CartProducts;
 using ECommerce.Domain.Repositories.Category;
 using ECommerce.Domain.Repositories.Manufacturer;
@@ -17,6 +18,7 @@ using ECommerce.Domain.Repositories.ShippingAddress;
 using ECommerce.Domain.Repositories.StoreLocation;
 using ECommerce.Domain.Repositories.User;
 using ECommerce.Domain.Repositories.UserRole;
+using ECommerce.Infrastructure.Services.Payment;
 using ECommerce.PaymentSession;
 
 public static class DataAccessInitialization
@@ -78,6 +80,6 @@ public static class DataAccessInitialization
             WebhookSignature = webhookSignature,
         });
 
-        builder.Services.AddSingleton<IStripeSessionService, StripeSessionService>();
+        builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
     }
 }

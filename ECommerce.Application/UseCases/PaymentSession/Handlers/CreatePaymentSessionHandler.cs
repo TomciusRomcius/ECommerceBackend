@@ -1,4 +1,5 @@
 using ECommerce.Application.UseCases.PaymentSession.Commands;
+using ECommerce.Domain.Entities.PaymentSession;
 using ECommerce.Domain.Repositories.PaymentSession;
 using MediatR;
 
@@ -15,7 +16,10 @@ namespace ECommerce.Application.UseCases.PaymentSession.Handlers
 
         public async Task Handle(CreatePaymentSessionCommand request, CancellationToken cancellationToken)
         {
-            await _paymentSessionRepository.CreatePaymentSessionAsync(request.PaymentSessionEntity);
+            // TODO: use provider enum
+            await _paymentSessionRepository.CreatePaymentSessionAsync(
+                new PaymentSessionEntity(request.PaymentSessionId, request.UserId, "stripe")
+            );
         }
     }
 }

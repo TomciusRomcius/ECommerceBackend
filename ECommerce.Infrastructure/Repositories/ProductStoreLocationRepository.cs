@@ -87,20 +87,28 @@ namespace ECommerce.DataAccess.Repositories.ProductStoreLocation
 
         public async Task<List<ProductStoreLocationEntity>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId)
         {
+            if (storeLocationIdProductId.Count == 0) return [];
+
             var queryBuilder = new StringBuilder();
             queryBuilder.AppendLine(@"
                 SELECT * FROM productStoreLocations
                 WHERE (storeLocationId = $1 AND productId = $2)
             ");
 
-            List<QueryParameter> parameters = [];
-            int index = 3;
-            foreach ((int, int) entry in storeLocationIdProductId)
+            List<QueryParameter> parameters = [
+                new(storeLocationIdProductId[0].Item1),
+                new(storeLocationIdProductId[0].Item2)
+            ];
+
+            int index = 1;
+            for (int i = 0; i < storeLocationIdProductId.Count(); i++)
             {
+                (int, int) entry = storeLocationIdProductId[i];
+
                 queryBuilder.AppendLine($"OR (storeLocationId = ${index} AND productId = ${index + 1})");
                 parameters.Add(new QueryParameter(entry.Item1));
                 parameters.Add(new QueryParameter(entry.Item2));
-                index += 2;
+                index++;
             }
 
             List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(queryBuilder.ToString(), parameters.ToArray());

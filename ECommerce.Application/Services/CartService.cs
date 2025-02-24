@@ -1,18 +1,10 @@
+using ECommerce.Application.Interfaces.Services;
 using ECommerce.Domain.Entities.CartProduct;
 using ECommerce.Domain.Models.CartProduct;
 using ECommerce.Domain.Repositories.CartProducts;
 
-namespace ECommerce.Cart
+namespace ECommerce.Application.Services
 {
-    public interface ICartService
-    {
-        public Task<List<CartProductEntity>> GetAllUserItems(string userId);
-        public Task<List<CartProductModel>> GetAllUserItemsDetailed(string userId);
-        public Task<CartProductEntity?> AddItem(CartProductEntity cartProductModel);
-        public Task UpdateItemQuantity(CartProductEntity cartProductModel);
-        public Task WipeAsync(Guid userId);
-    }
-
     public class CartService : ICartService
     {
         readonly ICartProductsRepository _cartProductsRepository;

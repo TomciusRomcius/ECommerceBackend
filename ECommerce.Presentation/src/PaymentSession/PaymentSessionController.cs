@@ -1,7 +1,8 @@
-using ECommerce.DataAccess.Utils;
-using ECommerce.PaymentSession;
+using ECommerce.Application.UseCases.PaymentSession.Notifications;
+using ECommerce.Domain.Enums.PaymentProvider;
+using ECommerce.Domain.Interfaces.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
 
 namespace ECommerce.Order
 {
@@ -9,18 +10,45 @@ namespace ECommerce.Order
     [Route("[controller]")]
     public class PaymentSessionController : ControllerBase
     {
-        readonly IStripeSessionService _stripeSessionService;
-        readonly IOrderService _orderService;
-        readonly StripeSettings _stripeSettings;
-        readonly ILogger _logger;
+        readonly IMediator _mediator;
+        readonly IPaymentSessionFactory _paymentSessionFactory;
 
-        public PaymentSessionController(IStripeSessionService stripeSessionService, IOrderService orderService, ILogger logger, StripeSettings stripeSettings)
+        public PaymentSessionController(IMediator mediator, IPaymentSessionFactory paymentSessionFactory)
         {
-            _stripeSessionService = stripeSessionService;
-            _orderService = orderService;
-            _logger = logger;
-            _stripeSettings = stripeSettings;
+            _mediator = mediator;
+            _paymentSessionFactory = paymentSessionFactory;
         }
+
+        // [HttpPost("webhook")]
+        // public async Task<IActionResult> StripeWebhook()
+        // {
+        //     string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        //     string? signature = Request.Headers["Stripe-Signature"];
+
+        //     var stripeEvent = EventUtility.ConstructEvent(
+        //         json,
+        //         signature,
+        //         _stripeSettings.WebhookSignature,
+        //         throwOnApiVersionMismatch: false
+        //     );
+
+        //     if (stripeEvent.Type == EventTypes.ChargeSucceeded)
+        //     {
+        //         var charge = stripeEvent.Data.Object as Charge;
+        //         string? userId = charge?.Metadata["userid"];
+        //         if (userId is not null)
+        //         {
+        //             await _orderService.OnCharge(new Guid(userId));
+        //         }
+
+        //         else
+        //         {
+        //             _logger.LogCritical("Payment intent metadata:userId is null!");
+        //             return StatusCode(StatusCodes.Status500InternalServerError);
+        //         }
+        //     }
+        //     return Ok();
+        // }
 
         [HttpPost("webhook")]
         public async Task<IActionResult> StripeWebhook()
@@ -28,28 +56,10 @@ namespace ECommerce.Order
             string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             string? signature = Request.Headers["Stripe-Signature"];
 
-            var stripeEvent = EventUtility.ConstructEvent(
-                json,
-                signature,
-                _stripeSettings.WebhookSignature,
-                throwOnApiVersionMismatch: false
-            );
+            var paymentSessionService = _paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
 
-            if (stripeEvent.Type == EventTypes.ChargeSucceeded)
-            {
-                var charge = stripeEvent.Data.Object as Charge;
-                string? userId = charge?.Metadata["userid"];
-                if (userId is not null)
-                {
-                    await _orderService.OnCharge(new Guid(userId));
-                }
+            await _mediator.Publish(new WebhookNotification(json, signature, paymentSessionService));
 
-                else
-                {
-                    _logger.LogCritical("Payment intent metadata:userId is null!");
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-            }
             return Ok();
         }
     }
