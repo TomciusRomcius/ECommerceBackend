@@ -1,7 +1,9 @@
 using System.Security.Claims;
-using ECommerce.Application.Interfaces.Services;
+using ECommerce.Application.UseCases.Cart.Commands;
+using ECommerce.Application.UseCases.Cart.Queries;
 using ECommerce.Domain.Entities.CartProduct;
 using ECommerce.Domain.Models.CartProduct;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +13,11 @@ namespace ECommerce.Cart
     [Route("[controller]")]
     public class CartController : ControllerBase
     {
-        readonly ICartService _cartService;
+        readonly IMediator _mediator;
 
-        public CartController(ICartService cartService)
+        public CartController(IMediator mediator)
         {
-            _cartService = cartService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -28,7 +30,7 @@ namespace ECommerce.Cart
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            List<CartProductModel> result = await _cartService.GetAllUserItemsDetailed(userId);
+            List<CartProductModel> result = await _mediator.Send(new GetUserCartItemsDetailedQuery(new Guid(userId)));
             return Ok(result);
         }
 
@@ -42,10 +44,9 @@ namespace ECommerce.Cart
                 return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
             }
 
-
-            await _cartService.AddItem(
+            await _mediator.Send(new AddItemToCartCommand(
                 new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
-            );
+            ));
 
             return Created(nameof(AddItem), null);
         }
@@ -60,9 +61,9 @@ namespace ECommerce.Cart
                 return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
             }
 
-            await _cartService.UpdateItemQuantity(
+            await _mediator.Send(new UpdateCartItemQuantityCommand(
                 new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
-            );
+            ));
 
             return Ok();
         }
