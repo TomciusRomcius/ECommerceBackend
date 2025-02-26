@@ -1,5 +1,7 @@
 using System.Data;
 using ECommerce.Application.Interfaces.Services;
+using ECommerce.Application.UseCases.Cart.Commands;
+using ECommerce.Application.UseCases.Cart.Queries;
 using ECommerce.Application.UseCases.PaymentSession.Commands;
 using ECommerce.Application.UseCases.PaymentSession.Queries;
 using ECommerce.Domain.Enums.PaymentProvider;
@@ -16,17 +18,15 @@ namespace ECommerce.Application.Services
         IPaymentSessionFactory _paymentSessionFactory;
         IOrderValidator _orderValidator;
         IOrderPriceCalculator _orderPriceCalculator;
-        ICartService _cartService;
         IProductStoreLocationRepository _productStoreLocationRepository;
         IMediator _mediator;
 
-        public OrderService(IPaymentSessionFactory paymentSessionFactory, IProductStoreLocationRepository productStoreLocationRepository, IMediator mediator, IOrderValidator orderValidator, ICartService cartService, IOrderPriceCalculator orderPriceCalculator)
+        public OrderService(IPaymentSessionFactory paymentSessionFactory, IProductStoreLocationRepository productStoreLocationRepository, IMediator mediator, IOrderValidator orderValidator, IOrderPriceCalculator orderPriceCalculator)
         {
             _paymentSessionFactory = paymentSessionFactory;
             _productStoreLocationRepository = productStoreLocationRepository;
             _mediator = mediator;
             _orderValidator = orderValidator;
-            _cartService = cartService;
             _orderPriceCalculator = orderPriceCalculator;
         }
 
@@ -37,7 +37,8 @@ namespace ECommerce.Application.Services
                 throw new InvalidOperationException("Cannot create a payment session: there is an existing payment session!");
             }
 
-            var items = await _cartService.GetAllUserItemsDetailed(userId.ToString());
+            var items = await _mediator.Send(new GetUserCartItemsDetailedQuery(userId));
+
             List<(int, int)> idTuple = items.Select((item) => (item.StoreLocationId, item.ProductId)).ToList();
             var products = await _productStoreLocationRepository.GetProductsFromStoreAsync(idTuple);
 
@@ -63,9 +64,9 @@ namespace ECommerce.Application.Services
         }
         public async Task OnCharge(Guid userId)
         {
-            var cartItems = await _cartService.GetAllUserItems(userId.ToString());
+            var cartItems = await _mediator.Send(new GetUserCartItemsQuery(userId));
             await _productStoreLocationRepository.UpdateStock(cartItems);
-            await _cartService.WipeAsync(userId);
+            await _mediator.Send(new EraseUserCartCommand(userId));
             await _mediator.Send(new DeletePaymentSessionCommand(userId));
         }
     }
