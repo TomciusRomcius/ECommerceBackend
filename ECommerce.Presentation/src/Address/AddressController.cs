@@ -1,6 +1,9 @@
 using System.Security.Claims;
+using ECommerce.Application.UseCases.ShippingAddress.Commands;
+using ECommerce.Application.UseCases.ShippingAddress.Queries;
 using ECommerce.Domain.Entities.ShippingAddress;
 using ECommerce.Domain.Models.ShippingAddress;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Address
@@ -9,11 +12,11 @@ namespace ECommerce.Address
     [Route("[controller]")]
     public class AddressController : ControllerBase
     {
-        readonly IAddressService _addressService;
+        readonly IMediator _mediator;
 
-        public AddressController(IAddressService addressService)
+        public AddressController(IMediator mediator)
         {
-            _addressService = addressService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -25,7 +28,7 @@ namespace ECommerce.Address
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            var result = await _addressService.GetAddresses(userId);
+            var result = await _mediator.Send(new GetShippingAddressesQuery(new Guid(userId)));
             return Ok(result);
         }
 
@@ -51,7 +54,7 @@ namespace ECommerce.Address
                 MobileNumber = setAddressDto.MobileNumber,
             };
 
-            await _addressService.AddAddress(address);
+            await _mediator.Send(new AddShippingAddressCommand(address));
             return Created(nameof(AddAddress), null);
         }
 
@@ -78,7 +81,7 @@ namespace ECommerce.Address
                 MobileNumber = updateAddressDto.MobileNumber
             };
 
-            await _addressService.UpdateAddress(updateModel);
+            await _mediator.Send(new UpdateShippingAddressCommand(updateModel));
 
             return Ok();
         }
@@ -92,8 +95,7 @@ namespace ECommerce.Address
                 return new UnauthorizedObjectResult("You must be logged in to get items!");
             }
 
-            await _addressService.DeleteAddress(userId, deleteAddressDto.IsShipping);
-
+            await _mediator.Send(new RemoveShippingAddressCommand(new Guid(userId)));
             return Ok();
         }
 

@@ -18,7 +18,6 @@ namespace ECommerce.Initialization
         {
             builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
             builder.Services.AddSingleton<IOrderService, OrderService>();
-            builder.Services.AddSingleton<IAddressService, AddressService>();
             builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
             builder.Services.AddSingleton<IProductStoreLocationService, ProductStoreLocationService>();
 

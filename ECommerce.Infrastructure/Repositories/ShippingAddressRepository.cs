@@ -49,15 +49,14 @@ namespace ECommerce.Infrastructure.Repositories.ShippingAddress
             else throw new DataException("shippingAddressId is null!");
         }
 
-        public async Task DeleteAddressAsync(string userId, bool isShipping)
+        public async Task DeleteAddressAsync(string userId)
         {
             string query = @"
-                DELETE FROM shippingAddress WHERE userId = $1 AND isShipping = $2;
+                DELETE FROM shippingAddress WHERE userId = $1;
             ";
 
             QueryParameter[] parameters = [
                 new QueryParameter(new Guid(userId)),
-                new QueryParameter(isShipping),
             ];
 
             await _postgresService.ExecuteAsync(query, parameters);

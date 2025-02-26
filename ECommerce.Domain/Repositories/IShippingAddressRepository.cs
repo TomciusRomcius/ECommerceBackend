@@ -9,6 +9,6 @@ namespace ECommerce.Domain.Repositories.ShippingAddress
         public Task AddAddressAsync(ShippingAddressEntity addressEntity);
         public Task UpdateAddressAsync(UpdateShippingAddressModel updateAddressEntity);
         public Task<List<ShippingAddressEntity>> GetAddresses(string userId);
-        public Task DeleteAddressAsync(string userId, bool isShipping);
+        public Task DeleteAddressAsync(string userId);
     }
 }
