@@ -15,6 +15,11 @@ namespace ECommerce.Infrastructure.Utils.DictionaryExtensions
 
             dict.TryGetValue(col, out result);
 
+            if (result is DBNull)
+            {
+                return default;
+            }
+
             if (result is not T)
             {
                 throw new DataException($@"Column '{col}' does not satisfy expected type.
