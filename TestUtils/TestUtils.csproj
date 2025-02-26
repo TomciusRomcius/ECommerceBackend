@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.2.0" />
   </ItemGroup>
 </Project>
