@@ -1,5 +1,5 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
 using ECommerce.Domain.Repositories.User;

@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Services;
+using ECommerce.Infrastructure.Services;
 using Testcontainers.PostgreSql;
 
 namespace ECommerce.TestUtils.TestDatabase

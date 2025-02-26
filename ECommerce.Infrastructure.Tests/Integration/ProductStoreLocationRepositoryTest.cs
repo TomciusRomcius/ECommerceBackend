@@ -1,7 +1,7 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Repositories.ProductStoreLocation;
-using ECommerce.DataAccess.Repositories.StoreLocation;
+using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.ProductStoreLocation;
+using ECommerce.Infrastructure.Repositories.StoreLocation;
 using ECommerce.Domain.Entities.StoreLocation;
 using ECommerce.Domain.Entities.Manufacturer;
 using ECommerce.Domain.Entities.Category;

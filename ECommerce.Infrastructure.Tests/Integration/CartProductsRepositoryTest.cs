@@ -1,7 +1,7 @@
 using System.Data;
-using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Repositories.ProductStoreLocation;
-using ECommerce.DataAccess.Repositories.StoreLocation;
+using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.ProductStoreLocation;
+using ECommerce.Infrastructure.Repositories.StoreLocation;
 using ECommerce.Domain.Entities.CartProduct;
 using ECommerce.Domain.Entities.Product;
 using ECommerce.Domain.Entities.ProductStoreLocation;

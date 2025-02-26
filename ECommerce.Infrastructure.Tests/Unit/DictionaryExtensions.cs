@@ -1,5 +1,5 @@
 using System.Data;
-using ECommerce.DataAccess.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Utils.DictionaryExtensions;
 
 namespace DataAccess.Tests.Unit
 {

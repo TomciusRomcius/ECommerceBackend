@@ -1,6 +1,6 @@
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Repositories.PaymentSession;
+using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.PaymentSession;
 using Microsoft.Extensions.Logging;
 using Moq;
 using ECommerce.Domain.Entities.User;

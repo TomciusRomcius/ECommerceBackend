@@ -1,4 +1,4 @@
-using ECommerce.DataAccess.Repositories;
+using ECommerce.Infrastructure.Repositories;
 using ECommerce.Domain.Entities.Category;
 using ECommerce.TestUtils.TestDatabase;
 

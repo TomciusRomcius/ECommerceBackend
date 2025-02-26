@@ -1,7 +1,7 @@
 using System.Data;
 using ECommerce.TestUtils.TestDatabase;
-using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Repositories.ShippingAddress;
+using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Repositories.ShippingAddress;
 using Microsoft.Extensions.Logging;
 using Moq;
 using ECommerce.Domain.Entities.User;

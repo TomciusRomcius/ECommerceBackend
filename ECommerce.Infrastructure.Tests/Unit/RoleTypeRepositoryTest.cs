@@ -1,6 +1,6 @@
-using ECommerce.DataAccess.Repositories;
-using ECommerce.DataAccess.Services;
-using ECommerce.DataAccess.Utils;
+using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Utils;
 using ECommerce.Domain.Models.RoleType;
 using ECommerce.Domain.Repositories.RoleType;
 using Moq;
