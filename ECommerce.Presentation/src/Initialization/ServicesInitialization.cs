@@ -1,12 +1,8 @@
-using ECommerce.Address;
 using ECommerce.Application.Interfaces.Services;
 using ECommerce.Application.Services;
 using ECommerce.Categories;
-using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Services;
 using ECommerce.Identity;
-using ECommerce.Manufacturers;
-using ECommerce.ProductStoreLocation;
 using ECommerce.StoreLocation;
 using Microsoft.AspNetCore.Identity;
 
@@ -19,7 +15,6 @@ namespace ECommerce.Initialization
             builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
             builder.Services.AddSingleton<IOrderService, OrderService>();
             builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
-            builder.Services.AddSingleton<IProductStoreLocationService, ProductStoreLocationService>();
 
             // Validators
             builder.Services.AddSingleton<IOrderValidator, OrderValidator>();

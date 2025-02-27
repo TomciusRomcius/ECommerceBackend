@@ -1,4 +1,7 @@
+using ECommerce.Application.UseCases.Store;
+using ECommerce.Application.UseCases.Store.Commands;
 using ECommerce.Domain.Entities.ProductStoreLocation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +11,11 @@ namespace ECommerce.ProductStoreLocation
     [Route("[controller]")]
     public class ProductStoreLocationController : ControllerBase
     {
-        readonly IProductStoreLocationService _productStoreLocationService;
+        readonly IMediator _mediator;
 
-        public ProductStoreLocationController(IProductStoreLocationService productStoreLocationService)
+        public ProductStoreLocationController(IMediator mediator)
         {
-            _productStoreLocationService = productStoreLocationService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -23,12 +26,12 @@ namespace ECommerce.ProductStoreLocation
             object result;
             if (isDetailed)
             {
-                result = await _productStoreLocationService.GetProductsFromStore(getProductsFromStoreDto.StoreLocationId);
+                result = await _mediator.Send(new GetProductsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
             }
 
             else
             {
-                result = await _productStoreLocationService.GetProductIdsFromStore(getProductsFromStoreDto.StoreLocationId);
+                result = await _mediator.Send(new GetProductIdsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
             }
 
             return Ok(result);
@@ -44,7 +47,7 @@ namespace ECommerce.ProductStoreLocation
                 addProductToStoreDto.Stock
             );
 
-            await _productStoreLocationService.AddProductToStore(model);
+            await _mediator.Send(new AddProductToStoreCommand(model));
 
             return Ok();
         }
@@ -53,7 +56,9 @@ namespace ECommerce.ProductStoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> RemoveProductFromStore([FromBody] RemoveProductFromStoreDto removeProductFromStoreDto)
         {
-            await _productStoreLocationService.RemoveProductFromStore(removeProductFromStoreDto.StoreLocationId, removeProductFromStoreDto.ProductId);
+            await _mediator.Send(
+                new RemoveProductFromStoreCommand(removeProductFromStoreDto.StoreLocationId, removeProductFromStoreDto.ProductId
+            ));
             return Ok();
         }
 
@@ -68,7 +73,7 @@ namespace ECommerce.ProductStoreLocation
                 addProductToStoreDto.Stock
             );
 
-            await _productStoreLocationService.ModifyProductFromStore(model);
+            await _mediator.Send(new UpdateProductStockCommand(model));
             return Ok();
         }
     }
