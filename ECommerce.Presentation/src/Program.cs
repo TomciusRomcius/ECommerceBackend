@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen((setup) =>
 });
 
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
 DataAccessInitialization.InitDb(builder);
 DataAccessInitialization.InitRepositories(builder);
@@ -23,7 +24,6 @@ DataAccessInitialization.InitStripe(builder);
 ServicesInitialization.InitializeServices(builder);
 ServicesInitialization.InitializeIdentity(builder);
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
 builder.Services.AddControllers();
 

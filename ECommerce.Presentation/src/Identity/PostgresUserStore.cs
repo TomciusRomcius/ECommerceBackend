@@ -1,7 +1,10 @@
+using ECommerce.Application.UseCases.User.Commands;
+using ECommerce.Application.UseCases.User.Queries;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Domain.Models.User;
 using ECommerce.Domain.Repositories.User;
 using ECommerce.Domain.Repositories.UserRole;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Identity
@@ -11,15 +14,15 @@ namespace ECommerce.Identity
         IUserPasswordStore<ApplicationUser>,
         IUserRoleStore<ApplicationUser>
     {
-        readonly IUserRepository _userRepository;
+        readonly IMediator _mediator;
         readonly IUserRoleRepository _userRoleRepository;
         readonly ILogger _logger;
 
-        public PostgresUserStore(IUserRepository userRepository, IUserRoleRepository userRoleRepository, ILogger logger)
+        public PostgresUserStore(IUserRoleRepository userRoleRepository, ILogger logger, IMediator mediator)
         {
-            _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
             _logger = logger;
+            _mediator = mediator;
         }
 
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -31,9 +34,9 @@ namespace ECommerce.Identity
 
             try
             {
-                await _userRepository.CreateAsync(
+                await _mediator.Send(new CreateUserCommand(
                     new UserEntity(user.Id, user.NormalizedEmail, user.PasswordHash, user.Firstname, user.Lastname)
-                );
+                ));
             }
 
             catch (Exception ex)
@@ -51,7 +54,9 @@ namespace ECommerce.Identity
 
             try
             {
-                await _userRepository.DeleteAsync(user.Id);
+                await _mediator.Send(new DeleteUserCommand(
+                    new Guid(user.Id)
+                ));
             }
 
             catch (Exception ex)
@@ -65,7 +70,7 @@ namespace ECommerce.Identity
 
         public async Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            UserEntity? user = await _userRepository.FindByIdAsync(userId);
+            UserEntity? user = await _mediator.Send(new FindUserByIdQuery(new Guid(userId)));
             ApplicationUser? result = null;
 
             if (user is not null)
@@ -78,6 +83,7 @@ namespace ECommerce.Identity
 
         public async Task<ApplicationUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
+            // Names will be treadted as emails
             return await this.FindByEmailAsync(normalizedUserName, cancellationToken);
         }
 
@@ -124,7 +130,7 @@ namespace ECommerce.Identity
 
             try
             {
-                var UserEntity = new UpdateUserModel(
+                var updator = new UpdateUserModel(
                     user.Id,
                     user.NormalizedEmail,
                     user.PasswordHash,
@@ -132,7 +138,7 @@ namespace ECommerce.Identity
                     user.Lastname
                 );
 
-                await _userRepository.UpdateAsync(UserEntity);
+                await _mediator.Send(new UpdateUserCommand(updator));
             }
 
             catch (Exception ex)
@@ -174,9 +180,9 @@ namespace ECommerce.Identity
 
         public async Task<ApplicationUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
-            UserEntity? UserEntity = await _userRepository.FindByEmailAsync(normalizedEmail);
+            UserEntity? user = await _mediator.Send(new FindUserByEmailQuery(normalizedEmail));
 
-            if (UserEntity is null)
+            if (user is null)
             {
                 return null;
             }
@@ -184,11 +190,11 @@ namespace ECommerce.Identity
             return new ApplicationUser
             {
                 UserName = normalizedEmail,
-                NormalizedEmail = UserEntity!.Email!,
-                PasswordHash = UserEntity.PasswordHash!,
-                Firstname = UserEntity.Firstname,
-                Lastname = UserEntity.Lastname,
-                Id = UserEntity.UserId.ToString()!
+                NormalizedEmail = user!.Email!,
+                PasswordHash = user.PasswordHash!,
+                Firstname = user.Firstname,
+                Lastname = user.Lastname,
+                Id = user.UserId.ToString()!
             };
         }
 
