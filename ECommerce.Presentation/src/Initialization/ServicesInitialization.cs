@@ -3,7 +3,6 @@ using ECommerce.Application.Services;
 using ECommerce.Categories;
 using ECommerce.Domain.Services;
 using ECommerce.Identity;
-using ECommerce.StoreLocation;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Initialization
@@ -14,13 +13,7 @@ namespace ECommerce.Initialization
         {
             builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
             builder.Services.AddSingleton<IOrderService, OrderService>();
-            builder.Services.AddSingleton<IStoreLocationService, StoreLocationService>();
-
-            // Validators
             builder.Services.AddSingleton<IOrderValidator, OrderValidator>();
-
-
-            // Utils
             builder.Services.AddSingleton<IOrderPriceCalculator, OrderPriceCalculator>();
         }
 

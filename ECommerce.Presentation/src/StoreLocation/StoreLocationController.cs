@@ -1,5 +1,8 @@
+using ECommerce.Application.UseCases.Queries;
+using ECommerce.Application.UseCases.StoreLocation.Commands;
 using ECommerce.Domain.Entities.StoreLocation;
 using ECommerce.Domain.Models.StoreLocation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,17 +12,17 @@ namespace ECommerce.StoreLocation
     [Route("[controller]")]
     public class StoreLocation : ControllerBase
     {
-        readonly IStoreLocationService _storeLocationService;
+        readonly IMediator _mediator;
 
-        public StoreLocation(IStoreLocationService storeLocationService)
+        public StoreLocation(IMediator mediator)
         {
-            _storeLocationService = storeLocationService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetLocations()
         {
-            List<StoreLocationEntity> result = await _storeLocationService.GetLocations();
+            List<StoreLocationEntity> result = await _mediator.Send(new GetAllLocationsQuery());
             return Ok(result);
         }
 
@@ -27,9 +30,9 @@ namespace ECommerce.StoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> CreateStoreLocation([FromBody] RequestCreateLocationDto createLocationDto)
         {
-            StoreLocationEntity? result = await _storeLocationService.CreateStoreLocation(
+            StoreLocationEntity? result = await _mediator.Send(new CreateStoreLocationCommand(
                 new CreateStoreLocationModel(createLocationDto.DisplayName, createLocationDto.Address)
-            );
+            ));
 
             return Created(nameof(CreateStoreLocation), result);
         }
@@ -38,9 +41,9 @@ namespace ECommerce.StoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> ModifyStoreLocation([FromBody] RequestModifyLocationDto modifyLocationDto)
         {
-            await _storeLocationService.UpdateStoreLocation(
+            await _mediator.Send(new UpdateStoreLocationCommand(
                 new UpdateStoreLocationModel(modifyLocationDto.StoreLocationId, modifyLocationDto.DisplayName, modifyLocationDto.Address)
-            );
+            ));
 
             return Ok();
         }
@@ -49,7 +52,7 @@ namespace ECommerce.StoreLocation
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> RemoveLocation([FromBody] RequestRemoveLocationDto removeLocationDto)
         {
-            await _storeLocationService.RemoveLocation(removeLocationDto.StoreLocationId);
+            await _mediator.Send(new RemoveStoreLocationCommand(removeLocationDto.StoreLocationId));
             return Ok();
         }
     }
