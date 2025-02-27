@@ -1,4 +1,3 @@
-using ECommerce.Application.UseCases.User.Commands;
 using ECommerce.Application.UseCases.User.Queries;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Domain.Repositories.User;
