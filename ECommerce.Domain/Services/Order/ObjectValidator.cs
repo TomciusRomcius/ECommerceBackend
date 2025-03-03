@@ -1,21 +1,22 @@
 using System.ComponentModel.DataAnnotations;
+using ECommerce.Domain.Utils;
 
 namespace ECommerce.Domain.Services
 {
     public interface IObjectValidator
     {
-        List<ValidationResult> Validate(object obj);
+        IEnumerable<ResultError> Validate(object obj);
     }
 
     public class ObjectValidator : IObjectValidator
     {
-        public List<ValidationResult> Validate(object obj)
+        public IEnumerable<ResultError> Validate(object obj)
         {
             var validationContext = new ValidationContext(obj);
             var errors = new List<ValidationResult>();
 
             Validator.TryValidateObject(obj, validationContext, errors, true);
-            return errors;
+            return errors.Select((error) => new ResultError(ResultErrorType.VALIDATION_ERROR, error.ErrorMessage));
         }
     }
 }
