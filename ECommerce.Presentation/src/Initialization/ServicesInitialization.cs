@@ -3,7 +3,6 @@ using ECommerce.Application.Services;
 using ECommerce.Categories;
 using ECommerce.Domain.Services;
 using ECommerce.Identity;
-using ECommerce.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Initialization
@@ -18,7 +17,7 @@ namespace ECommerce.Initialization
             builder.Services.AddSingleton<IOrderPriceCalculator, OrderPriceCalculator>();
         }
 
-        public static void InitializeIdentity(WebApplicationBuilder builder, OpenIdProviderConfigService openIdProviderConfigService)
+        public static void InitializeIdentity(WebApplicationBuilder builder)
         {
             // TODO: define issuer in appsettings
             string issuer = "localhost";
@@ -35,27 +34,14 @@ namespace ECommerce.Initialization
                 .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddRoleManager<RoleManager<ApplicationUserRole>>();
 
-            var authBuilder = builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-                .AddCookie("Identity.Application", options =>
+            builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+                .AddCookie("Identity.Application", o =>
                 {
-                    options.Cookie.Name = "user";
-                    options.Cookie.Domain = "localhost";
-                    options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    o.Cookie.Name = "user";
+                    o.Cookie.Domain = "localhost";
+                    o.SlidingExpiration = true;
+                    o.ExpireTimeSpan = TimeSpan.FromDays(30);
                 });
-
-            // Add openid providers
-            foreach (var instance in openIdProviderConfigService._providers)
-            {
-                var provider = instance.Value;
-
-                authBuilder.AddOpenIdConnect(options =>
-                {
-                    options.Authority = provider.Authority;
-                    options.ClientId = provider.ClientId;
-                    options.ClientSecret = provider.ClientSecret;
-                });
-            }
         }
     }
 }

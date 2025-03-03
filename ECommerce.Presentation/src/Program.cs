@@ -1,8 +1,6 @@
 using System.Reflection;
 using ECommerce.Application;
 using ECommerce.Common.Utils;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
 using ECommerce.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,10 +22,7 @@ DataAccessInitialization.InitRepositories(builder);
 DataAccessInitialization.InitStripe(builder);
 
 ServicesInitialization.InitializeServices(builder);
-
-var openIdConfigService = new OpenIdProviderConfigService();
-
-ServicesInitialization.InitializeIdentity(builder, openIdConfigService);
+ServicesInitialization.InitializeIdentity(builder);
 
 
 builder.Services.AddControllers();
