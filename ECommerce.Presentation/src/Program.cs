@@ -4,6 +4,7 @@ using ECommerce.Application.Interfaces.Services;
 using ECommerce.Application.Services;
 using ECommerce.Common.Services;
 using ECommerce.Common.Utils;
+using ECommerce.Domain.Services;
 using ECommerce.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen((setup) =>
 });
 
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
+builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
