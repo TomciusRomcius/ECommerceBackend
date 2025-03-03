@@ -160,8 +160,13 @@ namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
             await _postgresService.ExecuteScalarAsync(query, parameters);
         }
 
-        public async Task<int> UpdateStock(List<CartProductEntity> cartProducts)
+        public async Task UpdateStock(List<CartProductEntity> cartProducts)
         {
+            if (cartProducts.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder queryValues = new StringBuilder();
 
             List<QueryParameter> parameters = new List<QueryParameter>();
@@ -179,6 +184,7 @@ namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
 
                 var entry = cartProducts[i];
 
+
                 parameters.Add(new QueryParameter(entry.StoreLocationId));
                 parameters.Add(new QueryParameter(entry.ProductId));
                 parameters.Add(new QueryParameter(entry.Quantity));
@@ -193,15 +199,7 @@ namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
                 WHERE a.storeLocationId = b.storeLocationId AND a.productId = b.productId;
             ";
 
-            // TODO: fix copy
-            object? stock = await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
-
-            if (stock is int)
-            {
-                return Convert.ToInt32(stock);
-            }
-
-            else return -1;
+            await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
         }
     }
 }
