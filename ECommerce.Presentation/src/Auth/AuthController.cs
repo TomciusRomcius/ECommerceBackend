@@ -24,14 +24,8 @@ namespace ECommerce.Auth
         [HttpPost("sign-up-with-password")]
         public async Task<IActionResult> SignUpWithPassword(SignUpWithPasswordRequestDto signUpWithPasswordRequestDto)
         {
-            var user = new ApplicationUser()
-            {
-                Email = signUpWithPasswordRequestDto.Email,
-                UserName = signUpWithPasswordRequestDto.Email,
-                Firstname = signUpWithPasswordRequestDto.Firstname,
-                Lastname = signUpWithPasswordRequestDto.Lastname,
-            };
-
+            // Pasword hash gets set in UserManager.CreateAsync
+            var user = new ApplicationUser(signUpWithPasswordRequestDto.Firstname, signUpWithPasswordRequestDto.Lastname, signUpWithPasswordRequestDto.Email, "");
             var result = await _userManager.CreateAsync(user, signUpWithPasswordRequestDto.Password);
 
             return Ok(result.Errors);

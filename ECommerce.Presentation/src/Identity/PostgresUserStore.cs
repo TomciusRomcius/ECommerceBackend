@@ -74,7 +74,7 @@ namespace ECommerce.Identity
 
             if (user is not null)
             {
-                result = new ApplicationUser(user.UserId, user.Email, user.PasswordHash);
+                result = new ApplicationUser(user.Firstname, user.Lastname, user.UserId, user.Email, user.PasswordHash);
             }
 
             return result;
@@ -186,15 +186,7 @@ namespace ECommerce.Identity
                 return null;
             }
 
-            return new ApplicationUser
-            {
-                UserName = normalizedEmail,
-                NormalizedEmail = user!.Email!,
-                PasswordHash = user.PasswordHash!,
-                Firstname = user.Firstname,
-                Lastname = user.Lastname,
-                Id = user.UserId.ToString()!
-            };
+            return new ApplicationUser(user.UserId, user.Firstname, user.Lastname, user.Email, user.PasswordHash);
         }
 
         public Task<string?> GetNormalizedEmailAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -254,7 +246,7 @@ namespace ECommerce.Identity
 
             foreach (var user in dbResult)
             {
-                users.Add(new ApplicationUser(user.UserId, user.Email, user.PasswordHash));
+                users.Add(new ApplicationUser(user.UserId, user.Firstname, user.Lastname, user.Email, user.PasswordHash));
             }
 
             return users;
