@@ -9,7 +9,7 @@ CREATE TABLE categories(
 );
 
 CREATE TABLE "users"(
-  userId uuid NOT NULL,
+  userId UUID NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   passwordHash VARCHAR(255) NOT NULL,
   firstname VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE roleTypes(
 );
 
 CREATE TABLE userRoles(
-  userId uuid NOT NULL,
+  userId UUID NOT NULL,
   roleTypeId INT NOT NULL,
   PRIMARY KEY (userId, roleTypeId),
   FOREIGN KEY (userId) REFERENCES users(userId),  
@@ -80,11 +80,11 @@ CREATE TABLE productStoreLocations(
 );
 
 CREATE TABLE cartProducts(
-  userId uuid NOT NULL,
+  userId UUID NOT NULL,
   productId INT NOT NULL UNIQUE,
   storeLocationId INT NOT NULL UNIQUE,
   quantity INT NOT NULL CHECK (quantity > 0),
-  PRIMARY KEY (userId, productId),
+  PRIMARY KEY (userId, productId, storeLocationId),
   FOREIGN KEY (userId) REFERENCES "users"(userId) ON DELETE CASCADE,
   FOREIGN KEY (productId, storeLocationId) REFERENCES productStoreLocations(productId, storeLocationId) ON DELETE CASCADE
 );
