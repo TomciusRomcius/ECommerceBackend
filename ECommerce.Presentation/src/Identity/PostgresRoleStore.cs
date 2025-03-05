@@ -78,8 +78,6 @@ namespace ECommerce.Identity
                 };
             }
 
-            _logger.LogInformation("Result {Result}", result?.ToString());
-
             return result;
         }
 
