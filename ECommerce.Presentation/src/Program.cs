@@ -43,7 +43,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-await Initialization.CreateDefaultRolesAndMasterUser(app);
+
+string? masterUserEmail = builder.Configuration["MASTER_USER_EMAIL"];
+string? masterUserPassword = builder.Configuration["MASTER_USER_PASSWORD"];
+await Initialization.CreateDefaultRolesAndMasterUser(app, builder.Configuration);
 
 app.MapControllers();
 

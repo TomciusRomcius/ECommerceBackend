@@ -5,12 +5,24 @@ namespace ECommerce.Initialization
 {
     public static class Initialization
     {
-        public static async Task CreateDefaultRolesAndMasterUser(WebApplication app)
+        public static async Task CreateDefaultRolesAndMasterUser(WebApplication app, ConfigurationManager configuration)
         {
             using (var scope = app.Services.CreateScope())
             {
+                string? email = configuration["MASTER_USER_EMAIL"];
+                string? password = configuration["MASTER_USER_PASSWORD"];
+
+                if (email is null)
+                {
+                    throw new ArgumentNullException("Master user email cannot be null");
+                }
+                if (password is null)
+                {
+                    throw new ArgumentNullException("Master user password cannot be null");
+                }
+
                 await CreateDefaultRoles(scope);
-                await CreateDefaultMasterUser(scope);
+                await CreateDefaultMasterUser(scope, email, password);
             }
         }
 
@@ -34,7 +46,7 @@ namespace ECommerce.Initialization
             }
         }
 
-        private static async Task CreateDefaultMasterUser(IServiceScope scope)
+        private static async Task CreateDefaultMasterUser(IServiceScope scope, string email, string password)
         {
             // TODO: use secrets for this
             var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
@@ -44,14 +56,14 @@ namespace ECommerce.Initialization
                 throw new InvalidOperationException("User manager is null!");
             }
 
-            ApplicationUser? user = await userManager.FindByEmailAsync("masteruser@gmail.com");
+            ApplicationUser? user = await userManager.FindByEmailAsync(email);
 
             if (user is null)
             {
                 // Pasword gets set in CreateAsync
-                user = new ApplicationUser("master", "master", "masteruser@gmail.com", "");
+                user = new ApplicationUser("master", "master", email, "");
 
-                var result = await userManager.CreateAsync(user, "Masterpassword.55");
+                var result = await userManager.CreateAsync(user, password);
                 if (result.Errors.Count() > 0)
                 {
                     throw new Exception(result.Errors.ToString());
