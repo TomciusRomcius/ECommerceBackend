@@ -8,6 +8,7 @@ namespace ECommerce.Identity
         public string Lastname { get; set; }
         public ApplicationUser(string id, string firstname, string lastname, string email, string passwordHash) : base()
         {
+            UserName = email;
             Id = id;
             Firstname = firstname;
             Lastname = lastname;
@@ -17,6 +18,7 @@ namespace ECommerce.Identity
 
         public ApplicationUser(string firstname, string lastname, string email, string passwordHash) : base()
         {
+            UserName = email;
             Firstname = firstname;
             Lastname = lastname;
             Email = email;
