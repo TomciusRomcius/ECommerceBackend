@@ -48,7 +48,8 @@ namespace ECommerce.Initialization
 
             if (user is null)
             {
-                user = new ApplicationUser("masteruser@gmail.com", "masteruser@gmail.com", "master", "master");
+                // Pasword gets set in CreateAsync
+                user = new ApplicationUser("master", "master", "masteruser@gmail.com", "");
 
                 var result = await userManager.CreateAsync(user, "Masterpassword.55");
                 if (result.Errors.Count() > 0)
