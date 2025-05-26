@@ -1,4 +1,6 @@
 using System.Data;
+using ECommerce.Application.Interfaces;
+using ECommerce.Application.Services;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Repositories;
@@ -53,7 +55,6 @@ public static class DataAccessInitialization
         string? webhookSignature = builder.Configuration["STRIPE_WEBHOOK_SIGNATURE"];
 
         if (stripeApiKey is null) throw new DataException("Stripe api key is undefined!");
-
         if (webhookSignature is null) throw new DataException("Stripe webhook signature is undefined!");
 
         builder.Services.AddSingleton<StripeSettings>(_ => new StripeSettings
@@ -63,5 +64,6 @@ public static class DataAccessInitialization
         });
 
         builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
+        builder.Services.AddSingleton<IWebhookCoordinatorService, WebhookCoordinatorService>();
     }
 }

@@ -1,9 +1,4 @@
-using System.Data;
 using ECommerce.Application.Interfaces;
-using ECommerce.Application.UseCases.PaymentSession.Notifications;
-using ECommerce.Domain.Enums;
-using ECommerce.Domain.Interfaces.Services;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Presentation.PaymentSession;
@@ -12,13 +7,11 @@ namespace ECommerce.Presentation.PaymentSession;
 [Route("[controller]")]
 public class PaymentSessionController : ControllerBase
 {
-    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IWebhookCoordinatorService _webhookCoordinatorService;
 
-    public PaymentSessionController(IBackgroundTaskQueue backgroundTaskQueue, IServiceScopeFactory serviceScopeFactory)
+    public PaymentSessionController(IWebhookCoordinatorService webhookCoordinatorService)
     {
-        _backgroundTaskQueue = backgroundTaskQueue;
-        _serviceScopeFactory = serviceScopeFactory;
+        _webhookCoordinatorService = webhookCoordinatorService;
     }
 
     [HttpPost("webhook")]
@@ -26,24 +19,11 @@ public class PaymentSessionController : ControllerBase
     {
         string json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
         string? signature = Request.Headers["Stripe-Signature"];
-
-        Func<CancellationToken, ValueTask> task = async cancellationToken =>
+        if (String.IsNullOrWhiteSpace(json) || String.IsNullOrWhiteSpace(signature))
         {
-            using IServiceScope? scope = _serviceScopeFactory.CreateScope();
-            var mediator = scope.ServiceProvider.GetService<IMediator>();
-            var paymentSessionFactory = scope.ServiceProvider.GetService<IPaymentSessionFactory>();
-
-            if (mediator is null || paymentSessionFactory is null)
-                throw new DataException("Payment session factory is null");
-            // TODO: handle this as the user might have payed but the charge isn't being processesd
-            IPaymentSessionService paymentSessionService =
-                paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
-
-            await mediator.Publish(new WebhookNotification(json, signature, paymentSessionService), cancellationToken);
-        };
-
-        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(task);
-
+            return Forbid();
+        }
+        await _webhookCoordinatorService.HandlePaymentWebhook(json, signature);
         return Ok();
     }
 }
