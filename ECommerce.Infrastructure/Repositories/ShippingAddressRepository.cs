@@ -1,105 +1,105 @@
 using System.Data;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
-using ECommerce.Domain.Entities.ShippingAddress;
-using ECommerce.Domain.Models.ShippingAddress;
-using ECommerce.Domain.Repositories.ShippingAddress;
 
-namespace ECommerce.Infrastructure.Repositories.ShippingAddress
+namespace ECommerce.Infrastructure.Repositories;
+
+public class ShippingAddressRepository : IShippingAddressRepository
 {
-    public class ShippingAddressRepository : IShippingAddressRepository
+    private readonly IPostgresService _postgresService;
+
+    public ShippingAddressRepository(IPostgresService postgresService)
     {
-        readonly IPostgresService _postgresService;
+        _postgresService = postgresService;
+    }
 
-        public ShippingAddressRepository(IPostgresService postgresService)
-        {
-            _postgresService = postgresService;
-        }
-
-        public async Task AddAddressAsync(ShippingAddressEntity addressModel)
-        {
-            string query = @"
+    public async Task AddAddressAsync(ShippingAddressEntity addressModel)
+    {
+        var query = @"
                 INSERT INTO shippingAddresses
                 (userId, recipientName, streetAddress, apartmentUnit, country, city, state, postalCode, mobileNumber)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING shippingAddressId;
             ";
 
-            // TODO: add apartment
-            QueryParameter[] parameters = [
-                new QueryParameter(new Guid(addressModel.UserId)),
-                new QueryParameter(addressModel.RecipientName),
-                new QueryParameter(addressModel.StreetAddress),
-                new QueryParameter(addressModel.ApartmentUnit),
-                new QueryParameter(addressModel.Country),
-                new QueryParameter(addressModel.City),
-                new QueryParameter(addressModel.State),
-                new QueryParameter(addressModel.PostalCode),
-                new QueryParameter(addressModel.MobileNumber),
-            ];
+        // TODO: add apartment
+        QueryParameter[] parameters =
+        [
+            new(new Guid(addressModel.UserId)),
+            new(addressModel.RecipientName),
+            new(addressModel.StreetAddress),
+            new(addressModel.ApartmentUnit),
+            new(addressModel.Country),
+            new(addressModel.City),
+            new(addressModel.State),
+            new(addressModel.PostalCode),
+            new(addressModel.MobileNumber)
+        ];
 
-            object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+        object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            if (id is not null)
-            {
-                addressModel.ShippingAddressId = Convert.ToInt64(id);
-            }
+        if (id is not null)
+            addressModel.ShippingAddressId = Convert.ToInt64(id);
 
-            else throw new DataException("shippingAddressId is null!");
-        }
+        else throw new DataException("shippingAddressId is null!");
+    }
 
-        public async Task DeleteAddressAsync(string userId)
-        {
-            string query = @"
+    public async Task DeleteAddressAsync(string userId)
+    {
+        var query = @"
                 DELETE FROM shippingAddress WHERE userId = $1;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(new Guid(userId)),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(new Guid(userId))
+        ];
 
-            await _postgresService.ExecuteAsync(query, parameters);
-        }
+        await _postgresService.ExecuteAsync(query, parameters);
+    }
 
-        public async Task<List<ShippingAddressEntity>> GetAddresses(string userId)
-        {
-            string query = @"
+    public async Task<List<ShippingAddressEntity>> GetAddresses(string userId)
+    {
+        var query = @"
                 SELECT * from shippingAddresses WHERE userId = $1;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(new Guid(userId)),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(new Guid(userId))
+        ];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            List<ShippingAddressEntity> result = new List<ShippingAddressEntity>();
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        var result = new List<ShippingAddressEntity>();
 
-            foreach (var row in rows)
+        foreach (Dictionary<string, object> row in rows)
+        {
+            var address = new ShippingAddressEntity
             {
-                var address = new ShippingAddressEntity
-                {
-                    ShippingAddressId = row.GetColumn<Int64>("shippingaddressid"),
-                    UserId = row.GetColumn<Guid>("userid").ToString(),
-                    RecipientName = row.GetColumn<string>("recipientname"),
-                    StreetAddress = row.GetColumn<string>("streetaddress"),
-                    ApartmentUnit = row.GetColumn<string?>("apartmentunit"),
-                    City = row.GetColumn<string>("city"),
-                    State = row.GetColumn<string>("state"),
-                    PostalCode = row.GetColumn<string>("postalcode"),
-                    Country = row.GetColumn<string>("country"),
-                    MobileNumber = row.GetColumn<string>("mobilenumber"),
-                };
+                ShippingAddressId = row.GetColumn<long>("shippingaddressid"),
+                UserId = row.GetColumn<Guid>("userid").ToString(),
+                RecipientName = row.GetColumn<string>("recipientname"),
+                StreetAddress = row.GetColumn<string>("streetaddress"),
+                ApartmentUnit = row.GetColumn<string?>("apartmentunit"),
+                City = row.GetColumn<string>("city"),
+                State = row.GetColumn<string>("state"),
+                PostalCode = row.GetColumn<string>("postalcode"),
+                Country = row.GetColumn<string>("country"),
+                MobileNumber = row.GetColumn<string>("mobilenumber")
+            };
 
-                result.Add(address);
-            }
-
-            return result;
+            result.Add(address);
         }
 
-        public async Task UpdateAddressAsync(UpdateShippingAddressModel updateAddressModel)
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task UpdateAddressAsync(UpdateShippingAddressModel updateAddressModel)
+    {
+        var query = @"
                 UPDATE shippingAddresses
                 SET
                 recipientName = COALESCE($1, recipientName),
@@ -113,20 +113,20 @@ namespace ECommerce.Infrastructure.Repositories.ShippingAddress
                 WHERE userId = $9 AND addressId = $10;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(updateAddressModel.RecipientName),
-                new QueryParameter(updateAddressModel.StreetAddress),
-                new QueryParameter(updateAddressModel.ApartmentUnit),
-                new QueryParameter(updateAddressModel.Country),
-                new QueryParameter(updateAddressModel.City),
-                new QueryParameter(updateAddressModel.State),
-                new QueryParameter(updateAddressModel.PostalCode),
-                new QueryParameter(updateAddressModel.MobileNumber),
-                new QueryParameter(new Guid(updateAddressModel.UserId)),
-                new QueryParameter(updateAddressModel.ShippingAddressId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(updateAddressModel.RecipientName),
+            new(updateAddressModel.StreetAddress),
+            new(updateAddressModel.ApartmentUnit),
+            new(updateAddressModel.Country),
+            new(updateAddressModel.City),
+            new(updateAddressModel.State),
+            new(updateAddressModel.PostalCode),
+            new(updateAddressModel.MobileNumber),
+            new(new Guid(updateAddressModel.UserId)),
+            new(updateAddressModel.ShippingAddressId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
     }
 }

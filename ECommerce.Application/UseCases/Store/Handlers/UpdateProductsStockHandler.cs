@@ -1,21 +1,20 @@
 using ECommerce.Application.UseCases.Store.Commands;
-using ECommerce.Domain.Repositories.ProductStoreLocation;
+using ECommerce.Domain.Repositories;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.Store.Handlers
+namespace ECommerce.Application.UseCases.Store.Handlers;
+
+public class UpdateProductsStockHandler : IRequestHandler<UpdateProductStockCommand>
 {
-    public class UpdateProductsStockHandler : IRequestHandler<UpdateProductStockCommand>
+    private readonly IProductStoreLocationRepository _productStoreLocationRepository;
+
+    public UpdateProductsStockHandler(IProductStoreLocationRepository productStoreLocationRepository)
     {
-        readonly IProductStoreLocationRepository _productStoreLocationRepository;
+        _productStoreLocationRepository = productStoreLocationRepository;
+    }
 
-        public UpdateProductsStockHandler(IProductStoreLocationRepository productStoreLocationRepository)
-        {
-            _productStoreLocationRepository = productStoreLocationRepository;
-        }
-
-        public async Task Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
-        {
-            await _productStoreLocationRepository.UpdateProduct(request.ProductStoreLocation);
-        }
+    public async Task Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
+    {
+        await _productStoreLocationRepository.UpdateProduct(request.ProductStoreLocation);
     }
 }

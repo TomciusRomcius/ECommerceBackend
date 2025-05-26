@@ -1,8 +1,6 @@
-using ECommerce.Domain.Entities.ProductStoreLocation;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.Store.Commands
-{
-    public record UpdateProductStockCommand(ProductStoreLocationEntity ProductStoreLocation) : IRequest;
+namespace ECommerce.Application.UseCases.Store.Commands;
 
-}
+public record UpdateProductStockCommand(ProductStoreLocationEntity ProductStoreLocation) : IRequest;

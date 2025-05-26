@@ -1,8 +1,7 @@
-using ECommerce.Domain.Entities.StoreLocation;
-using ECommerce.Domain.Models.StoreLocation;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.StoreLocation.Commands
-{
-    public record CreateStoreLocationCommand(CreateStoreLocationModel StoreLocation) : IRequest<StoreLocationEntity?>;
-}
+namespace ECommerce.Application.UseCases.StoreLocation.Commands;
+
+public record CreateStoreLocationCommand(CreateStoreLocationModel StoreLocation) : IRequest<StoreLocationEntity?>;

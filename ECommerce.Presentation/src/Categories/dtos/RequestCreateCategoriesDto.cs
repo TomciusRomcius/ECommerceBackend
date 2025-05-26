@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Categories
+namespace ECommerce.Presentation.Categories.dtos;
+
+public class RequestCreateCategoryDto
 {
-    public class RequestCreateCategoryDto
-    {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Name cannot be empty")]
-        public required string Name { get; set; }
-    }
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name cannot be empty")]
+    public required string Name { get; set; }
 }

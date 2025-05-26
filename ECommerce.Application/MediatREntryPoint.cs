@@ -1,4 +1,5 @@
-namespace ECommerce.Application
+namespace ECommerce.Application;
+
+public class MediatREntryPoint
 {
-    public class MediatREntryPoint { }
 }

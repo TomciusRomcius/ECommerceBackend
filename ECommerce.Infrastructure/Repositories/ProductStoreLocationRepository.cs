@@ -1,196 +1,191 @@
 using System.Text;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
-using ECommerce.Domain.Entities.CartProduct;
-using ECommerce.Domain.Entities.ProductStoreLocation;
-using ECommerce.Domain.Models.ProductStoreLocation;
-using ECommerce.Domain.Repositories.ProductStoreLocation;
 
-namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
+namespace ECommerce.Infrastructure.Repositories;
+
+public class ProductStoreLocationRepository : IProductStoreLocationRepository
 {
-    public class ProductStoreLocationRepository : IProductStoreLocationRepository
+    private readonly IPostgresService _postgresService;
+
+    public ProductStoreLocationRepository(IPostgresService postgresService)
     {
-        readonly IPostgresService _postgresService;
+        _postgresService = postgresService;
+    }
 
-        public ProductStoreLocationRepository(IPostgresService postgresService)
-        {
-            _postgresService = postgresService;
-        }
-
-        public async Task AddProductToStore(ProductStoreLocationEntity model)
-        {
-            string query = @"
+    public async Task AddProductToStore(ProductStoreLocationEntity model)
+    {
+        var query = @"
                 INSERT INTO productStoreLocations (storeLocationId, productId, stock)
                 VALUES ($1, $2, $3);
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(model.StoreLocationId),
-                new QueryParameter(model.ProductId),
-                new QueryParameter(model.Stock)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(model.StoreLocationId),
+            new(model.ProductId),
+            new(model.Stock)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
+    }
 
-        public async Task<List<int>> GetProductIdsFromStoreAsync(int storeLocationId)
-        {
-            string query = @"
+    public async Task<List<int>> GetProductIdsFromStoreAsync(int storeLocationId)
+    {
+        var query = @"
                 SELECT productId FROM productStoreLocations WHERE storeLocationId = $1;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter(storeLocationId)];
+        QueryParameter[] parameters = [new(storeLocationId)];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            List<int> result = new List<int>();
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        var result = new List<int>();
 
-            foreach (var row in rows)
-            {
-                result.Add(row.GetColumn<int>("productid"));
-            }
+        foreach (Dictionary<string, object> row in rows) result.Add(row.GetColumn<int>("productid"));
 
-            return result;
-        }
+        return result;
+    }
 
-        public async Task<List<DetailedProductModel>> GetProductsFromStoreAsync(int storeLocationId)
-        {
-            string query = @"
+    public async Task<List<DetailedProductModel>> GetProductsFromStoreAsync(int storeLocationId)
+    {
+        var query = @"
                 SELECT * FROM productStoreLocations
                 INNER JOIN products
                 ON productStoreLocations.productId = products.productId
                 WHERE storeLocationId = $1;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter(storeLocationId)];
+        QueryParameter[] parameters = [new(storeLocationId)];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            List<DetailedProductModel> result = new List<DetailedProductModel>();
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        var result = new List<DetailedProductModel>();
 
-            foreach (var row in rows)
-            {
-                var model = new DetailedProductModel(
-                    row.GetColumn<int>("productid"),
-                    row.GetColumn<string>("name"),
-                    row.GetColumn<string>("description"),
-                    row.GetColumn<decimal>("price"), // TODO: decimal
-                    row.GetColumn<int>("manufacturerid"),
-                    row.GetColumn<int>("categoryid"),
-                    row.GetColumn<int>("stock")
-                );
+        foreach (Dictionary<string, object> row in rows)
+        {
+            var model = new DetailedProductModel(
+                row.GetColumn<int>("productid"),
+                row.GetColumn<string>("name"),
+                row.GetColumn<string>("description"),
+                row.GetColumn<decimal>("price"), // TODO: decimal
+                row.GetColumn<int>("manufacturerid"),
+                row.GetColumn<int>("categoryid"),
+                row.GetColumn<int>("stock")
+            );
 
-                result.Add(model);
-            }
-
-            return result;
+            result.Add(model);
         }
 
-        public async Task<List<ProductStoreLocationEntity>> GetProductsFromStoreAsync(List<(int, int)> storeLocationIdProductId)
-        {
-            if (storeLocationIdProductId.Count == 0) return [];
+        return result;
+    }
 
-            var queryBuilder = new StringBuilder();
-            queryBuilder.AppendLine(@"
+    public async Task<List<ProductStoreLocationEntity>> GetProductsFromStoreAsync(
+        List<(int, int)> storeLocationIdProductId)
+    {
+        if (storeLocationIdProductId.Count == 0) return [];
+
+        var queryBuilder = new StringBuilder();
+        queryBuilder.AppendLine(@"
                 SELECT * FROM productStoreLocations
                 WHERE (storeLocationId = $1 AND productId = $2)
             ");
 
-            List<QueryParameter> parameters = [
-                new(storeLocationIdProductId[0].Item1),
-                new(storeLocationIdProductId[0].Item2)
-            ];
+        List<QueryParameter> parameters =
+        [
+            new(storeLocationIdProductId[0].Item1),
+            new(storeLocationIdProductId[0].Item2)
+        ];
 
-            int index = 1;
-            for (int i = 0; i < storeLocationIdProductId.Count(); i++)
-            {
-                (int, int) entry = storeLocationIdProductId[i];
+        var index = 1;
+        for (var i = 0; i < storeLocationIdProductId.Count(); i++)
+        {
+            (int, int) entry = storeLocationIdProductId[i];
 
-                queryBuilder.AppendLine($"OR (storeLocationId = ${index} AND productId = ${index + 1})");
-                parameters.Add(new QueryParameter(entry.Item1));
-                parameters.Add(new QueryParameter(entry.Item2));
-                index++;
-            }
-
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(queryBuilder.ToString(), parameters.ToArray());
-            List<ProductStoreLocationEntity> result = new List<ProductStoreLocationEntity>();
-
-            foreach (var row in rows)
-            {
-                var model = new ProductStoreLocationEntity(
-                    row.GetColumn<int>("storelocationid"),
-                    row.GetColumn<int>("productid"),
-                    row.GetColumn<int>("stock")
-                );
-
-                result.Add(model);
-            }
-
-            return result;
+            queryBuilder.AppendLine($"OR (storeLocationId = ${index} AND productId = ${index + 1})");
+            parameters.Add(new QueryParameter(entry.Item1));
+            parameters.Add(new QueryParameter(entry.Item2));
+            index++;
         }
 
-        public async Task RemoveProductFromStore(int storeLocationId, int productId)
+        List<Dictionary<string, object>> rows =
+            await _postgresService.ExecuteAsync(queryBuilder.ToString(), parameters.ToArray());
+        var result = new List<ProductStoreLocationEntity>();
+
+        foreach (Dictionary<string, object> row in rows)
         {
-            string query = @"
+            var model = new ProductStoreLocationEntity(
+                row.GetColumn<int>("storelocationid"),
+                row.GetColumn<int>("productid"),
+                row.GetColumn<int>("stock")
+            );
+
+            result.Add(model);
+        }
+
+        return result;
+    }
+
+    public async Task RemoveProductFromStore(int storeLocationId, int productId)
+    {
+        var query = @"
                 DELETE FROM productStoreLocations WHERE storeLocationId = $1 AND productId = $2;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(storeLocationId),
-                new QueryParameter(productId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(storeLocationId),
+            new(productId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
+    }
 
-        public async Task UpdateProduct(ProductStoreLocationEntity model)
-        {
-            string query = @"
+    public async Task UpdateProduct(ProductStoreLocationEntity model)
+    {
+        var query = @"
                 UPDATE productStoreLocations
                 SET
                 stock = COALESCE($1, stock)
                 WHERE storeLocationId = $1 AND productId = $2;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(model.Stock),
-                new QueryParameter(model.StoreLocationId),
-                new QueryParameter(model.ProductId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(model.Stock),
+            new(model.StoreLocationId),
+            new(model.ProductId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
+        await _postgresService.ExecuteScalarAsync(query, parameters);
+    }
+
+    public async Task UpdateStock(List<CartProductEntity> cartProducts)
+    {
+        if (cartProducts.Count == 0) return;
+
+        var queryValues = new StringBuilder();
+
+        var parameters = new List<QueryParameter>();
+
+        queryValues.Append("VALUES ");
+
+        for (var i = 0; i < cartProducts.Count(); i++)
+        {
+            queryValues.Append($"(${i * 3 + 1}, ${i * 3 + 2}, ${i * 3 + 3})");
+
+            if (i != cartProducts.Count() - 1) queryValues.Append(",");
+
+            CartProductEntity entry = cartProducts[i];
+
+
+            parameters.Add(new QueryParameter(entry.StoreLocationId));
+            parameters.Add(new QueryParameter(entry.ProductId));
+            parameters.Add(new QueryParameter(entry.Quantity));
         }
 
-        public async Task UpdateStock(List<CartProductEntity> cartProducts)
-        {
-            if (cartProducts.Count == 0)
-            {
-                return;
-            }
-
-            StringBuilder queryValues = new StringBuilder();
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-
-            queryValues.Append("VALUES ");
-
-            for (int i = 0; i < cartProducts.Count(); i++)
-            {
-                queryValues.Append($"(${(i * 3) + 1}, ${(i * 3) + 2}, ${(i * 3) + 3})");
-
-                if (i != cartProducts.Count() - 1)
-                {
-                    queryValues.Append(",");
-                }
-
-                var entry = cartProducts[i];
-
-
-                parameters.Add(new QueryParameter(entry.StoreLocationId));
-                parameters.Add(new QueryParameter(entry.ProductId));
-                parameters.Add(new QueryParameter(entry.Quantity));
-            }
-
-            string queryBuilder = @$"
+        var queryBuilder = @$"
                 UPDATE productStoreLocations as a
                 SET stock = GREATEST(0, stock - b.dStock)
                 FROM (
@@ -199,7 +194,6 @@ namespace ECommerce.Infrastructure.Repositories.ProductStoreLocation
                 WHERE a.storeLocationId = b.storeLocationId AND a.productId = b.productId;
             ";
 
-            await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
-        }
+        await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
     }
 }

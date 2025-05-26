@@ -1,53 +1,53 @@
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
-using ECommerce.Domain.Entities.Product;
-using ECommerce.Domain.Models.Product;
-using ECommerce.Domain.Repositories.Product;
 
-namespace ECommerce.Infrastructure.Repositories
+namespace ECommerce.Infrastructure.Repositories;
+
+public class ProductRepository : IProductRepository
 {
-    public class ProductRepository : IProductRepository
+    private readonly IPostgresService _postgresService;
+
+    public ProductRepository(IPostgresService postgresService)
     {
-        readonly IPostgresService _postgresService;
+        _postgresService = postgresService;
+    }
 
-        public ProductRepository(IPostgresService postgresService)
-        {
-            _postgresService = postgresService;
-        }
-
-        public async Task<ProductEntity?> CreateAsync(ProductEntity product)
-        {
-            string query = @"
+    public async Task<ProductEntity?> CreateAsync(ProductEntity product)
+    {
+        var query = @"
                     INSERT INTO products(name, description, price, manufacturerId, categoryId) 
                     VALUES ($1, $2, $3, $4, $5)
                     RETURNING productId;
                 ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(product.Name),
-                new QueryParameter(product.Description),
-                new QueryParameter(product.Price),
-                new QueryParameter(product.ManufacturerId),
-                new QueryParameter(product.CategoryId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(product.Name),
+            new(product.Description),
+            new(product.Price),
+            new(product.ManufacturerId),
+            new(product.CategoryId)
+        ];
 
-            ProductEntity? result = null;
+        ProductEntity? result = null;
 
-            object? id = await _postgresService.ExecuteScalarAsync(query.ToString(), parameters.ToArray());
+        object? id = await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
 
-            if (id is int)
-            {
-                result = product;
-                result.ProductId = Convert.ToInt32(id);
-            }
-
-            return result;
+        if (id is int)
+        {
+            result = product;
+            result.ProductId = Convert.ToInt32(id);
         }
 
-        public async Task UpdateAsync(UpdateProductModel product)
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task UpdateAsync(UpdateProductModel product)
+    {
+        var query = @"
                     UPDATE products
                     SET name = COALESCE($1, name)
                     SET description = COALESCE($2, description)
@@ -57,89 +57,86 @@ namespace ECommerce.Infrastructure.Repositories
                     WHERE productId = $6;
                 ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(product.Name),
-                new QueryParameter(product.Description),
-                new QueryParameter(product.Price),
-                new QueryParameter(product.ManufacturerId),
-                new QueryParameter(product.CategoryId),
-                new QueryParameter(product.ProductId),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(product.Name),
+            new(product.Description),
+            new(product.Price),
+            new(product.ManufacturerId),
+            new(product.CategoryId),
+            new(product.ProductId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query.ToString(), parameters.ToArray());
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
+    }
 
-        public async Task DeleteAsync(int productId)
-        {
-            string query = @"
+    public async Task DeleteAsync(int productId)
+    {
+        var query = @"
                     DELETE FROM products WHERE productId = $1; 
                 ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(productId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(productId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query.ToString(), parameters.ToArray());
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
+    }
 
-        public Task<ProductEntity?> FindByIdAsync(int productId)
-        {
-            throw new NotImplementedException();
-        }
+    public Task<ProductEntity?> FindByIdAsync(int productId)
+    {
+        throw new NotImplementedException();
+    }
 
-        public async Task<ProductEntity?> FindByNameAsync(string productName)
-        {
-            string query = @"
+    public async Task<ProductEntity?> FindByNameAsync(string productName)
+    {
+        var query = @"
                 SELECT * FROM products;
             ";
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query.ToString());
-            ProductEntity? result = null;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
+        ProductEntity? result = null;
 
-            var row = rows[0];
+        Dictionary<string, object>? row = rows[0];
 
-            if (row is not null)
-            {
-                result = new ProductEntity(
-                    row.GetColumn<int>("productid"),
-                    row.GetColumn<string>("name"),
-                    row.GetColumn<string>("description"),
-                    row.GetColumn<decimal>("price"), // TODO: decimal
-                    row.GetColumn<int>("manufacturerid"),
-                    row.GetColumn<int>("categoryid")
-                );
-            }
+        if (row is not null)
+            result = new ProductEntity(
+                row.GetColumn<int>("productid"),
+                row.GetColumn<string>("name"),
+                row.GetColumn<string>("description"),
+                row.GetColumn<decimal>("price"), // TODO: decimal
+                row.GetColumn<int>("manufacturerid"),
+                row.GetColumn<int>("categoryid")
+            );
 
-            return result;
-        }
+        return result;
+    }
 
-        public async Task<List<ProductEntity>> GetAll()
-        {
-            string query = @"
+    public async Task<List<ProductEntity>> GetAll()
+    {
+        var query = @"
                 SELECT * FROM products;
             ";
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query.ToString());
-            List<ProductEntity> result = new List<ProductEntity>();
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
+        List<ProductEntity> result = new List<ProductEntity>();
 
-            foreach (var row in rows)
-            {
-                result.Add(new ProductEntity(
-                    row.GetColumn<int>("productid"),
-                    row.GetColumn<string>("name"),
-                    row.GetColumn<string>("description"),
-                    row.GetColumn<decimal>("price"), // TODO: decimal
-                    row.GetColumn<int>("manufacturerid"),
-                    row.GetColumn<int>("categoryid")
-                ));
-            }
+        foreach (Dictionary<string, object> row in rows)
+            result.Add(new ProductEntity(
+                row.GetColumn<int>("productid"),
+                row.GetColumn<string>("name"),
+                row.GetColumn<string>("description"),
+                row.GetColumn<decimal>("price"), // TODO: decimal
+                row.GetColumn<int>("manufacturerid"),
+                row.GetColumn<int>("categoryid")
+            ));
 
-            return result;
-        }
+        return result;
+    }
 
-        public Task<List<ProductEntity>> GetAllInCategory(int categoryId)
-        {
-            throw new NotImplementedException();
-        }
+    public Task<List<ProductEntity>> GetAllInCategory(int categoryId)
+    {
+        throw new NotImplementedException();
     }
 }

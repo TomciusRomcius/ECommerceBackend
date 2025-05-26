@@ -1,14 +1,13 @@
-namespace ECommerce.Domain.Models.StoreLocation
-{
-    public class CreateStoreLocationModel
-    {
-        public string DisplayName { get; set; }
-        public string Address { get; set; }
+namespace ECommerce.Domain.Models;
 
-        public CreateStoreLocationModel(string displayName, string address)
-        {
-            DisplayName = displayName;
-            Address = address;
-        }
+public class CreateStoreLocationModel
+{
+    public CreateStoreLocationModel(string displayName, string address)
+    {
+        DisplayName = displayName;
+        Address = address;
     }
+
+    public string DisplayName { get; set; }
+    public string Address { get; set; }
 }

@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>cc5c5ce1-f2d5-4df3-8062-78fe6aa73a00</UserSecretsId>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>1591</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>cc5c5ce1-f2d5-4df3-8062-78fe6aa73a00</UserSecretsId>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1591</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" />
-    <ProjectReference Include="../ECommerce.Application/ECommerce.Application.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../ECommerce.Infrastructure/ECommerce.Infrastructure.csproj"/>
+        <ProjectReference Include="../ECommerce.Application/ECommerce.Application.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="7.2.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="7.2.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0"/>
+    </ItemGroup>
 
 </Project>

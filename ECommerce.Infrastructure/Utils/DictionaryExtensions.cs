@@ -1,32 +1,26 @@
 using System.Data;
 
-namespace ECommerce.Infrastructure.Utils.DictionaryExtensions
+namespace ECommerce.Infrastructure.Utils;
+
+public static class DbDictionaryExtensions
 {
-    public static class DbDictionaryExtensions
+    /// <summary>
+    ///     Converts column name to lower case and throws error if result is not of type T
+    /// </summary>
+    public static T GetColumn<T>(this Dictionary<string, object> dict, string columnName)
     {
-        /// <summary>
-        /// Converts column name to lower case and throws error if result is not of type T
-        /// </summary>
-        public static T GetColumn<T>(this Dictionary<string, object> dict, string columnName)
-        {
-            string col = columnName.ToLower();
+        string col = columnName.ToLower();
 
-            object? result;
+        object? result;
 
-            dict.TryGetValue(col, out result);
+        dict.TryGetValue(col, out result);
 
-            if (result is DBNull)
-            {
-                return default;
-            }
+        if (result is DBNull) return default;
 
-            if (result is not T)
-            {
-                throw new DataException($@"Column '{col}' does not satisfy expected type.
+        if (result is not T)
+            throw new DataException($@"Column '{col}' does not satisfy expected type.
                                         Expected type: {typeof(T)} Received type: {result?.GetType()}");
-            }
 
-            return (T)result;
-        }
+        return (T)result;
     }
 }

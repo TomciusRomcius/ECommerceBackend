@@ -1,50 +1,46 @@
 using ECommerce.Infrastructure.Services;
 using Testcontainers.PostgreSql;
 
-namespace ECommerce.TestUtils.TestDatabase
+namespace TestUtils;
+
+public class TestDatabase
 {
-    public class TestDatabase
+    public TestDatabase()
     {
-        public PostgreSqlContainer _postgresContainer { get; set; }
-        public PostgresService _postgresService { get; set; }
+        Task? initializationTask = CreateAsync();
+        initializationTask.Wait();
+    }
 
-        public TestDatabase()
-        {
-            var initializationTask = CreateAsync();
-            initializationTask.Wait();
-        }
+    private TestDatabase(PostgreSqlContainer container, PostgresService postgresService)
+    {
+        _postgresContainer = container;
+        _postgresService = postgresService;
+    }
 
-        private TestDatabase(PostgreSqlContainer container, PostgresService postgresService)
-        {
-            _postgresContainer = container;
-            _postgresService = postgresService;
-        }
+    public PostgreSqlContainer _postgresContainer { get; set; }
+    public PostgresService _postgresService { get; set; }
 
-        public async Task CreateAsync()
-        {
-            string? solutionRoot = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.FullName;
-            if (solutionRoot is null)
-            {
-                throw new FileLoadException("Couldn't find solution root path");
-            }
-            var initSqlPath = Path.Combine(solutionRoot ?? "", "sql-init", "init.sql");
+    public async Task CreateAsync()
+    {
+        string? solutionRoot = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.FullName;
+        if (solutionRoot is null) throw new FileLoadException("Couldn't find solution root path");
+        string initSqlPath = Path.Combine(solutionRoot ?? "", "sql-init", "init.sql");
 
-            _postgresContainer = new PostgreSqlBuilder()
+        _postgresContainer = new PostgreSqlBuilder()
             .WithDatabase("test")
             .WithUsername("test")
             .WithPassword("test")
             .WithResourceMapping(initSqlPath, "/docker-entrypoint-initdb.d")
             .Build();
 
-            await _postgresContainer.StartAsync();
+        await _postgresContainer.StartAsync();
 
 
-            _postgresService = new PostgresService(_postgresContainer.GetConnectionString());
-        }
+        _postgresService = new PostgresService(_postgresContainer.GetConnectionString());
+    }
 
-        public async Task DisposeAsync()
-        {
-            await _postgresContainer.DisposeAsync();
-        }
+    public async Task DisposeAsync()
+    {
+        await _postgresContainer.DisposeAsync();
     }
 }

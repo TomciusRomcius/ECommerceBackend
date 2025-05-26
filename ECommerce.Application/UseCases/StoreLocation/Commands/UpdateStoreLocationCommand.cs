@@ -1,7 +1,6 @@
-using ECommerce.Domain.Models.StoreLocation;
+using ECommerce.Domain.Models;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.StoreLocation.Commands
-{
-    public record UpdateStoreLocationCommand(UpdateStoreLocationModel Updator) : IRequest;
-}
+namespace ECommerce.Application.UseCases.StoreLocation.Commands;
+
+public record UpdateStoreLocationCommand(UpdateStoreLocationModel Updator) : IRequest;

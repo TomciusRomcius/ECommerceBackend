@@ -1,30 +1,30 @@
-using ECommerce.TestUtils.TestDatabase;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ECommerce.Domain.Repositories.User;
-using ECommerce.Domain.Entities.User;
+using TestUtils;
 
-namespace DataAccess.Tests.Integration
+namespace ECommerce.Infrastructure.Tests.Integration;
+
+public class UserRepositoryIntegrationTest
 {
-    public class UserRepositoryIntegrationTest
+    [Fact]
+    public async Task ShouldSuccesfullyCreateAndRetrieveTheUser()
     {
-        [Fact]
-        public async Task ShouldSuccesfullyCreateAndRetrieveTheUser()
-        {
-            IUserRepository userRepository;
-            var testContainer = new TestDatabase();
-            userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
+        IUserRepository userRepository;
+        var testContainer = new TestDatabase();
+        userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
 
-            var id = new Guid();
-            await userRepository.CreateAsync(new UserEntity(id.ToString(), "email@gmail.com", "passwordhash", "firstname", "lastname"));
+        var id = new Guid();
+        await userRepository.CreateAsync(new UserEntity(id.ToString(), "email@gmail.com", "passwordhash", "firstname",
+            "lastname"));
 
-            var retrieved = await userRepository.FindByEmailAsync("email@gmail.com");
+        UserEntity? retrieved = await userRepository.FindByEmailAsync("email@gmail.com");
 
-            Assert.NotNull(retrieved);
-            Assert.Equal("email@gmail.com", retrieved.Email);
+        Assert.NotNull(retrieved);
+        Assert.Equal("email@gmail.com", retrieved.Email);
 
-            await testContainer.DisposeAsync();
-        }
+        await testContainer.DisposeAsync();
     }
 }

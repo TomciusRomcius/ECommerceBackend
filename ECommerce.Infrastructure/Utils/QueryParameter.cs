@@ -1,19 +1,18 @@
-namespace ECommerce.Infrastructure.Utils
+namespace ECommerce.Infrastructure.Utils;
+
+public class QueryParameter
 {
-    public class QueryParameter
+    public QueryParameter(object? value)
     {
-        public string? Key { get; set; } = null;
-        public object? Value { get; set; }
-
-        public QueryParameter(object? value)
-        {
-            Value = value;
-        }
-
-        public QueryParameter(string key, object? value)
-        {
-            Key = key;
-            Value = value;
-        }
+        Value = value;
     }
+
+    public QueryParameter(string key, object? value)
+    {
+        Key = key;
+        Value = value;
+    }
+
+    public string? Key { get; set; }
+    public object? Value { get; set; }
 }

@@ -1,36 +1,37 @@
-using ECommerce.Domain.Entities.Category;
-using ECommerce.Domain.Repositories.Category;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Repositories;
+using ECommerce.Presentation.Categories.dtos;
 
-namespace ECommerce.Categories
+namespace ECommerce.Presentation.Categories;
+
+public interface ICategoriesService
 {
-    public interface ICategoriesService
+    public Task<List<CategoryEntity>> GetAllCategories();
+
+    /// <summary>
+    ///     Returns a list of ids
+    /// </summary>
+    public Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto);
+}
+
+public class CategoriesService : ICategoriesService
+{
+    private readonly ICategoryRepository _categoryRepository;
+
+    public CategoriesService(ICategoryRepository categoryRepository)
     {
-        public Task<List<CategoryEntity>> GetAllCategories();
-        /// <summary>
-        /// Returns a list of ids
-        /// </summary>
-        public Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto);
+        _categoryRepository = categoryRepository;
     }
 
-    public class CategoriesService : ICategoriesService
+    public async Task<List<CategoryEntity>> GetAllCategories()
     {
-        readonly ICategoryRepository _categoryRepository;
+        return await _categoryRepository.GetAll();
+    }
 
-        public CategoriesService(ICategoryRepository categoryRepository)
-        {
-            _categoryRepository = categoryRepository;
-        }
-
-        public async Task<List<CategoryEntity>> GetAllCategories()
-        {
-            return await _categoryRepository.GetAll();
-        }
-
-        public async Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto)
-        {
-            return await _categoryRepository.CreateAsync(
-                createCategoryDto.Name
-            );
-        }
+    public async Task<CategoryEntity?> CreateCategory(RequestCreateCategoryDto createCategoryDto)
+    {
+        return await _categoryRepository.CreateAsync(
+            createCategoryDto.Name
+        );
     }
 }

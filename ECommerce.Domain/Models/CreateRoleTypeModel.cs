@@ -1,12 +1,11 @@
-namespace ECommerce.Domain.Models.RoleType
-{
-    public class CreateRoleTypeModel
-    {
-        public string Name { get; set; }
+namespace ECommerce.Domain.Models;
 
-        public CreateRoleTypeModel(string name)
-        {
-            Name = name;
-        }
+public class CreateRoleTypeModel
+{
+    public CreateRoleTypeModel(string name)
+    {
+        Name = name;
     }
+
+    public string Name { get; set; }
 }

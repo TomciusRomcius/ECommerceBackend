@@ -1,21 +1,20 @@
 using ECommerce.Application.UseCases.ShippingAddress.Commands;
-using ECommerce.Domain.Repositories.ShippingAddress;
+using ECommerce.Domain.Repositories;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.ShippingAddress.Handlers
+namespace ECommerce.Application.UseCases.ShippingAddress.Handlers;
+
+public class RemoveShippingAddressHandler : IRequestHandler<RemoveShippingAddressCommand>
 {
-    public class RemoveShippingAddressHandler : IRequestHandler<RemoveShippingAddressCommand>
+    private readonly IShippingAddressRepository _shippingAddressRepository;
+
+    public RemoveShippingAddressHandler(IShippingAddressRepository shippingAddressRepository)
     {
-        readonly IShippingAddressRepository _shippingAddressRepository;
+        _shippingAddressRepository = shippingAddressRepository;
+    }
 
-        public RemoveShippingAddressHandler(IShippingAddressRepository shippingAddressRepository)
-        {
-            _shippingAddressRepository = shippingAddressRepository;
-        }
-
-        public async Task Handle(RemoveShippingAddressCommand request, CancellationToken cancellationToken)
-        {
-            await _shippingAddressRepository.DeleteAddressAsync(request.UserId.ToString());
-        }
+    public async Task Handle(RemoveShippingAddressCommand request, CancellationToken cancellationToken)
+    {
+        await _shippingAddressRepository.DeleteAddressAsync(request.UserId.ToString());
     }
 }

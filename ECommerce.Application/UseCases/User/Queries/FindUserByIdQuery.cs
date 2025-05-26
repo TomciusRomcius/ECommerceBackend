@@ -1,7 +1,6 @@
-using ECommerce.Domain.Entities.User;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.User.Queries
-{
-    public record FindUserByIdQuery(Guid UserId) : IRequest<UserEntity>;
-}
+namespace ECommerce.Application.UseCases.User.Queries;
+
+public record FindUserByIdQuery(Guid UserId) : IRequest<UserEntity>;

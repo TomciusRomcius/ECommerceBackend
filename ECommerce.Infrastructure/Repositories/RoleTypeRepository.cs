@@ -1,113 +1,100 @@
 using System.Data;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Domain.Entities.RoleType;
-using ECommerce.Domain.Models.RoleType;
-using ECommerce.Domain.Repositories.RoleType;
 
-namespace ECommerce.Infrastructure.Repositories
+namespace ECommerce.Infrastructure.Repositories;
+
+public class RoleTypeRepository(IPostgresService _postgresService) : IRoleTypeRepository
 {
-    public class RoleTypeRepository(IPostgresService _postgresService) : IRoleTypeRepository
+    public async Task<RoleTypeEntity> CreateAsync(CreateRoleTypeModel roleType)
     {
+        if (roleType.Name.Length == 0) throw new ArgumentException("Role type name cannot be empty!");
 
-        public async Task<RoleTypeEntity> CreateAsync(CreateRoleTypeModel roleType)
-        {
-            if (roleType.Name.Length == 0)
-            {
-                throw new ArgumentException("Role type name cannot be empty!");
-            }
-
-            string query = @"
+        var query = @"
                 INSERT INTO roleTypes (name) 
                 VALUES (@name) 
                 RETURNING roleTypeId; 
             ";
-            QueryParameter[] parameters = [new QueryParameter("name", roleType.Name)];
-            object? dbId = await _postgresService.ExecuteScalarAsync(query, parameters);
+        QueryParameter[] parameters = [new("name", roleType.Name)];
+        object? dbId = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            if (dbId is int)
-            {
-                return new RoleTypeEntity(Convert.ToInt32(dbId), roleType.Name);
-            }
+        if (dbId is int) return new RoleTypeEntity(Convert.ToInt32(dbId), roleType.Name);
 
-            else
-            {
-                throw new DataException("Failed to create role type");
-            }
-        }
+        throw new DataException("Failed to create role type");
+    }
 
-        public async Task DeleteAsync(int roleTypeId)
-        {
-            string query = @"
+    public async Task DeleteAsync(int roleTypeId)
+    {
+        var query = @"
                 DELETE ONLY FROM roleTypes
                 WHERE roleTypeId = $1
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(roleTypeId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(roleTypeId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
+    }
 
-        public async Task<RoleTypeEntity?> FindByIdAsync(int roleTypeId)
-        {
-            RoleTypeEntity? result = null;
+    public async Task<RoleTypeEntity?> FindByIdAsync(int roleTypeId)
+    {
+        RoleTypeEntity? result = null;
 
-            string query = @"
+        var query = @"
                 SELECT * FROM roleTypes WHERE roleTypeId = @roleId;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter("roleId", roleTypeId)];
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            if (rows.Count > 0)
-            {
-                string? name = rows[0]["name"]?.ToString();
-                if (name is not null)
-                {
-                    result = new RoleTypeEntity(roleTypeId, name);
-                }
-            }
-
-            return result;
+        QueryParameter[] parameters = [new("roleId", roleTypeId)];
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        if (rows.Count > 0)
+        {
+            var name = rows[0]["name"]?.ToString();
+            if (name is not null) result = new RoleTypeEntity(roleTypeId, name);
         }
 
-        public async Task<RoleTypeEntity?> FindByNameAsync(string roleTypeName)
-        {
-            RoleTypeEntity? result = null;
+        return result;
+    }
 
-            string query = @"
+    public async Task<RoleTypeEntity?> FindByNameAsync(string roleTypeName)
+    {
+        RoleTypeEntity? result = null;
+
+        var query = @"
                 SELECT * FROM roleTypes WHERE name = @name;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter("name", roleTypeName)];
+        QueryParameter[] parameters = [new("name", roleTypeName)];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            if (rows.Count > 0 && rows[0].ContainsKey("roletypeid"))
-            {
-
-                int roleTypeId = Convert.ToInt32(rows[0]["roletypeid"]);
-                result = new RoleTypeEntity(roleTypeId, roleTypeName);
-            }
-
-            return result;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        if (rows.Count > 0 && rows[0].ContainsKey("roletypeid"))
+        {
+            var roleTypeId = Convert.ToInt32(rows[0]["roletypeid"]);
+            result = new RoleTypeEntity(roleTypeId, roleTypeName);
         }
 
-        public async Task UpdateAsync(UpdateRoleTypeModel roleType)
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task UpdateAsync(UpdateRoleTypeModel roleType)
+    {
+        var query = @"
                 UPDATE roleTypes
                 SET
                     name = COALESCE($1, email),
                 WHERE roleTypeId = $2;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(roleType.Name),
-                new QueryParameter(roleType.RoleTypeId)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(roleType.Name),
+            new(roleType.RoleTypeId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
     }
 }

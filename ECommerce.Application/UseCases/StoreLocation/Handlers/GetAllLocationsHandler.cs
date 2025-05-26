@@ -1,22 +1,22 @@
-using ECommerce.Application.UseCases.Queries;
-using ECommerce.Domain.Entities.StoreLocation;
-using ECommerce.Domain.Repositories.StoreLocation;
+using ECommerce.Application.UseCases.StoreLocation.Queries;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Repositories;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.StoreLocation.Handlers
+namespace ECommerce.Application.UseCases.StoreLocation.Handlers;
+
+public class GetAllLocationsHandler : IRequestHandler<GetAllLocationsQuery, List<StoreLocationEntity>>
 {
-    public class GetAllLocationsHandler : IRequestHandler<GetAllLocationsQuery, List<StoreLocationEntity>>
+    private readonly IStoreLocationRepository _storeLocationRepository;
+
+    public GetAllLocationsHandler(IStoreLocationRepository storeLocationRepository)
     {
-        readonly IStoreLocationRepository _storeLocationRepository;
+        _storeLocationRepository = storeLocationRepository;
+    }
 
-        public GetAllLocationsHandler(IStoreLocationRepository storeLocationRepository)
-        {
-            _storeLocationRepository = storeLocationRepository;
-        }
-
-        public async Task<List<StoreLocationEntity>> Handle(GetAllLocationsQuery request, CancellationToken cancellationToken)
-        {
-            return await _storeLocationRepository.GetAll();
-        }
+    public async Task<List<StoreLocationEntity>> Handle(GetAllLocationsQuery request,
+        CancellationToken cancellationToken)
+    {
+        return await _storeLocationRepository.GetAll();
     }
 }

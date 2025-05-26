@@ -1,87 +1,81 @@
 using System.Data;
-using ECommerce.Infrastructure.Utils;
-using ECommerce.Domain.Enums.PaymentProvider;
+using ECommerce.Domain.Enums;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Models.PaymentSession;
+using ECommerce.Infrastructure.Utils;
 using Stripe;
 
-namespace ECommerce.PaymentSession
+namespace ECommerce.Infrastructure.Services.Payment;
+
+public class StripeSessionService : IPaymentSessionService
 {
-    public class StripeSessionService : IPaymentSessionService
+    private readonly StripeSettings _stripeSettings;
+
+    public StripeSessionService(StripeSettings stripeSettings)
     {
-        readonly StripeSettings _stripeSettings;
+        _stripeSettings = stripeSettings;
+        StripeConfiguration.ApiKey = _stripeSettings.ApiKey;
+    }
 
-        public StripeSessionService(StripeSettings stripeSettings)
+    public async Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
+    {
+        var options = new PaymentIntentCreateOptions
         {
-            _stripeSettings = stripeSettings;
-            StripeConfiguration.ApiKey = _stripeSettings.ApiKey;
-        }
+            Amount = sessionOptions.Price,
+            Currency = "usd",
+            Metadata = new Dictionary<string, string>
+            {
+                { "userId", sessionOptions.UserId }
+            },
+            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+            {
+                Enabled = true,
+                AllowRedirects = "never"
+            }
+        };
 
-        public async Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
+        var service = new PaymentIntentService();
+        PaymentIntent? result = await service.CreateAsync(options);
+        // TODO: have not hard coded currency
+        return new PaymentProviderSession
         {
-            var options = new PaymentIntentCreateOptions
-            {
-                Amount = sessionOptions.Price,
-                Currency = "usd",
-                Metadata = new Dictionary<string, string>
-                {
-                    { "userId", sessionOptions.UserId }
-                },
-                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions()
-                {
-                    Enabled = true,
-                    AllowRedirects = "never"
-                }
-            };
+            Provider = PaymentProvider.STRIPE,
+            UserId = sessionOptions.UserId,
+            ClientSecret = result.ClientSecret,
+            SessionId = result.Id,
+            Currency = "usd"
+        };
+    }
 
-            var service = new PaymentIntentService();
-            var result = await service.CreateAsync(options);
-            // TODO: have not hard coded currency
-            return new PaymentProviderSession
+    public Task<PaymentProviderEvent> ParseWebhookEvent(string json, string signature)
+    {
+        // TODO: throwOnApiVersionMismatch = true on production
+        Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSignature,
+            throwOnApiVersionMismatch: false);
+        PaymentProviderEvent? result = null;
+
+        if (ev.Type == EventTypes.ChargeSucceeded)
+        {
+            var charge = ev.Data.Object as Charge;
+            if (charge is null) throw new DataException("Failed parsing charge");
+
+            if (!charge.Metadata.ContainsKey("userid")) throw new DataException("userid is null!");
+
+            // TODO: null safety
+            result = new PaymentProviderEvent
             {
+                UserId = charge.Metadata["userid"],
+                Id = charge.Id,
                 Provider = PaymentProvider.STRIPE,
-                UserId = sessionOptions.UserId,
-                ClientSecret = result.ClientSecret,
-                SessionId = result.Id,
-                Currency = "usd",
+                EventType = PaymentProviderEventType.CHARGE_SUCEEDED
             };
         }
 
-        public Task<PaymentProviderEvent> ParseWebhookEvent(string json, string signature)
+        if (result is null)
         {
-            // TODO: throwOnApiVersionMismatch = true on production
-            Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSignature, throwOnApiVersionMismatch: false);
-            PaymentProviderEvent? result = null;
-
-            if (ev.Type == EventTypes.ChargeSucceeded)
-            {
-                Charge? charge = ev.Data.Object as Charge;
-                if (charge is null)
-                {
-                    throw new DataException("Failed parsing charge");
-                }
-
-                if (!charge.Metadata.ContainsKey("userid"))
-                {
-                    throw new DataException("userid is null!");
-                }
-
-                // TODO: null safety
-                result = new PaymentProviderEvent
-                {
-                    UserId = charge.Metadata["userid"],
-                    Id = charge.Id,
-                    Provider = PaymentProvider.STRIPE,
-                    EventType = PaymentProviderEventType.CHARGE_SUCEEDED
-                };
-            }
-
-            if (result is null)
-            {
-                // TODO: log warning
-            }
-
-            return Task.FromResult(result);
+            // TODO: log warning
         }
+
+        return Task.FromResult(result);
     }
 }

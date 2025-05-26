@@ -1,15 +1,14 @@
-using ECommerce.Domain.Entities.Manufacturer;
-using ECommerce.Domain.Models.Manufacturer;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
 
-namespace ECommerce.Domain.Repositories.Manufacturer
+namespace ECommerce.Domain.Repositories;
+
+public interface IManufacturerRepository
 {
-    public interface IManufacturerRepository
-    {
-        public Task<ManufacturerEntity?> CreateAsync(string manufacturerName);
-        public Task UpdateAsync(UpdateManufacturerModel updateEntity);
-        public Task DeleteAsync(int manufacturerId);
-        public Task<List<ManufacturerEntity>> GetAll();
-        public Task<ManufacturerEntity?> FindByIdAsync(int manufacturerId);
-        public Task<ManufacturerEntity?> FindByNameAsync(string name);
-    }
+    public Task<ManufacturerEntity?> CreateAsync(string manufacturerName);
+    public Task UpdateAsync(UpdateManufacturerModel updateEntity);
+    public Task DeleteAsync(int manufacturerId);
+    public Task<List<ManufacturerEntity>> GetAll();
+    public Task<ManufacturerEntity?> FindByIdAsync(int manufacturerId);
+    public Task<ManufacturerEntity?> FindByNameAsync(string name);
 }

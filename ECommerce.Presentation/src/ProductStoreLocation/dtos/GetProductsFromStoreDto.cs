@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.ProductStoreLocation
+namespace ECommerce.Presentation.ProductStoreLocation.dtos;
+
+public class GetProductsFromStoreDto
 {
-    public class GetProductsFromStoreDto
-    {
-        [Required]
-        public int StoreLocationId { get; set; }
-    }
+    [Required] public int StoreLocationId { get; set; }
 }

@@ -1,14 +1,13 @@
-namespace ECommerce.Domain.Models.Manufacturer
-{
-    public class UpdateManufacturerModel
-    {
-        public int ManufacturerId { get; set; }
-        public string? Name { get; set; }
+namespace ECommerce.Domain.Models;
 
-        public UpdateManufacturerModel(int manufacturerId, string? name)
-        {
-            ManufacturerId = manufacturerId;
-            Name = name;
-        }
+public class UpdateManufacturerModel
+{
+    public UpdateManufacturerModel(int manufacturerId, string? name)
+    {
+        ManufacturerId = manufacturerId;
+        Name = name;
     }
+
+    public int ManufacturerId { get; set; }
+    public string? Name { get; set; }
 }

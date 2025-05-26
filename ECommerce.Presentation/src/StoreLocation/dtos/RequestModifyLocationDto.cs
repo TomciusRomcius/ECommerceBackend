@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.StoreLocation
+namespace ECommerce.Presentation.StoreLocation.dtos;
+
+public class RequestModifyLocationDto
 {
-    public class RequestModifyLocationDto
-    {
-        [Required]
-        public int StoreLocationId { get; set; }
-        public string? DisplayName { get; set; }
-        public string? Address { get; set; }
-    }
+    [Required] public int StoreLocationId { get; set; }
+
+    public string? DisplayName { get; set; }
+    public string? Address { get; set; }
 }

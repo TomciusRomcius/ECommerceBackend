@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.ProductStoreLocation
+namespace ECommerce.Presentation.ProductStoreLocation.dtos;
+
+public class RemoveProductFromStoreDto
 {
-    public class RemoveProductFromStoreDto
-    {
-        [Required]
-        public int StoreLocationId { get; set; }
-        [Required]
-        public int ProductId { get; set; }
-    }
+    [Required] public int StoreLocationId { get; set; }
+
+    [Required] public int ProductId { get; set; }
 }

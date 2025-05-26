@@ -1,7 +1,6 @@
-using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.Product.Queries
-{
-    public record GetAllProductsQuery : IRequest<List<ProductEntity>>;
-}
+namespace ECommerce.Application.UseCases.Product.Queries;
+
+public record GetAllProductsQuery : IRequest<List<ProductEntity>>;

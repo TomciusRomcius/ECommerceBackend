@@ -1,37 +1,34 @@
+using ECommerce.Application.Interfaces;
 
-using ECommerce.Application.Interfaces.Services;
+namespace ECommerce.Presentation.Common.Services;
 
-namespace ECommerce.Common.Services
+public class QueueHostedService : BackgroundService
 {
-    public class QueueHostedService : BackgroundService
+    private readonly IBackgroundTaskQueue _backgroundQueue;
+    private readonly ILogger _logger;
+
+    public QueueHostedService(IBackgroundTaskQueue backgroundQueue, ILogger logger)
     {
-        readonly IBackgroundTaskQueue _backgroundQueue;
-        readonly ILogger _logger;
+        _backgroundQueue = backgroundQueue;
+        _logger = logger;
+    }
 
-        public QueueHostedService(IBackgroundTaskQueue backgroundQueue, ILogger logger)
-        {
-            _backgroundQueue = backgroundQueue;
-            _logger = logger;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                try
-                {
-                    Func<CancellationToken, ValueTask> func = await _backgroundQueue.DequeueBackgroundWorkItemAsync(stoppingToken);
-                    await func(stoppingToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogTrace("Operation cancelled");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.ToString());
-                }
+                Func<CancellationToken, ValueTask> func =
+                    await _backgroundQueue.DequeueBackgroundWorkItemAsync(stoppingToken);
+                await func(stoppingToken);
             }
-        }
+            catch (OperationCanceledException)
+            {
+                _logger.LogTrace("Operation cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
     }
 }

@@ -1,7 +1,6 @@
-namespace ECommerce.Domain.Enums.PaymentProvider
+namespace ECommerce.Domain.Enums;
+
+public enum PaymentProvider
 {
-    public enum PaymentProvider
-    {
-        STRIPE
-    }
+    STRIPE
 }

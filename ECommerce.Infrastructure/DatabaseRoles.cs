@@ -1,4 +1,1 @@
-﻿namespace ECommerce.Infrastructure
-{
-
-}
+﻿namespace ECommerce.Infrastructure;

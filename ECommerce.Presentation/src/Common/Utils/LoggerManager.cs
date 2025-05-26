@@ -1,28 +1,24 @@
-namespace ECommerce.Common.Utils
+namespace ECommerce.Presentation.Common.Utils;
+
+public class LoggerManager
 {
-    public class LoggerManager
+    private static LoggerManager? _loggerManager;
+    private readonly ILoggerFactory _loggerFactory;
+
+    public LoggerManager()
     {
-        private ILoggerFactory _loggerFactory;
-        private static LoggerManager? _loggerManager;
+        _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    }
 
-        static public LoggerManager GetInstance()
-        {
-            if (_loggerManager == null)
-            {
-                _loggerManager = new LoggerManager();
-            }
+    public static LoggerManager GetInstance()
+    {
+        if (_loggerManager == null) _loggerManager = new LoggerManager();
 
-            return _loggerManager;
-        }
+        return _loggerManager;
+    }
 
-        public LoggerManager()
-        {
-            _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-        }
-
-        public ILogger CreateLogger(string categoryName)
-        {
-            return _loggerFactory.CreateLogger(categoryName);
-        }
+    public ILogger CreateLogger(string categoryName)
+    {
+        return _loggerFactory.CreateLogger(categoryName);
     }
 }

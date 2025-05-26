@@ -1,7 +1,6 @@
-namespace ECommerce.Product
+namespace ECommerce.Presentation.Product.dtos;
+
+public class RequestGetProductsDto
 {
-    public class RequestGetProductsDto
-    {
-        public int MyProperty { get; set; }
-    }
+    public int MyProperty { get; set; }
 }

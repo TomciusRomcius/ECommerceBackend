@@ -1,22 +1,21 @@
 using ECommerce.Application.UseCases.PaymentSession.Queries;
-using ECommerce.Domain.Entities.PaymentSession;
-using ECommerce.Domain.Repositories.PaymentSession;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Repositories;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.PaymentSession.Handlers
+namespace ECommerce.Application.UseCases.PaymentSession.Handlers;
+
+public class GetPaymentSessionHandler : IRequestHandler<GetPaymentSessionQuery, PaymentSessionEntity?>
 {
-    public class GetPaymentSessionHandler : IRequestHandler<GetPaymentSessionQuery, PaymentSessionEntity?>
+    private readonly IPaymentSessionRepository _paymentSessionRepository;
+
+    public GetPaymentSessionHandler(IPaymentSessionRepository paymentSessionRepository)
     {
-        readonly IPaymentSessionRepository _paymentSessionRepository;
+        _paymentSessionRepository = paymentSessionRepository;
+    }
 
-        public GetPaymentSessionHandler(IPaymentSessionRepository paymentSessionRepository)
-        {
-            _paymentSessionRepository = paymentSessionRepository;
-        }
-
-        public async Task<PaymentSessionEntity?> Handle(GetPaymentSessionQuery request, CancellationToken cancellationToken)
-        {
-            return await _paymentSessionRepository.GetPaymentSession(request.UserId);
-        }
+    public async Task<PaymentSessionEntity?> Handle(GetPaymentSessionQuery request, CancellationToken cancellationToken)
+    {
+        return await _paymentSessionRepository.GetPaymentSession(request.UserId);
     }
 }

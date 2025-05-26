@@ -1,14 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Auth
+namespace ECommerce.Presentation.Auth.dtos;
+
+public class SignUpWithPasswordRequestDto
 {
-    public class SignUpWithPasswordRequestDto
-    {
-        public required string Firstname { get; set; }
-        public required string Lastname { get; set; }
-        [EmailAddress()]
-        public required string Email { get; set; }
-        [Length(8, 50)]
-        public required string Password { get; set; }
-    }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
+
+    [EmailAddress] public required string Email { get; set; }
+
+    [Length(8, 50)] public required string Password { get; set; }
 }

@@ -1,9 +1,8 @@
-using ECommerce.Domain.Models.CartProduct;
+using ECommerce.Domain.Models;
 
-namespace ECommerce.Domain.Services
+namespace ECommerce.Domain.Services.Order;
+
+public interface IOrderPriceCalculator
 {
-    public interface IOrderPriceCalculator
-    {
-        decimal CalculatePrice(IEnumerable<CartProductModel> products);
-    }
+    decimal CalculatePrice(IEnumerable<CartProductModel> products);
 }

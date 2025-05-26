@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.StoreLocation
+namespace ECommerce.Presentation.StoreLocation.dtos;
+
+public class RequestRemoveLocationDto
 {
-    public class RequestRemoveLocationDto
-    {
-        [Required]
-        public int StoreLocationId { get; set; }
-    }
+    [Required] public int StoreLocationId { get; set; }
 }

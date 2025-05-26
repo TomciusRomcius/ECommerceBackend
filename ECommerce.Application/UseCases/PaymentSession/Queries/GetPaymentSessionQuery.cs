@@ -1,7 +1,6 @@
-using ECommerce.Domain.Entities.PaymentSession;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.PaymentSession.Queries
-{
-    public record GetPaymentSessionQuery(Guid UserId) : IRequest<PaymentSessionEntity?>;
-}
+namespace ECommerce.Application.UseCases.PaymentSession.Queries;
+
+public record GetPaymentSessionQuery(Guid UserId) : IRequest<PaymentSessionEntity?>;

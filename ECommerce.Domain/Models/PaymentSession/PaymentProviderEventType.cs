@@ -1,10 +1,9 @@
-namespace ECommerce.Domain.Models.PaymentSession
+namespace ECommerce.Domain.Models.PaymentSession;
+
+public enum PaymentProviderEventType
 {
-    public enum PaymentProviderEventType
-    {
-        CHARGE_SUCEEDED,
-        CHARGE_EXPIRED,
-        CHARGE_REFUNDED,
-        CHARGE_PENDING
-    }
+    CHARGE_SUCEEDED,
+    CHARGE_EXPIRED,
+    CHARGE_REFUNDED,
+    CHARGE_PENDING
 }

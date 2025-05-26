@@ -1,27 +1,26 @@
 using System.Data;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
+using ECommerce.Infrastructure.Utils;
 
-namespace DataAccess.Tests.Unit
+namespace ECommerce.Infrastructure.Tests.Unit;
+
+public class DictionaryExtensionsTest
 {
-    public class DictionaryExtensionsTest
+    [Fact]
+    public void ShouldReturnCorrectValue()
     {
-        [Fact]
-        public void ShouldReturnCorrectValue()
-        {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict.Add("key", "value");
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add("key", "value");
 
-            string received = dict.GetColumn<string>("key");
-            Assert.Equal("value", received);
-        }
+        var received = dict.GetColumn<string>("key");
+        Assert.Equal("value", received);
+    }
 
-        [Fact]
-        public void ShouldThrowAnException_WhenTypesNotMatch()
-        {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict.Add("key", "value");
+    [Fact]
+    public void ShouldThrowAnException_WhenTypesNotMatch()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add("key", "value");
 
-            Assert.Throws<DataException>(() => dict.GetColumn<int>("key"));
-        }
+        Assert.Throws<DataException>(() => dict.GetColumn<int>("key"));
     }
 }

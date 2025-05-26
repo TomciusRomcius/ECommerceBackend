@@ -1,7 +1,6 @@
-using ECommerce.Domain.Entities.ShippingAddress;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.ShippingAddress.Commands
-{
-    public record AddShippingAddressCommand(ShippingAddressEntity Address) : IRequest;
-}
+namespace ECommerce.Application.UseCases.ShippingAddress.Commands;
+
+public record AddShippingAddressCommand(ShippingAddressEntity Address) : IRequest;

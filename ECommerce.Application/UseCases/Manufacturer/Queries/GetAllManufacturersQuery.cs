@@ -1,7 +1,6 @@
-using ECommerce.Domain.Entities.Manufacturer;
+using ECommerce.Domain.Entities;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.Manufacturer.Queries
-{
-    public record GetAllManufacturersQuery : IRequest<List<ManufacturerEntity>>;
-}
+namespace ECommerce.Application.UseCases.Manufacturer.Queries;
+
+public record GetAllManufacturersQuery : IRequest<List<ManufacturerEntity>>;

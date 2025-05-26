@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Address
+namespace ECommerce.Presentation.Address.dtos;
+
+public class DeleteAddressDto
 {
-    public class DeleteAddressDto
-    {
-        [Required]
-        public bool IsShipping { get; set; }
-    }
+    [Required] public bool IsShipping { get; set; }
 }

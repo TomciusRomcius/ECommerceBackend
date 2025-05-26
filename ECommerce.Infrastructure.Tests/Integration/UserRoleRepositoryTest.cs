@@ -1,40 +1,40 @@
-using ECommerce.TestUtils.TestDatabase;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ECommerce.Domain.Entities.User;
-using ECommerce.Domain.Models.RoleType;
-using ECommerce.Domain.Repositories.UserRole;
+using TestUtils;
 
-namespace DataAccess.Tests.Integration
+namespace ECommerce.Infrastructure.Tests.Integration;
+
+public class UserRoleRepositoryIntegrationTest
 {
-    public class UserRoleRepositoryIntegrationTest
+    [Fact]
+    public async Task ShouldSuccesfullyAddARoleToUser()
     {
-        [Fact]
-        public async Task ShouldSuccesfullyAddARoleToUser()
-        {
-            var testContainer = new TestDatabase();
+        var testContainer = new TestDatabase();
 
-            // Create user
-            UserRepository userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
-            var user = new UserEntity(new Guid().ToString(), "email@gmail.com", "passwordhash", "John", "Doe");
-            await userRepository.CreateAsync(user);
+        // Create user
+        var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
+        var user = new UserEntity(new Guid().ToString(), "email@gmail.com", "passwordhash", "John", "Doe");
+        await userRepository.CreateAsync(user);
 
-            // Create role
-            var roleRepository = new RoleTypeRepository(testContainer._postgresService);
-            string roleName = "administrator";
-            await roleRepository.CreateAsync(new CreateRoleTypeModel(roleName));
+        // Create role
+        var roleRepository = new RoleTypeRepository(testContainer._postgresService);
+        var roleName = "administrator";
+        await roleRepository.CreateAsync(new CreateRoleTypeModel(roleName));
 
-            // Add user to role
-            IUserRoleRepository userRoleRepository = new UserRoleRepository(testContainer._postgresService, new Mock<ILogger>().Object);
+        // Add user to role
+        IUserRoleRepository userRoleRepository =
+            new UserRoleRepository(testContainer._postgresService, new Mock<ILogger>().Object);
 
-            await userRoleRepository.AddToRoleAsync(user.UserId, roleName);
+        await userRoleRepository.AddToRoleAsync(user.UserId, roleName);
 
-            // Check if the role was succesfully added
-            bool isInRole = await userRoleRepository.IsInRoleAsync(user.UserId, roleName);
-            Assert.True(isInRole);
+        // Check if the role was succesfully added
+        bool isInRole = await userRoleRepository.IsInRoleAsync(user.UserId, roleName);
+        Assert.True(isInRole);
 
-            await testContainer.DisposeAsync();
-        }
+        await testContainer.DisposeAsync();
     }
 }

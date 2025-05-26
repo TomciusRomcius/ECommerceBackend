@@ -1,9 +1,8 @@
-using ECommerce.Domain.Enums.PaymentProvider;
+using ECommerce.Domain.Enums;
 
-namespace ECommerce.Domain.Interfaces.Services
+namespace ECommerce.Domain.Interfaces.Services;
+
+public interface IPaymentSessionFactory
 {
-    public interface IPaymentSessionFactory
-    {
-        IPaymentSessionService CreatePaymentSessionService(PaymentProvider provider);
-    }
+    IPaymentSessionService CreatePaymentSessionService(PaymentProvider provider);
 }

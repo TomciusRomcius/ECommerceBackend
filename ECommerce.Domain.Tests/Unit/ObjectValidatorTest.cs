@@ -1,31 +1,30 @@
-using System.Runtime.InteropServices;
-using ECommerce.Domain.Entities.User;
-using ECommerce.Domain.Services;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Services.Order;
+using ECommerce.Domain.Utils;
 
-namespace ECommerce.Domain.Tests.Unit
+namespace ECommerce.Domain.Tests.Unit;
+
+public class ObjectValidatorTest
 {
-    public class ObjectValidatorTest
+    [Fact]
+    public void ObjectValidator_ShouldValidateObjects_WithDataAntonations()
     {
-        [Fact]
-        public void ObjectValidator_ShouldValidateObjects_WithDataAntonations()
-        {
-            var validator = new ObjectValidator();
-            var invalid = new UserEntity("", "email@gmail.com", "passwordhash", "firstname", "lastname");
-            var errors = validator.Validate(invalid);
+        var validator = new ObjectValidator();
+        var invalid = new UserEntity("", "email@gmail.com", "passwordhash", "firstname", "lastname");
+        IEnumerable<ResultError>? errors = validator.Validate(invalid);
 
-            Assert.Single(errors);
-        }
+        Assert.Single(errors);
+    }
 
-        [Fact]
-        public void ObjectValidator_ShouldReturnMultipleErrors_WhenObjectHasMultipleInvalidFields()
-        {
-            int expectedErrors = 3;
+    [Fact]
+    public void ObjectValidator_ShouldReturnMultipleErrors_WhenObjectHasMultipleInvalidFields()
+    {
+        var expectedErrors = 3;
 
-            var validator = new ObjectValidator();
-            var invalid = new UserEntity("", "", "", "firstname", "lastname");
-            var errors = validator.Validate(invalid);
+        var validator = new ObjectValidator();
+        var invalid = new UserEntity("", "", "", "firstname", "lastname");
+        IEnumerable<ResultError> errors = validator.Validate(invalid);
 
-            Assert.Equal(expectedErrors, errors.Count());
-        }
+        Assert.Equal(expectedErrors, errors.Count());
     }
 }

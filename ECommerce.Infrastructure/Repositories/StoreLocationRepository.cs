@@ -1,138 +1,139 @@
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
-using ECommerce.Domain.Entities.StoreLocation;
-using ECommerce.Domain.Models.StoreLocation;
-using ECommerce.Domain.Repositories.StoreLocation;
 
-namespace ECommerce.Infrastructure.Repositories.StoreLocation
+namespace ECommerce.Infrastructure.Repositories;
+
+public class StoreLocationRepository : IStoreLocationRepository
 {
-    public class StoreLocationRepository : IStoreLocationRepository
+    private readonly IPostgresService _postgresService;
+
+    public StoreLocationRepository(IPostgresService postgresService)
     {
-        readonly IPostgresService _postgresService;
+        _postgresService = postgresService;
+    }
 
-        public StoreLocationRepository(IPostgresService postgresService)
-        {
-            _postgresService = postgresService;
-        }
-
-        public async Task<StoreLocationEntity?> CreateAsync(CreateStoreLocationModel storeLocation)
-        {
-            string query = @"
+    public async Task<StoreLocationEntity?> CreateAsync(CreateStoreLocationModel storeLocation)
+    {
+        var query = @"
                 INSERT INTO storeLocations (displayName, address)
                 VALUES ($1, $2)
                 RETURNING storeLocationId;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(storeLocation.DisplayName),
-                new QueryParameter(storeLocation.Address)
-            ];
+        QueryParameter[] parameters =
+        [
+            new(storeLocation.DisplayName),
+            new(storeLocation.Address)
+        ];
 
-            object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+        object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            if (id is int)
-            {
-                var result = new StoreLocationEntity(Convert.ToInt32(id), storeLocation.DisplayName, storeLocation.Address);
-                return result;
-            }
-
-            else return null;
+        if (id is int)
+        {
+            var result = new StoreLocationEntity(Convert.ToInt32(id), storeLocation.DisplayName, storeLocation.Address);
+            return result;
         }
 
-        public async Task DeleteAsync(int storeLocationId)
-        {
-            string query = @"
+        return null;
+    }
+
+    public async Task DeleteAsync(int storeLocationId)
+    {
+        var query = @"
                 DELETE FROM storeLocations WHERE storeLocationId = $1;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(storeLocationId),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(storeLocationId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
+    }
 
-        public async Task<StoreLocationEntity?> FindByIdAsync(int storeLocationId)
-        {
-            string query = @"
+    public async Task<StoreLocationEntity?> FindByIdAsync(int storeLocationId)
+    {
+        var query = @"
                 SELECT * FROM storeLocations WHERE storeLocationId = $1;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(storeLocationId),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(storeLocationId)
+        ];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            StoreLocationEntity? result = null;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        StoreLocationEntity? result = null;
 
-            if (rows.Count == 1)
-            {
-                // TODO: null safety
-                var row = rows[0];
+        if (rows.Count == 1)
+        {
+            // TODO: null safety
+            Dictionary<string, object> row = rows[0];
 
-                result = new StoreLocationEntity(
-                    row.GetColumn<int>("storelocationid"),
-                    row.GetColumn<string>("displayname"),
-                    row.GetColumn<string>("address")
-                );
-            }
-
-            return result;
+            result = new StoreLocationEntity(
+                row.GetColumn<int>("storelocationid"),
+                row.GetColumn<string>("displayname"),
+                row.GetColumn<string>("address")
+            );
         }
 
-        public async Task<StoreLocationEntity?> FindByNameAsync(string storeLocationName)
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task<StoreLocationEntity?> FindByNameAsync(string storeLocationName)
+    {
+        var query = @"
                 SELECT * FROM storeLocations WHERE displayname = $1;
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(storeLocationName),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(storeLocationName)
+        ];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            StoreLocationEntity? result = null;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        StoreLocationEntity? result = null;
 
-            if (rows.Count == 1)
-            {
-                var row = rows[0];
+        if (rows.Count == 1)
+        {
+            Dictionary<string, object> row = rows[0];
 
-                result = new StoreLocationEntity(
-                    row.GetColumn<int>("storelocationid"),
-                    row.GetColumn<string>("displayname"),
-                    row.GetColumn<string>("address")
-                );
-            }
-
-            return result;
+            result = new StoreLocationEntity(
+                row.GetColumn<int>("storelocationid"),
+                row.GetColumn<string>("displayname"),
+                row.GetColumn<string>("address")
+            );
         }
 
-        public async Task<List<StoreLocationEntity>> GetAll()
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task<List<StoreLocationEntity>> GetAll()
+    {
+        var query = @"
                 SELECT * FROM storeLocations;
             ";
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
-            List<StoreLocationEntity> result = new List<StoreLocationEntity>();
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
+        List<StoreLocationEntity> result = new List<StoreLocationEntity>();
 
-            foreach (var row in rows)
-            {
-                // TODO: null safety
-                result.Add(new StoreLocationEntity(
-                    row.GetColumn<int>("storelocationid"),
-                    row.GetColumn<string>("displayname"),
-                    row.GetColumn<string>("address")
-                ));
-            }
+        foreach (Dictionary<string, object> row in rows)
+            // TODO: null safety
+            result.Add(new StoreLocationEntity(
+                row.GetColumn<int>("storelocationid"),
+                row.GetColumn<string>("displayname"),
+                row.GetColumn<string>("address")
+            ));
 
-            return result;
-        }
+        return result;
+    }
 
-        public async Task UpdateAsync(UpdateStoreLocationModel updateModel)
-        {
-            string query = @"
+    public async Task UpdateAsync(UpdateStoreLocationModel updateModel)
+    {
+        var query = @"
                 UPDATE storeLocations
                 SET
                 displayName = COALESCE($1, displayName),
@@ -140,13 +141,13 @@ namespace ECommerce.Infrastructure.Repositories.StoreLocation
                 WHERE storeLocationId = $3
             ";
 
-            QueryParameter[] parameters = [
-                new QueryParameter(updateModel.DisplayName),
-                new QueryParameter(updateModel.Address),
-                new QueryParameter(updateModel.StoreLocationId),
-            ];
+        QueryParameter[] parameters =
+        [
+            new(updateModel.DisplayName),
+            new(updateModel.Address),
+            new(updateModel.StoreLocationId)
+        ];
 
-            await _postgresService.ExecuteScalarAsync(query, parameters);
-        }
+        await _postgresService.ExecuteScalarAsync(query, parameters);
     }
 }

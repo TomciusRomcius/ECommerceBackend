@@ -1,11 +1,10 @@
-using ECommerce.Domain.Entities.PaymentSession;
+using ECommerce.Domain.Entities;
 
-namespace ECommerce.Domain.Repositories.PaymentSession
+namespace ECommerce.Domain.Repositories;
+
+public interface IPaymentSessionRepository
 {
-    public interface IPaymentSessionRepository
-    {
-        public Task CreatePaymentSessionAsync(PaymentSessionEntity paymentSessionEntity);
-        public Task<PaymentSessionEntity?> GetPaymentSession(Guid userId);
-        public Task DeletePaymentSession(Guid userId);
-    }
+    public Task CreatePaymentSessionAsync(PaymentSessionEntity paymentSessionEntity);
+    public Task<PaymentSessionEntity?> GetPaymentSession(Guid userId);
+    public Task DeletePaymentSession(Guid userId);
 }

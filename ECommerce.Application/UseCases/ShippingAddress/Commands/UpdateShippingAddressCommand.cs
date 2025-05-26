@@ -1,7 +1,6 @@
-using ECommerce.Domain.Models.ShippingAddress;
+using ECommerce.Domain.Models;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.ShippingAddress.Commands
-{
-    public record UpdateShippingAddressCommand(UpdateShippingAddressModel UpdateAddress) : IRequest;
-}
+namespace ECommerce.Application.UseCases.ShippingAddress.Commands;
+
+public record UpdateShippingAddressCommand(UpdateShippingAddressModel UpdateAddress) : IRequest;

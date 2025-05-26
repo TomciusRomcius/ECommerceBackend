@@ -1,33 +1,32 @@
-using ECommerce.TestUtils.TestDatabase;
+using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Repositories;
-using ECommerce.Domain.Entities.Manufacturer;
+using TestUtils;
 
-namespace DataAccess.Tests.Integration
+namespace ECommerce.Infrastructure.Tests.Integration;
+
+public class ManufacturerRepositoryTest
 {
-    public class ManufacturerRepositoryTest
+    [Fact]
+    public async Task ShouldSuccesfullyCreateAndRetrieveManufacturer()
     {
-        [Fact]
-        public async Task ShouldSuccesfullyCreateAndRetrieveManufacturer()
-        {
-            var testContainer = new TestDatabase();
+        var testContainer = new TestDatabase();
 
-            ManufacturerRepository manufacturerRepository = new ManufacturerRepository(testContainer._postgresService);
-            string name = "manufacturer name";
+        var manufacturerRepository = new ManufacturerRepository(testContainer._postgresService);
+        var name = "manufacturer name";
 
-            // Create manufacturer
-            ManufacturerEntity? manufacturer = await manufacturerRepository.CreateAsync(name);
+        // Create manufacturer
+        ManufacturerEntity? manufacturer = await manufacturerRepository.CreateAsync(name);
 
-            Assert.NotNull(manufacturer);
-            Assert.Equal(name, manufacturer.Name);
+        Assert.NotNull(manufacturer);
+        Assert.Equal(name, manufacturer.Name);
 
-            // Find manufacturer
-            ManufacturerEntity? retrieved = await manufacturerRepository.FindByNameAsync(name);
+        // Find manufacturer
+        ManufacturerEntity? retrieved = await manufacturerRepository.FindByNameAsync(name);
 
-            Assert.NotNull(retrieved);
-            Assert.Equal(manufacturer.Name, retrieved.Name);
-            Assert.Equal(manufacturer.ManufacturerId, retrieved.ManufacturerId);
+        Assert.NotNull(retrieved);
+        Assert.Equal(manufacturer.Name, retrieved.Name);
+        Assert.Equal(manufacturer.ManufacturerId, retrieved.ManufacturerId);
 
-            await testContainer.DisposeAsync();
-        }
+        await testContainer.DisposeAsync();
     }
 }

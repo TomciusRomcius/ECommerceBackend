@@ -1,22 +1,21 @@
 using ECommerce.Application.UseCases.Product.Queries;
-using ECommerce.Domain.Entities.Product;
-using ECommerce.Domain.Repositories.Product;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Repositories;
 using MediatR;
 
-namespace ECommerce.Application.UseCases.Product.Handlers
+namespace ECommerce.Application.UseCases.Product.Handlers;
+
+public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, List<ProductEntity>>
 {
-    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, List<ProductEntity>>
+    private readonly IProductRepository _productRepository;
+
+    public GetAllProductsHandler(IProductRepository productRepository)
     {
-        readonly IProductRepository _productRepository;
+        _productRepository = productRepository;
+    }
 
-        public GetAllProductsHandler(IProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
-
-        public async Task<List<ProductEntity>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
-        {
-            return await _productRepository.GetAll();
-        }
+    public async Task<List<ProductEntity>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+    {
+        return await _productRepository.GetAll();
     }
 }

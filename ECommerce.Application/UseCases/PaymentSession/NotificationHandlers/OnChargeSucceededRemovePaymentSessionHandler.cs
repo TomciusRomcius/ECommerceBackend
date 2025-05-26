@@ -1,10 +1,12 @@
-using ECommerce.Application.UseCases.PaymentSession.Notifications;
-using ECommerce.Domain.Repositories.PaymentSession;
+using ECommerce.Application.UseCases.Common.Notifications;
+using ECommerce.Domain.Repositories;
 using MediatR;
+
+namespace ECommerce.Application.UseCases.PaymentSession.NotificationHandlers;
 
 public class OnChargeSucceededRemovePaymentSessionHandler : INotificationHandler<ChargeSucceededNotification>
 {
-    readonly IPaymentSessionRepository _paymentSessionRepository;
+    private readonly IPaymentSessionRepository _paymentSessionRepository;
 
     public OnChargeSucceededRemovePaymentSessionHandler(IPaymentSessionRepository paymentSessionRepository)
     {

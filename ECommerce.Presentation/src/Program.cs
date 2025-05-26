@@ -1,20 +1,20 @@
 using System.Reflection;
 using ECommerce.Application;
-using ECommerce.Application.Interfaces.Services;
+using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
-using ECommerce.Common.Services;
-using ECommerce.Common.Utils;
-using ECommerce.Domain.Services;
-using ECommerce.Initialization;
+using ECommerce.Domain.Services.Order;
+using ECommerce.Presentation.Common.Services;
+using ECommerce.Presentation.Common.Utils;
+using ECommerce.Presentation.Initialization;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen((setup) =>
+builder.Services.AddSwaggerGen(setup =>
 {
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    string? xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     setup.IncludeXmlComments(xmlPath);
 });
 
@@ -34,7 +34,7 @@ ServicesInitialization.InitializeIdentity(builder);
 
 builder.Services.AddControllers();
 
-var app = builder.Build();
+WebApplication? app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {

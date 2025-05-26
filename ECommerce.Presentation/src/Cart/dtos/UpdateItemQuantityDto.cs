@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Cart
+namespace ECommerce.Presentation.Cart.dtos;
+
+public class UpdateItemQuantityDto
 {
-    public class UpdateItemQuantityDto
-    {
-        [Required]
-        public int ProductId { get; set; }
-        public int Quantity { get; set; } = 1;
-    }
+    [Required] public int ProductId { get; set; }
+
+    public int Quantity { get; set; } = 1;
 }

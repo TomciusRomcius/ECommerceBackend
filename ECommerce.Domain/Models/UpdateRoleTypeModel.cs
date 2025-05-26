@@ -1,14 +1,13 @@
-namespace ECommerce.Domain.Models.RoleType
-{
-    public class UpdateRoleTypeModel
-    {
-        public int RoleTypeId { get; set; }
-        public string? Name { get; set; }
+namespace ECommerce.Domain.Models;
 
-        public UpdateRoleTypeModel(int roleTypeId, string? name)
-        {
-            RoleTypeId = roleTypeId;
-            Name = name;
-        }
+public class UpdateRoleTypeModel
+{
+    public UpdateRoleTypeModel(int roleTypeId, string? name)
+    {
+        RoleTypeId = roleTypeId;
+        Name = name;
     }
+
+    public int RoleTypeId { get; set; }
+    public string? Name { get; set; }
 }

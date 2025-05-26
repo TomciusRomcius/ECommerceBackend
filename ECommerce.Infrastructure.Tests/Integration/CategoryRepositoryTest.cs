@@ -1,33 +1,32 @@
+using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Repositories;
-using ECommerce.Domain.Entities.Category;
-using ECommerce.TestUtils.TestDatabase;
+using TestUtils;
 
-namespace DataAccess.Tests.Integration
+namespace ECommerce.Infrastructure.Tests.Integration;
+
+public class CategoryRepositoryTest
 {
-    public class CategoryRepositoryTest
+    [Fact]
+    public async Task ShouldSuccesfullyCreateAndRetrieveCategory()
     {
-        [Fact]
-        public async Task ShouldSuccesfullyCreateAndRetrieveCategory()
-        {
-            var testContainer = new TestDatabase();
+        var testContainer = new TestDatabase();
 
-            CategoryRepository categoryRepository = new CategoryRepository(testContainer._postgresService);
-            string name = "category name";
+        var categoryRepository = new CategoryRepository(testContainer._postgresService);
+        var name = "category name";
 
-            // Create category
-            CategoryEntity? category = await categoryRepository.CreateAsync(name);
+        // Create category
+        CategoryEntity? category = await categoryRepository.CreateAsync(name);
 
-            Assert.NotNull(category);
-            Assert.Equal(name, category.Name);
+        Assert.NotNull(category);
+        Assert.Equal(name, category.Name);
 
-            // Find category
-            CategoryEntity? retrieved = await categoryRepository.FindByNameAsync(name);
+        // Find category
+        CategoryEntity? retrieved = await categoryRepository.FindByNameAsync(name);
 
-            Assert.NotNull(retrieved);
-            Assert.Equal(category.Name, retrieved.Name);
-            Assert.Equal(category.CategoryId, retrieved.CategoryId);
+        Assert.NotNull(retrieved);
+        Assert.Equal(category.Name, retrieved.Name);
+        Assert.Equal(category.CategoryId, retrieved.CategoryId);
 
-            await testContainer.DisposeAsync();
-        }
+        await testContainer.DisposeAsync();
     }
 }

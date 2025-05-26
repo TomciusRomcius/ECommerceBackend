@@ -1,19 +1,15 @@
-using ECommerce.Domain.Models.CartProduct;
+using ECommerce.Domain.Models;
 
-namespace ECommerce.Domain.Services
+namespace ECommerce.Domain.Services.Order;
+
+public class OrderPriceCalculator : IOrderPriceCalculator
 {
-    public class OrderPriceCalculator : IOrderPriceCalculator
+    public decimal CalculatePrice(IEnumerable<CartProductModel> products)
     {
-        public decimal CalculatePrice(IEnumerable<CartProductModel> products)
-        {
-            decimal result = 0m;
+        var result = 0m;
 
-            foreach (var product in products)
-            {
-                result += product.Price;
-            }
+        foreach (CartProductModel? product in products) result += product.Price;
 
-            return result;
-        }
+        return result;
     }
 }

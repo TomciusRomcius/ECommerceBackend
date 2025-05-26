@@ -1,109 +1,102 @@
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Models;
+using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
-using ECommerce.Infrastructure.Utils.DictionaryExtensions;
-using ECommerce.Domain.Entities.Category;
-using ECommerce.Domain.Models.Category;
-using ECommerce.Domain.Repositories.Category;
 
-namespace ECommerce.Infrastructure.Repositories
+namespace ECommerce.Infrastructure.Repositories;
+
+public class CategoryRepository : ICategoryRepository
 {
-    public class CategoryRepository : ICategoryRepository
+    private readonly IPostgresService _postgresService;
+
+    public CategoryRepository(IPostgresService postgresService)
     {
-        IPostgresService _postgresService;
+        _postgresService = postgresService;
+    }
 
-        public CategoryRepository(IPostgresService postgresService)
-        {
-            _postgresService = postgresService;
-        }
-
-        public async Task<CategoryEntity?> CreateAsync(string categoryName)
-        {
-            string query = @"
+    public async Task<CategoryEntity?> CreateAsync(string categoryName)
+    {
+        var query = @"
             INSERT INTO categories (name) 
             VALUES ($1)
             RETURNING categoryId;
         ";
 
-            QueryParameter[] parameters = [new QueryParameter(categoryName)];
+        QueryParameter[] parameters = [new(categoryName)];
 
-            object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+        object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-            CategoryEntity? result = null;
+        CategoryEntity? result = null;
 
-            if (id is int)
-            {
-                result = new CategoryEntity(Convert.ToInt32(id), categoryName);
-            }
+        if (id is int) result = new CategoryEntity(Convert.ToInt32(id), categoryName);
 
-            return result;
-        }
+        return result;
+    }
 
-        public Task DeleteAsync(int categoryId)
-        {
-            throw new NotImplementedException();
-        }
+    public Task DeleteAsync(int categoryId)
+    {
+        throw new NotImplementedException();
+    }
 
-        public async Task<CategoryEntity?> FindByIdAsync(int categoryId)
-        {
-            string query = @"
+    public async Task<CategoryEntity?> FindByIdAsync(int categoryId)
+    {
+        var query = @"
                 SELECT * FROM categories WHERE categoryId = $1;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter(categoryId)];
+        QueryParameter[] parameters = [new(categoryId)];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            CategoryEntity? result = null;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        CategoryEntity? result = null;
 
-            if (rows.Count == 1)
-            {
-                var row = rows[0];
-                result = new CategoryEntity(categoryId, row.GetColumn<string>("name"));
-            }
-
-            return result;
+        if (rows.Count == 1)
+        {
+            Dictionary<string, object> row = rows[0];
+            result = new CategoryEntity(categoryId, row.GetColumn<string>("name"));
         }
 
-        public async Task<CategoryEntity?> FindByNameAsync(string categoryName)
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task<CategoryEntity?> FindByNameAsync(string categoryName)
+    {
+        var query = @"
                 SELECT * FROM categories WHERE name = $1;
             ";
 
-            QueryParameter[] parameters = [new QueryParameter(categoryName)];
+        QueryParameter[] parameters = [new(categoryName)];
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
-            CategoryEntity? result = null;
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query, parameters);
+        CategoryEntity? result = null;
 
-            if (rows.Count == 1)
-            {
-                var row = rows[0];
-                result = new CategoryEntity(row.GetColumn<int>("categoryid"), categoryName);
-            }
-
-            return result;
+        if (rows.Count == 1)
+        {
+            Dictionary<string, object> row = rows[0];
+            result = new CategoryEntity(row.GetColumn<int>("categoryid"), categoryName);
         }
 
-        public async Task<List<CategoryEntity>> GetAll()
-        {
-            string query = @"
+        return result;
+    }
+
+    public async Task<List<CategoryEntity>> GetAll()
+    {
+        var query = @"
                 SELECT * FROM categories;
             ";
 
-            List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
-            List<CategoryEntity> result = new List<CategoryEntity>();
-            foreach (var row in rows)
-            {
-                result.Add(
-                    new CategoryEntity(row.GetColumn<int>("categoryid"), row.GetColumn<string>("name"))
-                );
-            }
+        List<Dictionary<string, object>> rows = await _postgresService.ExecuteAsync(query);
+        List<CategoryEntity> result = new List<CategoryEntity>();
+        foreach (Dictionary<string, object> row in rows)
+            result.Add(
+                new CategoryEntity(row.GetColumn<int>("categoryid"), row.GetColumn<string>("name"))
+            );
 
-            return result;
-        }
+        return result;
+    }
 
-        public Task UpdateAsync(UpdateCategoryModel updateModel)
-        {
-            throw new NotImplementedException();
-        }
+    public Task UpdateAsync(UpdateCategoryModel updateModel)
+    {
+        throw new NotImplementedException();
     }
 }
