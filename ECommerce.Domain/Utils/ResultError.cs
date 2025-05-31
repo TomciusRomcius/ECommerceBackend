@@ -2,8 +2,10 @@ namespace ECommerce.Domain.Utils;
 
 public enum ResultErrorType
 {
+    UNKNOWN_ERROR = 0,
     VALIDATION_ERROR,
-    INVALID_OPERATION_ERROR
+    INVALID_OPERATION_ERROR,
+    UNSUPPORTED,
 }
 
 public class ResultError

@@ -22,7 +22,8 @@ public class CreateManufacturerHandler : IRequestHandler<CreateManufacturerComma
         CancellationToken cancellationToken)
     {
         IEnumerable<ResultError> errors = _objectValidator.Validate(new ManufacturerEntity(1, request.Name));
-        if (errors.Any()) return new Result<ManufacturerEntity>(null, errors);
+        if (errors.Any()) 
+            return new Result<ManufacturerEntity>(errors);
 
         ManufacturerEntity? manufacturer = await _manufacturerRepository.CreateAsync(request.Name);
         return new Result<ManufacturerEntity>(manufacturer);
