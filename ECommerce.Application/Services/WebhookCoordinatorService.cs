@@ -26,10 +26,17 @@ public class WebhookCoordinatorService : IWebhookCoordinatorService
             using IServiceScope? scope = _serviceScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetService<IMediator>();
             var paymentSessionFactory = scope.ServiceProvider.GetService<IPaymentSessionFactory>();
+            
+            if (mediator == null)
+            {
+                throw new DataException("Payment session is null");
+            }
 
-            if (mediator is null || paymentSessionFactory is null)
+            if (paymentSessionFactory == null)
+            {
                 throw new DataException("Payment session factory is null");
-            // TODO: handle this as the user might have payed but the charge isn't being processesd
+            }
+
             IPaymentSessionService paymentSessionService =
                 paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
 
