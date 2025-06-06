@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace ECommerce.Domain.Utils;
 
 public class Result<T>
@@ -21,6 +23,17 @@ public class Result<T>
         }
         
         return ReturnResult!;
+    }
+
+    public string ErrorsToString()
+    {
+        var builder = new StringBuilder();
+        foreach (var error in Errors)
+        {
+            builder.AppendLine(error.Message);
+        }
+        
+        return builder.ToString();
     }
 
     public T? ReturnResult { init; get; }
