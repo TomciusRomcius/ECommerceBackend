@@ -1,4 +1,5 @@
 using ECommerce.Domain.Models.PaymentSession;
+using ECommerce.Domain.Utils;
 
 namespace ECommerce.Domain.Interfaces.Services;
 
@@ -16,5 +17,5 @@ public class GeneratePaymentSessionOptions
 public interface IPaymentSessionService
 {
     public Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions);
-    public Task<PaymentProviderEvent> ParseWebhookEvent(string json, string signature);
+    public Task<Result<PaymentProviderEvent>> ParseWebhookEvent(string json, string signature);
 }
