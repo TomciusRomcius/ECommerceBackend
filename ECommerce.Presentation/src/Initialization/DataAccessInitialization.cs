@@ -1,5 +1,6 @@
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
+using ECommerce.Application.Services.WebhookStrategies;
 using ECommerce.Domain.Enums;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Repositories;
@@ -8,6 +9,7 @@ using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Services.Payment;
 using ECommerce.Infrastructure.Utils;
+using Stripe;
 using System.Data;
 
 namespace ECommerce.Presentation.Initialization;
@@ -68,6 +70,9 @@ public static class DataAccessInitialization
         builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
 
         IWebhookEventStrategyMap stripeStrategyMap = new WebhookEventStrategyMap<IStripeWebhookStrategy>();
+
+        stripeStrategyMap.AddStrategy<IStripeWebhookStrategy>(EventTypes.ChargeSucceeded, new ChargeSucceededStrategy());
+
         Dictionary<PaymentProvider, IWebhookEventStrategyMap> strategyMaps = new()
         {
             { PaymentProvider.STRIPE, stripeStrategyMap }
