@@ -2,11 +2,11 @@ namespace ECommerce.Application.Interfaces;
 
 public interface IBackgroundTaskQueue
 {
-    public ValueTask QueueBackgroundWorkItemAsync(
-        Func<CancellationToken, ValueTask> func
+    public Task QueueBackgroundWorkItemAsync(
+        Func<CancellationToken, Task> func
     );
 
-    public ValueTask<Func<CancellationToken, ValueTask>> DequeueBackgroundWorkItemAsync(
+    public Task<Func<CancellationToken, Task>> DequeueBackgroundWorkItemAsync(
         CancellationToken cancellationToken
     );
 }

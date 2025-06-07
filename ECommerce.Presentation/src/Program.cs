@@ -23,7 +23,7 @@ builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-builder.Services.AddHostedService<QueueHostedService>();
+builder.Services.AddHostedService<IoBackgroundTaskRunner>();
 
 DataAccessInitialization.InitDb(builder);
 DataAccessInitialization.InitRepositories(builder);

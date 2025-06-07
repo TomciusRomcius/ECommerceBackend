@@ -30,7 +30,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
 
     public async Task HandlePaymentWebhook(string json, string signature)
     {
-        Func<CancellationToken, ValueTask> paymentTask = async cancellationToken =>
+        Func<CancellationToken, Task> paymentTask = async cancellationToken =>
         {
             using IServiceScope? scope = _serviceScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
