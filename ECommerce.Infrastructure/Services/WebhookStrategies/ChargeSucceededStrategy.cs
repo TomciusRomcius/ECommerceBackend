@@ -9,11 +9,13 @@ namespace ECommerce.Application.Services.WebhookStrategies
     {
         public ResultError? Run(IHasObject ev)
         {
+        public async Task<ResultError?> RunAsync(IHasObject ev)
+        {
             if (ev is not Charge)
             {
                 return new ResultError(
                     ResultErrorType.INVALID_OPERATION_ERROR,
-                    "Event is not of type Charge"
+                    "Event is not of type Charge!"
                 );
             }
             var charge = ev as Charge;

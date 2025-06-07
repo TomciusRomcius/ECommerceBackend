@@ -5,6 +5,6 @@ namespace ECommerce.Infrastructure.Interfaces
 {
     public interface IStripeWebhookStrategy
     {
-        ResultError? Run(IHasObject ev);
+        Task<ResultError?> RunAsync(IHasObject ev);
     }
 }
