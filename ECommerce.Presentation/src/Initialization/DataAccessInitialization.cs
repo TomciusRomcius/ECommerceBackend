@@ -1,12 +1,14 @@
-using System.Data;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
+using ECommerce.Domain.Enums;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Repositories;
+using ECommerce.Infrastructure.Interfaces;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Services.Payment;
 using ECommerce.Infrastructure.Utils;
+using System.Data;
 
 namespace ECommerce.Presentation.Initialization;
 
@@ -64,6 +66,17 @@ public static class DataAccessInitialization
         });
 
         builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
-        builder.Services.AddSingleton<IWebhookCoordinatorService, WebhookCoordinatorService>();
+
+        IWebhookEventStrategyMap stripeStrategyMap = new WebhookEventStrategyMap<IStripeWebhookStrategy>();
+        Dictionary<PaymentProvider, IWebhookEventStrategyMap> strategyMaps = new()
+        {
+            { PaymentProvider.STRIPE, stripeStrategyMap }
+        };
+
+        builder.Services.AddSingleton<WebhookEventStrategyMapContainer>(
+            _ => new WebhookEventStrategyMapContainer(strategyMaps)
+        );
+
+        builder.Services.AddSingleton<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
     }
 }

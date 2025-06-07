@@ -17,5 +17,5 @@ public class GeneratePaymentSessionOptions
 public interface IPaymentSessionService
 {
     public Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions);
-    public Task<Result<PaymentProviderEvent>> ParseWebhookEvent(string json, string signature);
+    public Task<Result<T>> ParseWebhookEvent<T>(string json, string signature);
 }

@@ -4,7 +4,6 @@ using ECommerce.Domain.Models.PaymentSession;
 using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Utils;
 using Stripe;
-using System.Data;
 
 namespace ECommerce.Infrastructure.Services.Payment;
 
@@ -48,50 +47,21 @@ public class StripeSessionService : IPaymentSessionService
         };
     }
 
-    public Task<Result<PaymentProviderEvent>> ParseWebhookEvent(string json, string signature)
+    // TODO: not ideal, figure out a way to do this without having to mass a generic parameter
+    // everytime this needs to be called
+    // T = IHasResult
+    public Task<Result<T>> ParseWebhookEvent<T>(string json, string signature)
     {
+        if (typeof(T) != typeof(Event))
+        {
+            return Task.FromResult(new Result<T>([
+                new ResultError(ResultErrorType.INVALID_OPERATION_ERROR, "T must be IHasObject")
+            ]));
+        }
         // TODO: throwOnApiVersionMismatch = true on production
-        // TODO: refactor event types into a Dictionary to use strategy pattern
         // Construct webhook event + verify the signature
         Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSignature,
             throwOnApiVersionMismatch: false);
-        Result<PaymentProviderEvent> result;
-
-        switch (ev.Type)
-        {
-            case EventTypes.ChargeSucceeded:
-                {
-                    var charge = ev.Data.Object as Charge;
-                    if (charge is null) throw new DataException("Failed parsing charge");
-
-                    string? userId;
-                    if (!charge.Metadata.TryGetValue("userid", out userId))
-                    {
-                        var error = new ResultError(
-                            ResultErrorType.VALIDATION_ERROR,
-                            "Event does not have a user id attached to it"
-                        );
-
-                        result = new Result<PaymentProviderEvent>([error]);
-                        break;
-                    }
-
-                    result = new Result<PaymentProviderEvent>(new PaymentProviderEvent
-                    {
-                        UserId = userId,
-                        Id = charge.Id,
-                        Provider = PaymentProvider.STRIPE,
-                        EventType = PaymentProviderEventType.CHARGE_SUCEEDED
-                    });
-                    break;
-                }
-            default:
-                result = new Result<PaymentProviderEvent>([
-                    new ResultError(ResultErrorType.UNSUPPORTED, "Payment event type unsupported")
-                ]);
-                break;
-        }
-
-        return Task.FromResult(result);
+        return Task.FromResult(new Result<T>((T)(object)ev));
     }
 }
