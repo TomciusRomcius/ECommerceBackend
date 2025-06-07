@@ -21,7 +21,7 @@ public class PaymentSessionController : ControllerBase
         string? signature = Request.Headers["Stripe-Signature"];
         if (String.IsNullOrWhiteSpace(json) || String.IsNullOrWhiteSpace(signature))
         {
-            return Forbid();
+            return BadRequest();
         }
         await _webhookCoordinatorService.HandlePaymentWebhook(json, signature);
         return Ok();
