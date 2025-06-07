@@ -1,4 +1,3 @@
-using System.Reflection;
 using ECommerce.Application;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
@@ -6,6 +5,7 @@ using ECommerce.Domain.Services.Order;
 using ECommerce.Presentation.Common.Services;
 using ECommerce.Presentation.Common.Utils;
 using ECommerce.Presentation.Initialization;
+using System.Reflection;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +47,7 @@ if (app.Environment.IsDevelopment())
 string? masterUserEmail = builder.Configuration["MASTER_USER_EMAIL"];
 string? masterUserPassword = builder.Configuration["MASTER_USER_PASSWORD"];
 await Initialization.CreateDefaultRolesAndMasterUser(app, builder.Configuration);
+DataAccessInitialization.InitializeStripeWebhookStrategies(app);
 
 app.MapControllers();
 

@@ -5,11 +5,11 @@ namespace ECommerce.Application.Services
 {
     public class WebhookEventStrategyMapContainer
     {
-        private Dictionary<PaymentProvider, IWebhookEventStrategyMap> _strategyMaps;
+        private Dictionary<PaymentProvider, IWebhookEventStrategyMap> _strategyMaps = [];
 
-        public WebhookEventStrategyMapContainer(Dictionary<PaymentProvider, IWebhookEventStrategyMap> strategyMaps)
+        public void AddStrategyMap(PaymentProvider paymentProvider, IWebhookEventStrategyMap strategyMap)
         {
-            _strategyMaps = strategyMaps;
+            _strategyMaps.Add(paymentProvider, strategyMap);
         }
 
         public IWebhookEventStrategyMap? GetStrategyMap(PaymentProvider paymentProvider)

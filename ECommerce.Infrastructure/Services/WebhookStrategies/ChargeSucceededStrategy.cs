@@ -1,14 +1,19 @@
-﻿using ECommerce.Domain.Utils;
+﻿using ECommerce.Application.Interfaces;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Interfaces;
 using Stripe;
-using System.Data;
 
 namespace ECommerce.Application.Services.WebhookStrategies
 {
     public class ChargeSucceededStrategy : IStripeWebhookStrategy
     {
-        public ResultError? Run(IHasObject ev)
+        IOrderService _orderService;
+
+        public ChargeSucceededStrategy(IOrderService orderService)
         {
+            _orderService = orderService;
+        }
+
         public async Task<ResultError?> RunAsync(IHasObject ev)
         {
             if (ev is not Charge)
@@ -20,10 +25,20 @@ namespace ECommerce.Application.Services.WebhookStrategies
             }
             var charge = ev as Charge;
 
-            if (charge is null) throw new DataException("Failed parsing charge");
+            if (charge is null)
+            {
+                return new ResultError(ResultErrorType.VALIDATION_ERROR, "Charge object is null!");
+            }
+            charge.Metadata.TryGetValue("userid", out string? userId);
+            if (userId == null)
+            {
+                return new ResultError(
+                    ResultErrorType.VALIDATION_ERROR,
+                    "Charge event metadata does not have an user id attatched to it"
+                );
+            }
 
-            string? userId;
-            charge.Metadata.TryGetValue("userid", out userId);
+            await _orderService.OnCharge(new Guid(userId));
 
             return null;
         }

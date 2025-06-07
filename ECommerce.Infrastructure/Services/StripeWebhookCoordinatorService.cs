@@ -59,7 +59,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
             }
 
             IStripeWebhookStrategy webhookHandlerStrategy = webhookHandlerStrategyResult.GetValue();
-            webhookHandlerStrategy.Run(paymentEvent.Data.Object);
+            await webhookHandlerStrategy.RunAsync(paymentEvent.Data.Object);
         };
 
         await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(paymentTask);

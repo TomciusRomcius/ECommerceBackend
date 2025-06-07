@@ -68,20 +68,30 @@ public static class DataAccessInitialization
         });
 
         builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
+        builder.Services.AddSingleton<WebhookEventStrategyMapContainer>();
+        builder.Services.AddSingleton<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
+    }
 
+    public static void InitializeStripeWebhookStrategies(WebApplication app)
+    {
         IWebhookEventStrategyMap stripeStrategyMap = new WebhookEventStrategyMap<IStripeWebhookStrategy>();
 
-        stripeStrategyMap.AddStrategy<IStripeWebhookStrategy>(EventTypes.ChargeSucceeded, new ChargeSucceededStrategy());
-
-        Dictionary<PaymentProvider, IWebhookEventStrategyMap> strategyMaps = new()
+        using (var scope = app.Services.CreateScope())
         {
-            { PaymentProvider.STRIPE, stripeStrategyMap }
-        };
+            var serviceProvider = scope.ServiceProvider;
+            var strategyMapContainer = serviceProvider.GetRequiredService<WebhookEventStrategyMapContainer>();
+            // Get required services
+            IOrderService orderService = serviceProvider.GetRequiredService<IOrderService>();
 
-        builder.Services.AddSingleton<WebhookEventStrategyMapContainer>(
-            _ => new WebhookEventStrategyMapContainer(strategyMaps)
-        );
+            // Create strategies
+            IStripeWebhookStrategy chargeSucceeded = new ChargeSucceededStrategy(orderService);
 
-        builder.Services.AddSingleton<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
+            // Add strategies to stripe
+            stripeStrategyMap.AddStrategy<IStripeWebhookStrategy>(EventTypes.ChargeSucceeded, chargeSucceeded);
+
+            strategyMapContainer.AddStrategyMap(PaymentProvider.STRIPE, stripeStrategyMap);
+        }
+
+
     }
 }
