@@ -2,6 +2,7 @@ using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TestUtils;
@@ -16,7 +17,7 @@ public class UserRoleRepositoryIntegrationTest
         var testContainer = new TestDatabase();
 
         // Create user
-        var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
+        UserRepository userRepository = RepositoryFactories.CreateUserRepository(testContainer._postgresService);
         var user = new UserEntity(new Guid().ToString(), "email@gmail.com", "passwordhash", "John", "Doe");
         await userRepository.CreateAsync(user);
 

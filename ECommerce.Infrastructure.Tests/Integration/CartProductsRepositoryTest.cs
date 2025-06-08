@@ -1,7 +1,11 @@
 using System.Data;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
+using ECommerce.Domain.Utils;
+using ECommerce.Domain.Validators.Product;
+using ECommerce.Domain.Validators.User;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TestUtils;
@@ -14,31 +18,43 @@ public class CartProductsRepositoryTest
     public async Task ShouldSuccesfullyCreateAndRetrieveACartProduct()
     {
         var testContainer = new TestDatabase();
+        var postgres = testContainer._postgresService;
 
         // Create user
-        var userRepository = new UserRepository(testContainer._postgresService, new Mock<ILogger>().Object);
+        var userRepository = RepositoryFactories.CreateUserRepository(postgres);
+
         var user = new UserEntity(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname",
             "lastname");
         if (user is null) throw new DataException("Failed to create the user");
         await userRepository.CreateAsync(user);
 
         // Create manufacturer
-        var manufacturerRepository = new ManufacturerRepository(testContainer._postgresService);
+        var manufacturerRepository = new ManufacturerRepository(postgres);
         ManufacturerEntity? manufacturerDb = await manufacturerRepository.CreateAsync("Name");
         if (manufacturerDb is null) throw new DataException("Failed to create a manufacturer");
 
 
         // Create category
-        var categoryRepository = new CategoryRepository(testContainer._postgresService);
+        var categoryRepository = new CategoryRepository(postgres);
         CategoryEntity? categoryDb = await categoryRepository.CreateAsync("Name");
         if (categoryDb is null) throw new DataException("Failed to create a product category");
 
 
         // Create product
-        var productRepository = new ProductRepository(testContainer._postgresService);
-        ProductEntity? productDb =
-            await productRepository.CreateAsync(new ProductEntity("Product name", "Product descriptino", 5.99m, 1, 1));
-        if (productDb is null) throw new DataException("Failed to create product");
+        var productRepository = RepositoryFactories.CreateProductRepository(postgres);
+
+        var productEntity = new ProductEntity(
+            "Product name",
+            "Product description",
+            5.99m,
+            1,
+            1
+        );
+
+        Result<ProductEntity> productResult = await productRepository.CreateAsync(productEntity);
+
+        Assert.Empty(productResult.Errors);
+        ProductEntity productDb = productResult.GetValue();
 
         // Create store location
         var storeLocationRepository = new StoreLocationRepository(testContainer._postgresService);

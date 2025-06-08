@@ -1,5 +1,6 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TestUtils;
@@ -14,11 +15,7 @@ public class ShippingAddressRepositoryTest
         var testContainer = new TestDatabase();
 
         // Create base user to whom we are going to attach a shipping address
-        var userRepository = new UserRepository(
-            testContainer._postgresService,
-            new Mock<ILogger>().Object
-        );
-
+        var userRepository = RepositoryFactories.CreateUserRepository(testContainer._postgresService);
         var userId = new Guid();
 
         await userRepository.CreateAsync(

@@ -1,6 +1,7 @@
 using System.Data;
 using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 
 /*
@@ -26,7 +27,7 @@ public class ProductCreationFlowTest : IClassFixture<TestDatabase>
 
         var categoryRepository = new CategoryRepository(_container._postgresService);
         var manufacturerRepository = new ManufacturerRepository(_container._postgresService);
-        var productRepository = new ProductRepository(_container._postgresService);
+        var productRepository = RepositoryFactories.CreateProductRepository(_container._postgresService);
 
         int manufacturerId = (await manufacturerRepository.CreateAsync("manufacturer"))!.ManufacturerId;
         int categoryId = (await categoryRepository.CreateAsync("category"))!.CategoryId;

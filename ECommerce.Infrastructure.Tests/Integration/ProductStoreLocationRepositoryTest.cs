@@ -1,6 +1,8 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 
 namespace ECommerce.Infrastructure.Tests.Integration;
@@ -14,15 +16,22 @@ public class ProductStoreLocationRepositoryTest
             await new ManufacturerRepository(testContainer._postgresService).CreateAsync("Manufacturer");
         CategoryEntity? category = await new CategoryRepository(testContainer._postgresService).CreateAsync("Category");
 
-        ProductEntity? product = await new ProductRepository(testContainer._postgresService).CreateAsync(
-            new ProductEntity("Name", "Description", 2.99m, manufacturer!.ManufacturerId, category!.CategoryId
-            ));
+        var productEntity = new ProductEntity(
+            "Name", "Description", 2.99m, manufacturer!.ManufacturerId, category!.CategoryId
+        );
+
+        ProductRepository productRepository = RepositoryFactories.CreateProductRepository(testContainer._postgresService);
+
+        Result<ProductEntity> productResult= await productRepository.CreateAsync(productEntity);
+        Assert.Empty(productResult.Errors);
+        var product = productResult.GetValue();
 
         StoreLocationEntity? storeLocation =
             await new StoreLocationRepository(testContainer._postgresService).CreateAsync(
                 new CreateStoreLocationModel("Display name", "Address")
             );
 
+        Assert.NotNull(storeLocation);
         return (storeLocation, product);
     }
 
