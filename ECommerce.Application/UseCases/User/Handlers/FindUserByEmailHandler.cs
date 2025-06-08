@@ -1,6 +1,7 @@
 using ECommerce.Application.UseCases.User.Queries;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.User.Handlers;
@@ -16,6 +17,8 @@ public class FindUserByEmailHandler : IRequestHandler<FindUserByEmailQuery, User
 
     public async Task<UserEntity?> Handle(FindUserByEmailQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.FindByEmailAsync(request.Email);
+        // TODO: return result
+        Result<UserEntity?> result = await _userRepository.FindByEmailAsync(request.Email);
+        return result.GetValue();
     }
 }

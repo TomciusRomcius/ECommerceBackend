@@ -1,6 +1,7 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ public class UserRepository : IUserRepository
         _logger = logger;
     }
 
-    public async Task CreateAsync(UserEntity user)
+    public async Task<ResultError?> CreateAsync(UserEntity user)
     {
         var query = @"
                 INSERT INTO users (userId, email, passwordHash, firstname, lastname)
@@ -35,9 +36,11 @@ public class UserRepository : IUserRepository
         ];
 
         await _postgresService.ExecuteScalarAsync(query, parameters);
+
+        return null;
     }
 
-    public async Task DeleteAsync(string userId)
+    public async Task<ResultError?> DeleteAsync(string userId)
     {
         var query = @"
                 DELETE FROM users WHERE userId = $1 
@@ -45,9 +48,11 @@ public class UserRepository : IUserRepository
 
         QueryParameter[] parameters = [new(new Guid(userId))];
         await _postgresService.ExecuteScalarAsync(query, parameters);
+
+        return null;
     }
 
-    public async Task<UserEntity?> FindByEmailAsync(string normalizedEmail)
+    public async Task<Result<UserEntity?>> FindByEmailAsync(string normalizedEmail)
     {
         var query = @"
                 SELECT * FROM users WHERE email = @email 
@@ -73,15 +78,15 @@ public class UserRepository : IUserRepository
             );
         }
 
-        return user;
+        return new Result<UserEntity?>(user);
     }
 
-    public Task<UserEntity?> FindByIdAsync(string userId)
+    public Task<Result<UserEntity?>> FindByIdAsync(string userId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task UpdateAsync(UpdateUserModel user)
+    public async Task<ResultError?> UpdateAsync(UpdateUserModel user)
     {
         var query = @"
                 UPDATE users
@@ -103,5 +108,7 @@ public class UserRepository : IUserRepository
         ];
 
         await _postgresService.ExecuteScalarAsync(query, parameters);
+
+        return null;
     }
 }

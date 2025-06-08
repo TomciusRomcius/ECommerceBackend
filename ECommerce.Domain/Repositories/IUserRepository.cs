@@ -1,13 +1,14 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
+using ECommerce.Domain.Utils;
 
 namespace ECommerce.Domain.Repositories;
 
 public interface IUserRepository
 {
-    public Task CreateAsync(UserEntity user);
-    public Task UpdateAsync(UpdateUserModel user);
-    public Task DeleteAsync(string userId);
-    public Task<UserEntity?> FindByIdAsync(string userId);
-    public Task<UserEntity?> FindByEmailAsync(string normalizedEmail);
+    public Task<ResultError?> CreateAsync(UserEntity user);
+    public Task<ResultError?> UpdateAsync(UpdateUserModel user);
+    public Task<ResultError?> DeleteAsync(string userId);
+    public Task<Result<UserEntity?>> FindByIdAsync(string userId);
+    public Task<Result<UserEntity?>> FindByEmailAsync(string normalizedEmail);
 }
