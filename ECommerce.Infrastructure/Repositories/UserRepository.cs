@@ -4,6 +4,8 @@ using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Infrastructure.Repositories;
@@ -12,15 +14,31 @@ public class UserRepository : IUserRepository
 {
     private readonly ILogger _logger;
     private readonly IPostgresService _postgresService;
+    private readonly IValidator<UserEntity> _userValidator;
+    private readonly IValidator<UpdateUserModel> _updateUserValidator;
 
-    public UserRepository(IPostgresService postgresService, ILogger logger)
+    public UserRepository(IPostgresService postgresService, 
+        ILogger logger, 
+        IValidator<UserEntity> userValidator,
+        IValidator<UpdateUserModel> updateUserValidator)
     {
         _postgresService = postgresService;
         _logger = logger;
+        _userValidator = userValidator;
+        _updateUserValidator = updateUserValidator;
     }
 
     public async Task<ResultError?> CreateAsync(UserEntity user)
     {
+        List<ValidationFailure> errors = _userValidator.Validate(user).Errors;
+        if (errors.Any())
+        {
+            return new ResultError(
+                ResultErrorType.VALIDATION_ERROR,
+                errors.First().ErrorMessage
+            );
+        }
+
         var query = @"
                 INSERT INTO users (userId, email, passwordHash, firstname, lastname)
                 VALUES ($1, $2, $3, $4, $5)
@@ -88,6 +106,15 @@ public class UserRepository : IUserRepository
 
     public async Task<ResultError?> UpdateAsync(UpdateUserModel user)
     {
+        List<ValidationFailure> errors = _updateUserValidator.Validate(user).Errors;
+        if (errors.Any())
+        {
+            return new ResultError(
+                ResultErrorType.VALIDATION_ERROR,
+                errors.First().ErrorMessage
+            );
+        }
+
         var query = @"
                 UPDATE users
                 SET
