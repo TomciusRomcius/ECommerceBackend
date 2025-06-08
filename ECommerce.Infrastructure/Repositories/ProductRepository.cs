@@ -1,6 +1,7 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
 
@@ -15,7 +16,7 @@ public class ProductRepository : IProductRepository
         _postgresService = postgresService;
     }
 
-    public async Task<ProductEntity?> CreateAsync(ProductEntity product)
+    public async Task<Result<ProductEntity>> CreateAsync(ProductEntity product)
     {
         var query = @"
                     INSERT INTO products(name, description, price, manufacturerId, categoryId) 
@@ -42,10 +43,10 @@ public class ProductRepository : IProductRepository
             result.ProductId = Convert.ToInt32(id);
         }
 
-        return result;
+        return new Result<ProductEntity>(result);
     }
 
-    public async Task UpdateAsync(UpdateProductModel product)
+    public async Task<ResultError?> UpdateAsync(UpdateProductModel product)
     {
         var query = @"
                     UPDATE products
@@ -68,6 +69,7 @@ public class ProductRepository : IProductRepository
         ];
 
         await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
+        return null;
     }
 
     public async Task DeleteAsync(int productId)
