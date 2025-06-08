@@ -4,20 +4,36 @@ using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace ECommerce.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
     private readonly IPostgresService _postgresService;
+    private readonly IValidator<ProductEntity> _productValidator;
+    private readonly IValidator<UpdateProductModel> _updateProductValidator;
 
-    public ProductRepository(IPostgresService postgresService)
+    public ProductRepository(IPostgresService postgresService, 
+        IValidator<ProductEntity> productValidator, 
+        IValidator<UpdateProductModel> updateProductValidator)
     {
         _postgresService = postgresService;
+        _productValidator = productValidator;
+        _updateProductValidator = updateProductValidator;
     }
 
     public async Task<Result<ProductEntity>> CreateAsync(ProductEntity product)
     {
+        List<ValidationFailure> errors = _productValidator.Validate(product).Errors;
+        if (errors.Any())
+        {
+            return new Result<ProductEntity>(
+                ResultUtils.ValidationFailuresToResultErrors(errors)
+            );
+        }
+
         var query = @"
                     INSERT INTO products(name, description, price, manufacturerId, categoryId) 
                     VALUES ($1, $2, $3, $4, $5)
@@ -48,6 +64,12 @@ public class ProductRepository : IProductRepository
 
     public async Task<ResultError?> UpdateAsync(UpdateProductModel product)
     {
+        List<ValidationFailure> errors = _updateProductValidator.Validate(product).Errors;
+        if (errors.Any())
+        {
+            return ResultUtils.ValidationFailuresToResultError(errors);
+        }
+
         var query = @"
                     UPDATE products
                     SET name = COALESCE($1, name)
