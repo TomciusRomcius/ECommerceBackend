@@ -4,6 +4,7 @@ using ECommerce.Application.UseCases.Common.Notifications;
 using ECommerce.Application.UseCases.PaymentSession.Commands;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.Order.NotificationHandlers;
@@ -22,8 +23,13 @@ public class ChargeSucceededNotificationHandler : INotificationHandler<ChargeSuc
 
     public async Task Handle(ChargeSucceededNotification notification, CancellationToken cancellationToken)
     {
-        List<CartProductEntity> cartItems = await _mediator.Send(new GetUserCartItemsQuery(notification.UserId));
-        await _productStoreLocationRepository.UpdateStock(cartItems);
+        Result<List<CartProductEntity>> cartItemsResult = await _mediator.Send(new GetUserCartItemsQuery(notification.UserId));
+        if (cartItemsResult.Errors.Any())
+        {
+            // TODO: handle
+            return;
+        }
+        await _productStoreLocationRepository.UpdateStock(cartItemsResult.GetValue());
         await _mediator.Send(new EraseUserCartCommand(notification.UserId));
         await _mediator.Send(new DeletePaymentSessionCommand(notification.UserId));
     }

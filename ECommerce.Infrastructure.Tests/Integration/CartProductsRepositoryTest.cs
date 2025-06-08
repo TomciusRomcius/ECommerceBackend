@@ -1,4 +1,3 @@
-using System.Data;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Utils;
@@ -8,7 +7,9 @@ using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Data;
 using TestUtils;
+using Xunit.Abstractions;
 
 namespace ECommerce.Infrastructure.Tests.Integration;
 
@@ -81,7 +82,10 @@ public class CartProductsRepositoryTest
         );
 
         // Get user cart products
-        List<CartProductModel> items = await cartProductsRepository.GetUserCartProductsDetailedAsync(user.UserId);
+        Result<List<CartProductModel>> itemsResult = await cartProductsRepository.GetUserCartProductsDetailedAsync(user.UserId);
+        
+        Assert.Empty(itemsResult.Errors);
+        List<CartProductModel> items = itemsResult.GetValue();
         CartProductModel? targetItem = items.FirstOrDefault();
 
         Assert.NotNull(targetItem);

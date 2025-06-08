@@ -1,8 +1,10 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using Npgsql;
 
 namespace ECommerce.Infrastructure.Repositories;
 
@@ -15,8 +17,10 @@ public class CartProductsRepository : ICartProductsRepository
         _postgresService = postgresService;
     }
 
-    public async Task<CartProductEntity?> AddItemAsync(CartProductEntity cartProduct)
+    public async Task<ResultError?> AddItemAsync(CartProductEntity cartProduct)
     {
+        ResultError? error = null;
+
         var query = @"
                 INSERT INTO cartProducts (userId, productId, storeLocationId, quantity)
                 VALUES ($1, $2, $3, $4);
@@ -30,12 +34,30 @@ public class CartProductsRepository : ICartProductsRepository
             new(cartProduct.Quantity)
         ];
 
-        await _postgresService.ExecuteScalarAsync(query, parameters);
+        try
+        {
+            await _postgresService.ExecuteScalarAsync(query, parameters);
+        }
+        catch (NpgsqlException ex)
+        {
+            if (ex.ErrorCode == int.Parse(PostgresErrorCodes.ForeignKeyViolation))
+            {
+                error = new ResultError(
+                    ResultErrorType.VALIDATION_ERROR,
+                    "Specified product or store location does not exist"
+                );
+            }
+        }
 
-        return cartProduct;
+        catch (Exception)
+        {
+            error = new ResultError(ResultErrorType.UNKNOWN_ERROR, "Unknown error.");
+        }
+
+        return error;
     }
 
-    public async Task<List<CartProductModel>> GetUserCartProductsDetailedAsync(string userId)
+    public async Task<Result<List<CartProductModel>>> GetUserCartProductsDetailedAsync(string userId)
     {
         var query = @"
                 SELECT cartProducts.userid, cartProducts.productid, cartProducts.storelocationid, cartProducts.quantity, products.price 
@@ -54,18 +76,20 @@ public class CartProductsRepository : ICartProductsRepository
         var result = new List<CartProductModel>();
 
         foreach (Dictionary<string, object> row in rows)
+        {
             result.Add(new CartProductModel(
                 row.GetColumn<Guid>("userid").ToString(),
                 row.GetColumn<int>("productid"),
                 row.GetColumn<int>("storelocationid"),
                 row.GetColumn<int>("quantity"),
-                row.GetColumn<decimal>("price") // TODO: decimal type
+                row.GetColumn<decimal>("price")
             ));
+        }
 
-        return result;
+        return new Result<List<CartProductModel>>(result);
     }
 
-    public async Task<List<CartProductEntity>> GetUserCartProductsAsync(string userId)
+    public async Task<Result<List<CartProductEntity>>> GetUserCartProductsAsync(string userId)
     {
         var query = @"
                 SELECT cartProducts.userid, cartProducts.productid, cartProducts.storelocationid, cartProducts.quantity 
@@ -82,17 +106,19 @@ public class CartProductsRepository : ICartProductsRepository
         var result = new List<CartProductEntity>();
 
         foreach (Dictionary<string, object> row in rows)
+        {
             result.Add(new CartProductEntity(
                 row.GetColumn<Guid>("userid").ToString(),
                 row.GetColumn<int>("productid"),
                 row.GetColumn<int>("storelocationid"),
                 row.GetColumn<int>("quantity")
             ));
+        }
 
-        return result;
+        return new Result<List<CartProductEntity>>(result);
     }
 
-    public async Task RemoveAllCartItemsAsync(Guid userId)
+    public async Task<ResultError?> RemoveAllCartItemsAsync(Guid userId)
     {
         var query = @"
                 DELETE FROM cartProducts WHERE userId = $1;
@@ -104,9 +130,11 @@ public class CartProductsRepository : ICartProductsRepository
         ];
 
         await _postgresService.ExecuteScalarAsync(query, parameters);
+
+        return null;
     }
 
-    public async Task RemoveItemAsync(string userId, int productId)
+    public async Task<ResultError?> RemoveItemAsync(string userId, int productId)
     {
         var query = @"
                 DELETE FROM cartProducts WHERE userId = $1 AND productId = $2;
@@ -119,10 +147,14 @@ public class CartProductsRepository : ICartProductsRepository
         ];
 
         await _postgresService.ExecuteScalarAsync(query, parameters);
+
+        return null;
     }
 
-    public async Task<CartProductEntity?> UpdateItemAsync(CartProductEntity cartProduct)
+    public async Task<ResultError?> UpdateItemAsync(CartProductEntity cartProduct)
     {
+        ResultError? error = null;
+
         var query = @"
                 UPDATE cartProducts
                 SET
@@ -137,9 +169,16 @@ public class CartProductsRepository : ICartProductsRepository
             new(cartProduct.ProductId)
         ];
 
+        try
+        {
+            await _postgresService.ExecuteScalarAsync(query, parameters);
+        }
 
-        await _postgresService.ExecuteScalarAsync(query, parameters);
+        catch (Exception)
+        {
+            error = new ResultError(ResultErrorType.UNKNOWN_ERROR, "Unknown error.");
+        }
 
-        return cartProduct;
+        return error;
     }
 }

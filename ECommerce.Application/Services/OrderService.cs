@@ -10,6 +10,7 @@ using ECommerce.Domain.Models;
 using ECommerce.Domain.Models.PaymentSession;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Services.Order;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.Services;
@@ -39,7 +40,14 @@ public class OrderService : IOrderService
             throw new InvalidOperationException(
                 "Cannot create a payment session: there is an existing payment session!");
 
-        List<CartProductModel>? items = await _mediator.Send(new GetUserCartItemsDetailedQuery(userId));
+        Result<List<CartProductModel>> itemsResult = await _mediator.Send(new GetUserCartItemsDetailedQuery(userId));
+        if (itemsResult.Errors.Any())
+        {
+            // TODO: handle
+            return null;
+        }
+
+        List<CartProductModel> items = itemsResult.GetValue();
 
         List<(int, int)> idTuple = items.Select(item => (item.StoreLocationId, item.ProductId)).ToList();
         List<ProductStoreLocationEntity> products =
@@ -69,8 +77,14 @@ public class OrderService : IOrderService
 
     public async Task OnCharge(Guid userId)
     {
-        List<CartProductEntity>? cartItems = await _mediator.Send(new GetUserCartItemsQuery(userId));
-        await _productStoreLocationRepository.UpdateStock(cartItems);
+        Result<List<CartProductEntity>> cartItemsResult = await _mediator.Send(new GetUserCartItemsQuery(userId));
+        if (cartItemsResult.Errors.Any())
+        {
+            // TODO: handle
+            return;
+        }
+
+        await _productStoreLocationRepository.UpdateStock(cartItemsResult.GetValue());
         await _mediator.Send(new EraseUserCartCommand(userId));
         await _mediator.Send(new DeletePaymentSessionCommand(userId));
     }

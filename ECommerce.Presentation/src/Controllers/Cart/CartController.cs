@@ -3,7 +3,9 @@ using ECommerce.Application.UseCases.Cart.Commands;
 using ECommerce.Application.UseCases.Cart.Queries;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
+using ECommerce.Domain.Utils;
 using ECommerce.Presentation.src.Controllers.Cart.dtos;
+using ECommerce.Presentation.src.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +30,13 @@ public class CartController : ControllerBase
         string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to get items!");
 
-        List<CartProductModel> result = await _mediator.Send(new GetUserCartItemsDetailedQuery(new Guid(userId)));
-        return Ok(result);
+        Result<List<CartProductModel>> result = await _mediator.Send(new GetUserCartItemsDetailedQuery(new Guid(userId)));
+        if (result.Errors.Any())
+        {
+            ControllerUtils.ResultErrorToResponse(result.Errors.First());
+        }
+
+        return Ok(result.GetValue());
     }
 
     [HttpPost]
@@ -39,9 +46,14 @@ public class CartController : ControllerBase
         string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
 
-        await _mediator.Send(new AddItemToCartCommand(
+        ResultError? error = await _mediator.Send(new AddItemToCartCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
         ));
+
+        if (error != null)
+        {
+            return ControllerUtils.ResultErrorToResponse(error);
+        }
 
         return Created(nameof(AddItem), null);
     }
@@ -53,9 +65,14 @@ public class CartController : ControllerBase
         string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
 
-        await _mediator.Send(new UpdateCartItemQuantityCommand(
+        ResultError? error = await _mediator.Send(new UpdateCartItemQuantityCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
         ));
+
+        if (error != null)
+        {
+            ControllerUtils.ResultErrorToResponse(error);
+        }
 
         return Ok();
     }
