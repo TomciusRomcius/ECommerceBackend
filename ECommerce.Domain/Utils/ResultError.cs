@@ -5,6 +5,7 @@ public enum ResultErrorType
     UNKNOWN_ERROR = 0,
     VALIDATION_ERROR,
     INVALID_OPERATION_ERROR,
+    UNAUTHORIZED,
     UNSUPPORTED,
 }
 

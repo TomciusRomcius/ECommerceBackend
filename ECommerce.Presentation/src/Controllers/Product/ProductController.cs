@@ -1,7 +1,9 @@
 using ECommerce.Application.UseCases.Product.Commands;
 using ECommerce.Application.UseCases.Product.Queries;
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Utils;
 using ECommerce.Presentation.src.Controllers.Product.dtos;
+using ECommerce.Presentation.src.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +32,7 @@ public class ProductController : ControllerBase
     [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> CreateProducts([FromBody] RequestCreateProductDto createProductDto)
     {
-        ProductEntity? res = await _mediator.Send(new CreateProductCommand(
+        Result<ProductEntity> result = await _mediator.Send(new CreateProductCommand(
             createProductDto.Name,
             createProductDto.Description,
             createProductDto.Price,
@@ -38,6 +40,11 @@ public class ProductController : ControllerBase
             createProductDto.CategoryId
         ));
 
-        return Created(nameof(CreateProducts), res);
+        if (result.Errors.Any())
+        {
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
+        }
+
+        return Created(nameof(CreateProducts), result.GetValue());
     }
 }

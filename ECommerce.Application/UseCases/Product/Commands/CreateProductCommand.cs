@@ -1,4 +1,5 @@
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.Product.Commands;
@@ -8,4 +9,4 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     int ManufacturerId,
-    int CategoryId) : IRequest<ProductEntity>;
+    int CategoryId) : IRequest<Result<ProductEntity>>;
