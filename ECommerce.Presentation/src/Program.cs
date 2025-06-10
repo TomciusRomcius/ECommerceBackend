@@ -48,8 +48,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-string? masterUserEmail = builder.Configuration["MASTER_USER_EMAIL"];
-string? masterUserPassword = builder.Configuration["MASTER_USER_PASSWORD"];
 await Initialization.CreateDefaultRolesAndMasterUser(app, builder.Configuration);
 DataAccessInitialization.InitializeStripeWebhookStrategies(app);
 
