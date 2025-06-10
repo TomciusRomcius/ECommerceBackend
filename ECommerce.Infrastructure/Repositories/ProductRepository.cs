@@ -6,6 +6,7 @@ using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
 using FluentValidation;
 using FluentValidation.Results;
+using Npgsql;
 
 namespace ECommerce.Infrastructure.Repositories;
 
@@ -50,15 +51,50 @@ public class ProductRepository : IProductRepository
         ];
 
         ProductEntity? result = null;
+        ResultError? error = null;
 
-        object? id = await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
-
-        if (id is int)
+        try
         {
-            result = product;
-            result.ProductId = Convert.ToInt32(id);
+            object? id = await _postgresService.ExecuteScalarAsync(query, parameters.ToArray());
+
+            if (id is int)
+            {
+                result = product;
+                result.ProductId = Convert.ToInt32(id);
+            }
+
+        }
+        catch (NpgsqlException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                error = new ResultError(
+                    ResultErrorType.VALIDATION_ERROR,
+                    "Product already exists!"
+                );
+            }
+
+            else
+            {
+                error = new ResultError(
+                    ResultErrorType.UNKNOWN_ERROR,
+                    "Unknown error occured!"
+                );
+            }
         }
 
+        catch (Exception)
+        {
+            error = new ResultError(
+                ResultErrorType.UNKNOWN_ERROR,
+                "Unknown error occured!"
+            );
+        }
+
+        if (error is not null)
+        {
+            return new Result<ProductEntity>([error]);
+        }
         return new Result<ProductEntity>(result);
     }
 
