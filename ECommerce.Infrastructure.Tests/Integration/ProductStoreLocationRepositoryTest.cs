@@ -13,8 +13,12 @@ public class ProductStoreLocationRepositoryTest
     private async Task<(StoreLocationEntity, ProductEntity)> CreateTestStoreLocationAndProductModel(
         TestDatabase testContainer)
     {
-        var categoryRepository = RepositoryFactories.CreateCategoryRepository(testContainer._postgresService);
-        var manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(testContainer._postgresService);
+        CategoryRepository categoryRepository = RepositoryFactories.CreateCategoryRepository(
+            testContainer._postgresService
+        );
+        ManufacturerRepository manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(
+            testContainer._postgresService
+        );
 
         Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("Manufacturer");
         Assert.Empty(manufacturerResult.Errors);
