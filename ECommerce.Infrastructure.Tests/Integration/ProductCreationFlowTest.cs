@@ -26,18 +26,27 @@ public class ProductCreationFlowTest : IClassFixture<TestDatabase>
     {
         if (_container is null) throw new DataException("Test container is null");
 
-        var categoryRepository = RepositoryFactories.CreateCategoryRepository(_container._postgresService);
-        var manufacturerRepository = new ManufacturerRepository(_container._postgresService);
-        var productRepository = RepositoryFactories.CreateProductRepository(_container._postgresService);
+        CategoryRepository categoryRepository = RepositoryFactories.CreateCategoryRepository(
+            _container._postgresService
+        );
+        ManufacturerRepository manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(
+            _container._postgresService
+        );
+        ProductRepository productRepository = RepositoryFactories.CreateProductRepository(
+            _container._postgresService
+        );
 
-        int manufacturerId = (await manufacturerRepository.CreateAsync("manufacturer"))!.ManufacturerId;
+        Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("manufacturer");
+        Assert.Empty(manufacturerResult.Errors);
+        int manufacturerId = manufacturerResult.GetValue();
+        
         Result<int> categoryResult = await categoryRepository.CreateAsync("category");
         Assert.Empty(categoryResult.Errors);
         int categoryId = categoryResult.GetValue();
         
-        var name = "New product name";
-        var description = "New product description";
-        var price = 5.99m;
+        const string name = "New product name";
+        const string description = "New product description";
+        const decimal price = 5.99m;
 
         await productRepository.CreateAsync(new ProductEntity(name, description, price, manufacturerId, categoryId));
 

@@ -4,4 +4,4 @@ using MediatR;
 
 namespace ECommerce.Application.UseCases.Manufacturer.Commands;
 
-public record CreateManufacturerCommand(string Name) : IRequest<Result<ManufacturerEntity>>;
+public record CreateManufacturerCommand(string Name) : IRequest<Result<int>>;

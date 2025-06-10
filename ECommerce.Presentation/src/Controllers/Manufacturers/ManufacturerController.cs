@@ -3,6 +3,7 @@ using ECommerce.Application.UseCases.Manufacturer.Queries;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Utils;
 using ECommerce.Presentation.src.Controllers.Manufacturers.dtos;
+using ECommerce.Presentation.src.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,20 +33,14 @@ public class ManufacturerController : ControllerBase
     [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> CreateManufacturer([FromBody] RequestCreateManufacturerDto createProductsDto)
     {
-        Result<ManufacturerEntity> manufacturerResult = await _mediator.Send(new CreateManufacturerCommand(
+        Result<int> manufacturerResult = await _mediator.Send(new CreateManufacturerCommand(
             createProductsDto.Name
         ));
 
-        // if (manufacturerResult.Errors.Any())
-        // {
-        //     var firstError = manufacturerResult.Errors.First();
-        //     return firstError.ErrorType switch
-        //     {
-        //         ResultErrorType.VALIDATION_ERROR => BadRequest(firstError.Message),
-        //         ResultErrorType.INVALID_OPERATION_ERROR => BadRequest(firstError.Message),
-        //         _ => StatusCode(500, new { Error = "Unexpected error" })
-        //     };
-        // }
+        if (manufacturerResult.Errors.Any())
+        {
+            ControllerUtils.ResultErrorsToResponse(manufacturerResult.Errors);
+        }
 
         return Created(nameof(CreateManufacturer), manufacturerResult.ReturnResult);
     }

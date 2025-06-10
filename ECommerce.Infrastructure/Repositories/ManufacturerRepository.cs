@@ -2,22 +2,40 @@ using System.Data;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace ECommerce.Infrastructure.Repositories;
 
 public class ManufacturerRepository : IManufacturerRepository
 {
     private readonly IPostgresService _postgresService;
+    private readonly IValidator<ManufacturerEntity> _manufacturerValidator;
+    private readonly IValidator<UpdateManufacturerModel> _updateManufacturerValidator;
 
-    public ManufacturerRepository(IPostgresService postgresService)
+    public ManufacturerRepository(IPostgresService postgresService, 
+        IValidator<ManufacturerEntity> manufacturerValidator, 
+        IValidator<UpdateManufacturerModel> updateManufacturerValidator)
     {
         _postgresService = postgresService;
+        _manufacturerValidator = manufacturerValidator;
+        _updateManufacturerValidator = updateManufacturerValidator;
     }
 
-    public async Task<ManufacturerEntity?> CreateAsync(string manufacturerName)
+    public async Task<Result<int>> CreateAsync(string manufacturerName)
     {
+        var manufacturer = new ManufacturerEntity(manufacturerName);
+        List<ValidationFailure> errors = _manufacturerValidator.Validate(manufacturer).Errors;
+        if (errors.Any())
+        {
+            return new Result<int>(
+                ResultUtils.ValidationFailuresToResultErrors(errors)
+            );
+        }
+        
         var query = @"
                 INSERT INTO manufacturers (name)
                 VALUES ($1)
@@ -28,11 +46,18 @@ public class ManufacturerRepository : IManufacturerRepository
 
         object? res = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-        if (res == null) throw new DataException("Creating manufacturer failed");
-
+        if (res is not int) 
+        {
+            var error = new ResultError(
+                ResultErrorType.UNKNOWN_ERROR,
+                "Failed to create the manufacturer."
+            );
+            
+            return new Result<int>([error]);
+        }
+        
         var id = Convert.ToInt32(res);
-
-        return new ManufacturerEntity(id, manufacturerName);
+        return new Result<int>(id);    
     }
 
     public async Task DeleteAsync(int manufacturerId)
@@ -107,8 +132,9 @@ public class ManufacturerRepository : IManufacturerRepository
         return result;
     }
 
-    public Task UpdateAsync(UpdateManufacturerModel updateModel)
+    public Task<ResultError?> UpdateAsync(UpdateManufacturerModel updateModel)
     {
+        // TODO: implement
         throw new NotImplementedException();
     }
 }

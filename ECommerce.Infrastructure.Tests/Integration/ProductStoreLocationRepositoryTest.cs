@@ -13,21 +13,25 @@ public class ProductStoreLocationRepositoryTest
     private async Task<(StoreLocationEntity, ProductEntity)> CreateTestStoreLocationAndProductModel(
         TestDatabase testContainer)
     {
-        ManufacturerEntity? manufacturer =
-            await new ManufacturerRepository(testContainer._postgresService).CreateAsync("Manufacturer");
-        Result<int> categoryResult = await new CategoryRepository(
-            testContainer._postgresService, 
-            new CategoryEntityValidators()
-        ).CreateAsync("Category");
+        var categoryRepository = RepositoryFactories.CreateCategoryRepository(testContainer._postgresService);
+        var manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(testContainer._postgresService);
+
+        Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("Manufacturer");
+        Assert.Empty(manufacturerResult.Errors);
+        int manufacturerId = manufacturerResult.GetValue();
+        
+        Result<int> categoryResult = await categoryRepository.CreateAsync("Category");
         Assert.Empty(categoryResult.Errors);
 
         int categoryId = categoryResult.GetValue();
         
         var productEntity = new ProductEntity(
-            "Name", "Description", 2.99m, manufacturer!.ManufacturerId, categoryId
+            "Name", "Description", 2.99m, manufacturerId, categoryId
         );
 
-        ProductRepository productRepository = RepositoryFactories.CreateProductRepository(testContainer._postgresService);
+        ProductRepository productRepository = RepositoryFactories.CreateProductRepository(
+            testContainer._postgresService
+        );
 
         Result<ProductEntity> productResult= await productRepository.CreateAsync(productEntity);
         Assert.Empty(productResult.Errors);
@@ -84,9 +88,14 @@ public class ProductStoreLocationRepositoryTest
 
         var quantity = 3;
 
+        var cartProductEntity = new CartProductEntity(
+            Guid.NewGuid().ToString(), 
+            testData.Item2.ProductId,
+            testData.Item1.StoreLocationId,
+            quantity);
+        
         await productStoreLocationRepository.UpdateStock([
-            new CartProductEntity(Guid.NewGuid().ToString(), testData.Item2.ProductId, testData.Item1.StoreLocationId,
-                quantity)
+            cartProductEntity,
         ]);
 
         DetailedProductModel? retrieved =

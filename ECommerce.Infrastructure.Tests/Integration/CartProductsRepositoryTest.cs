@@ -8,6 +8,7 @@ using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Data;
+using ECommerce.Infrastructure.Services;
 using TestUtils;
 using Xunit.Abstractions;
 
@@ -19,30 +20,34 @@ public class CartProductsRepositoryTest
     public async Task ShouldSuccesfullyCreateAndRetrieveACartProduct()
     {
         var testContainer = new TestDatabase();
-        var postgres = testContainer._postgresService;
+        PostgresService postgres = testContainer._postgresService;
 
         // Create user
-        var userRepository = RepositoryFactories.CreateUserRepository(postgres);
-
-        var user = new UserEntity(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname",
-            "lastname");
-        if (user is null) throw new DataException("Failed to create the user");
-        await userRepository.CreateAsync(user);
-
+        UserRepository userRepository = RepositoryFactories.CreateUserRepository(postgres);
+        
+        var user = new UserEntity(
+            Guid.NewGuid().ToString(), 
+            "email@gmail.com", 
+            "passwordhash", 
+            "firstname",
+            "lastname"
+        );
+        ResultError? userCreationError = await userRepository.CreateAsync(user);
+        Assert.Null(userCreationError);
+        
         // Create manufacturer
-        var manufacturerRepository = new ManufacturerRepository(postgres);
-        ManufacturerEntity? manufacturerDb = await manufacturerRepository.CreateAsync("Name");
-        if (manufacturerDb is null) throw new DataException("Failed to create a manufacturer");
-
+        ManufacturerRepository manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(postgres);
+        Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("Name");
+        Assert.Empty(manufacturerResult.Errors);
 
         // Create category
-        var categoryRepository = RepositoryFactories.CreateCategoryRepository(postgres);
+        CategoryRepository categoryRepository = RepositoryFactories.CreateCategoryRepository(postgres);
         Result<int> categoryResult = await categoryRepository.CreateAsync("Name");
         Assert.Empty(categoryResult.Errors);
         int categoryId = categoryResult.GetValue();
 
         // Create product
-        var productRepository = RepositoryFactories.CreateProductRepository(postgres);
+        ProductRepository productRepository = RepositoryFactories.CreateProductRepository(postgres);
 
         var productEntity = new ProductEntity(
             "Product name",
@@ -70,7 +75,7 @@ public class CartProductsRepositoryTest
         );
 
         // Create cart product
-        var itemQuantity = 2;
+        const int itemQuantity = 2;
         var cartProductsRepository = new CartProductsRepository(testContainer._postgresService);
         await cartProductsRepository.AddItemAsync(
             new CartProductEntity(

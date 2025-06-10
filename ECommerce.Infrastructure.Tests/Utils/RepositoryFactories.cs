@@ -24,6 +24,13 @@ namespace ECommerce.Infrastructure.Tests.Utils
                 new ProductEntityValidator(),
                 new UpdateProductModelValidator()
             );
+        
+        public static ManufacturerRepository CreateManufacturerRepository(IPostgresService postgresService) =>
+            new ManufacturerRepository(
+                postgresService,
+                new ManufacturerEntityValidators(),
+                new UpdateManufacturerModelValidator()
+            );
 
         public static CategoryRepository CreateCategoryRepository(IPostgresService postgresService) =>
             new CategoryRepository(

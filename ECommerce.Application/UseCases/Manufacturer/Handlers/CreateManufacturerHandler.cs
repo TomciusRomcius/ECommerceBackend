@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ECommerce.Application.UseCases.Manufacturer.Handlers;
 
-public class CreateManufacturerHandler : IRequestHandler<CreateManufacturerCommand, Result<ManufacturerEntity>>
+public class CreateManufacturerHandler : IRequestHandler<CreateManufacturerCommand, Result<int>>
 {
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IObjectValidator _objectValidator;
@@ -18,14 +18,9 @@ public class CreateManufacturerHandler : IRequestHandler<CreateManufacturerComma
         _objectValidator = objectValidator;
     }
 
-    public async Task<Result<ManufacturerEntity>> Handle(CreateManufacturerCommand request,
+    public async Task<Result<int>> Handle(CreateManufacturerCommand request,
         CancellationToken cancellationToken)
     {
-        IEnumerable<ResultError> errors = _objectValidator.Validate(new ManufacturerEntity(1, request.Name));
-        if (errors.Any()) 
-            return new Result<ManufacturerEntity>(errors);
-
-        ManufacturerEntity? manufacturer = await _manufacturerRepository.CreateAsync(request.Name);
-        return new Result<ManufacturerEntity>(manufacturer);
+        return await _manufacturerRepository.CreateAsync(request.Name);
     }
 }

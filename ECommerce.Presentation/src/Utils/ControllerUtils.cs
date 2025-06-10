@@ -21,6 +21,11 @@ namespace ECommerce.Presentation.src.Utils
                 StatusCode = statusCode
             };
         }
+        
+        public static IActionResult ResultErrorsToResponse(IEnumerable<ResultError> errors)
+        {
+            return ResultErrorToResponse(errors.First());
+        }
 
         private static int ResultErrorTypeToStatusCode(ResultErrorType errorType)
         {
