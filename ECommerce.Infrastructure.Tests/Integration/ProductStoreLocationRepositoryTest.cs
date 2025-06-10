@@ -1,7 +1,6 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Utils;
-using ECommerce.Domain.Validators.Category;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
@@ -30,7 +29,7 @@ public class ProductStoreLocationRepositoryTest
         int categoryId = categoryResult.GetValue();
         
         var productEntity = new ProductEntity(
-            "Name", "Description", 2.99m, manufacturerId, categoryId
+            "Product Name", "Description", 2.99m, manufacturerId, categoryId
         );
 
         ProductRepository productRepository = RepositoryFactories.CreateProductRepository(
