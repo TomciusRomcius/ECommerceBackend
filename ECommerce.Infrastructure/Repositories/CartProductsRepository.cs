@@ -40,7 +40,7 @@ public class CartProductsRepository : ICartProductsRepository
         }
         catch (NpgsqlException ex)
         {
-            if (ex.ErrorCode == int.Parse(PostgresErrorCodes.ForeignKeyViolation))
+            if (ex.SqlState == PostgresErrorCodes.ForeignKeyViolation)
             {
                 error = new ResultError(
                     ResultErrorType.VALIDATION_ERROR,
