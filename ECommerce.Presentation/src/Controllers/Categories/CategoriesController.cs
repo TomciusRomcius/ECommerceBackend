@@ -32,7 +32,7 @@ public class CategoriesController : ControllerBase
         Result<int> result = await _categoriesService.CreateCategory(createCategoryDto);
         if (result.Errors.Any())
         {
-            ControllerUtils.ResultErrorToResponse(result.Errors.First());
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
         }
 
         int categoryId = result.GetValue();
