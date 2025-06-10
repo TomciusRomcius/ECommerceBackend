@@ -1,4 +1,5 @@
-﻿using ECommerce.Domain.Validators.Product;
+﻿using ECommerce.Domain.Validators.Category;
+using ECommerce.Domain.Validators.Product;
 using ECommerce.Domain.Validators.User;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Services;
@@ -22,6 +23,12 @@ namespace ECommerce.Infrastructure.Tests.Utils
                 postgresService,
                 new ProductEntityValidator(),
                 new UpdateProductModelValidator()
+            );
+
+        public static CategoryRepository CreateCategoryRepository(IPostgresService postgresService) =>
+            new CategoryRepository(
+                postgresService,
+                new CategoryEntityValidators()
             );
     }
 }

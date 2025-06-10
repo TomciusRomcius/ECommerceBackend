@@ -36,10 +36,10 @@ public class CartProductsRepositoryTest
 
 
         // Create category
-        var categoryRepository = new CategoryRepository(postgres);
-        CategoryEntity? categoryDb = await categoryRepository.CreateAsync("Name");
-        if (categoryDb is null) throw new DataException("Failed to create a product category");
-
+        var categoryRepository = RepositoryFactories.CreateCategoryRepository(postgres);
+        Result<int> categoryResult = await categoryRepository.CreateAsync("Name");
+        Assert.Empty(categoryResult.Errors);
+        int categoryId = categoryResult.GetValue();
 
         // Create product
         var productRepository = RepositoryFactories.CreateProductRepository(postgres);
@@ -49,7 +49,7 @@ public class CartProductsRepositoryTest
             "Product description",
             5.99m,
             1,
-            1
+            categoryId
         );
 
         Result<ProductEntity> productResult = await productRepository.CreateAsync(productEntity);

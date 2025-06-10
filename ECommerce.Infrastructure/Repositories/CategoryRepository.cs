@@ -1,22 +1,37 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace ECommerce.Infrastructure.Repositories;
 
 public class CategoryRepository : ICategoryRepository
 {
     private readonly IPostgresService _postgresService;
+    private readonly IValidator<CategoryEntity> _categoryValidator;
 
-    public CategoryRepository(IPostgresService postgresService)
+    public CategoryRepository(IPostgresService postgresService, IValidator<CategoryEntity> categoryValidator)
     {
         _postgresService = postgresService;
+        _categoryValidator = categoryValidator;
     }
 
-    public async Task<CategoryEntity?> CreateAsync(string categoryName)
+    public async Task<Result<int>> CreateAsync(string categoryName)
     {
+        var categoryEntity = new CategoryEntity(categoryName);
+        
+        List<ValidationFailure> errors = _categoryValidator.Validate(categoryEntity).Errors;
+        if (errors.Any())
+        {
+            return new Result<int>(
+                ResultUtils.ValidationFailuresToResultErrors(errors)
+            );
+        }
+        
         var query = @"
             INSERT INTO categories (name) 
             VALUES ($1)
@@ -29,9 +44,15 @@ public class CategoryRepository : ICategoryRepository
 
         CategoryEntity? result = null;
 
-        if (id is int) result = new CategoryEntity(Convert.ToInt32(id), categoryName);
-
-        return result;
+        if (id is int)
+        {
+            return new Result<int>(Convert.ToInt32(id));
+        }
+        else
+        {
+            var error = new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create a category");
+            return new Result<int>([error]);
+        }
     }
 
     public Task DeleteAsync(int categoryId)
@@ -95,8 +116,9 @@ public class CategoryRepository : ICategoryRepository
         return result;
     }
 
-    public Task UpdateAsync(UpdateCategoryModel updateModel)
+    public Task<ResultError?> UpdateAsync(UpdateCategoryModel updateModel)
     {
+        // TODO: implement
         throw new NotImplementedException();
     }
 }

@@ -1,5 +1,6 @@
 using System.Data;
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
@@ -25,13 +26,15 @@ public class ProductCreationFlowTest : IClassFixture<TestDatabase>
     {
         if (_container is null) throw new DataException("Test container is null");
 
-        var categoryRepository = new CategoryRepository(_container._postgresService);
+        var categoryRepository = RepositoryFactories.CreateCategoryRepository(_container._postgresService);
         var manufacturerRepository = new ManufacturerRepository(_container._postgresService);
         var productRepository = RepositoryFactories.CreateProductRepository(_container._postgresService);
 
         int manufacturerId = (await manufacturerRepository.CreateAsync("manufacturer"))!.ManufacturerId;
-        int categoryId = (await categoryRepository.CreateAsync("category"))!.CategoryId;
-
+        Result<int> categoryResult = await categoryRepository.CreateAsync("category");
+        Assert.Empty(categoryResult.Errors);
+        int categoryId = categoryResult.GetValue();
+        
         var name = "New product name";
         var description = "New product description";
         var price = 5.99m;

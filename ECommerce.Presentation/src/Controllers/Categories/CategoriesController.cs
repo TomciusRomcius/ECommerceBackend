@@ -1,5 +1,7 @@
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Utils;
 using ECommerce.Presentation.src.Controllers.Categories.dtos;
+using ECommerce.Presentation.src.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +29,13 @@ public class CategoriesController : ControllerBase
     [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> CreateCategory([FromBody] RequestCreateCategoryDto createCategoryDto)
     {
-        CategoryEntity? res = await _categoriesService.CreateCategory(createCategoryDto);
-        return Created(nameof(CreateCategory), res);
+        Result<int> result = await _categoriesService.CreateCategory(createCategoryDto);
+        if (result.Errors.Any())
+        {
+            ControllerUtils.ResultErrorToResponse(result.Errors.First());
+        }
+
+        int categoryId = result.GetValue();
+        return Created(nameof(CreateCategory), categoryId);
     }
 }
