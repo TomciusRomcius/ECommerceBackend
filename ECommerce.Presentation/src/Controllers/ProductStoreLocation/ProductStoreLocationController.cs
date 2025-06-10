@@ -1,7 +1,9 @@
 using ECommerce.Application.UseCases.Store.Commands;
 using ECommerce.Application.UseCases.Store.Queries;
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Utils;
 using ECommerce.Presentation.src.Controllers.ProductStoreLocation.dtos;
+using ECommerce.Presentation.src.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,9 +46,8 @@ public class ProductStoreLocationController : ControllerBase
             addProductToStoreDto.Stock
         );
 
-        await _mediator.Send(new AddProductToStoreCommand(model));
-
-        return Ok();
+        ResultError? error = await _mediator.Send(new AddProductToStoreCommand(model));
+        return error == null ? Ok() : ControllerUtils.ResultErrorToResponse(error);
     }
 
     [HttpDelete]

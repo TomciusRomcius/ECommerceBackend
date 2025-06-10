@@ -1,10 +1,11 @@
 using ECommerce.Application.UseCases.Store.Commands;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.Store.Handlers;
 
-public class AddProductToStoreHandler : IRequestHandler<AddProductToStoreCommand>
+public class AddProductToStoreHandler : IRequestHandler<AddProductToStoreCommand, ResultError?>
 {
     private readonly IProductStoreLocationRepository _productStoreLocationRepository;
 
@@ -13,8 +14,8 @@ public class AddProductToStoreHandler : IRequestHandler<AddProductToStoreCommand
         _productStoreLocationRepository = productStoreLocationRepository;
     }
 
-    public async Task Handle(AddProductToStoreCommand request, CancellationToken cancellationToken)
+    public async Task<ResultError?> Handle(AddProductToStoreCommand request, CancellationToken cancellationToken)
     {
-        await _productStoreLocationRepository.AddProductToStore(request.ProductStoreLocation);
+        return await _productStoreLocationRepository.AddProductToStore(request.ProductStoreLocation);
     }
 }

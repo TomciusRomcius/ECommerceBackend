@@ -2,8 +2,10 @@ using System.Text;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using Npgsql;
 
 namespace ECommerce.Infrastructure.Repositories;
 
@@ -16,7 +18,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
         _postgresService = postgresService;
     }
 
-    public async Task AddProductToStore(ProductStoreLocationEntity model)
+    public async Task<ResultError?> AddProductToStore(ProductStoreLocationEntity model)
     {
         var query = @"
                 INSERT INTO productStoreLocations (storeLocationId, productId, stock)
@@ -30,7 +32,48 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
             new(model.Stock)
         ];
 
-        await _postgresService.ExecuteScalarAsync(query, parameters);
+        ResultError? error = null;
+
+        try
+        {
+            await _postgresService.ExecuteScalarAsync(query, parameters);
+        }
+        catch (NpgsqlException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.ForeignKeyViolation)
+            {
+                error = new ResultError(
+                    ResultErrorType.INVALID_OPERATION_ERROR,
+                    "Trying to add product to store location, when product or store location does not exist!"
+                );
+            }
+            
+            else if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                error = new ResultError(
+                    ResultErrorType.INVALID_OPERATION_ERROR,
+                    "Trying to add product to store location when it already is added!"
+                );
+            }
+
+            else
+            {
+                error = new ResultError(
+                    ResultErrorType.UNKNOWN_ERROR,
+                    "Failed to add product to store location due to unknown reasons."
+                );
+            }
+        }
+
+        catch (Exception ex)
+        {
+            error = new ResultError(
+                ResultErrorType.UNKNOWN_ERROR,
+                "Failed to add product to store location due to unknown reasons."
+            );
+        }
+        
+        return error;
     }
 
     public async Task<List<int>> GetProductIdsFromStoreAsync(int storeLocationId)
