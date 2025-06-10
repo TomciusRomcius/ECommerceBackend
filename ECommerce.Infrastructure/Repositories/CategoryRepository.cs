@@ -6,6 +6,7 @@ using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
 using FluentValidation;
 using FluentValidation.Results;
+using Npgsql;
 
 namespace ECommerce.Infrastructure.Repositories;
 
@@ -40,19 +41,56 @@ public class CategoryRepository : ICategoryRepository
 
         QueryParameter[] parameters = [new(categoryName)];
 
-        object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+        Result<int> result;
 
-        CategoryEntity? result = null;
+        try
+        {
+            object? id = await _postgresService.ExecuteScalarAsync(query, parameters);
+            if (id is int)
+            {
+                result = new Result<int>(Convert.ToInt32(id));
+            }
+            else
+            {
+                var error = new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create a category");
+                result = new Result<int>([error]);
+            }
+        }
 
-        if (id is int)
+        catch (NpgsqlException ex)
         {
-            return new Result<int>(Convert.ToInt32(id));
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                var error = new ResultError(
+                    ResultErrorType.VALIDATION_ERROR,
+                    "Category already exists"
+                );
+
+                result = new Result<int>([error]);
+            }
+
+            else
+            {
+                var error = new ResultError(
+                    ResultErrorType.UNKNOWN_ERROR,
+                    "Failed to create a category for unknown reasons"
+                );
+                
+                result = new Result<int>([error]);
+            }
         }
-        else
+
+        catch (Exception ex)
         {
-            var error = new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create a category");
-            return new Result<int>([error]);
+            var error = new ResultError(
+                ResultErrorType.UNKNOWN_ERROR,
+                "Failed to create a category for unknown reasons"
+            );
+            
+            result = new Result<int>([error]);
         }
+        
+        return result;
     }
 
     public Task DeleteAsync(int categoryId)
