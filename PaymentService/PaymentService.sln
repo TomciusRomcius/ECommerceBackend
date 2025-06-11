@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Presentation
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Application", "PaymentService.Application\PaymentService.Application.csproj", "{42D6440A-508F-47D6-86D9-81860B45AB7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Infrastructure", "PaymentService.Infrastructure\PaymentService.Infrastructure.csproj", "{75947021-8088-40EA-9D13-1F7F297EBFDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Domain", "PaymentService.Domain\PaymentService.Domain.csproj", "{C5DF7C6B-83E2-4100-88E3-DA8B831BE170}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{42D6440A-508F-47D6-86D9-81860B45AB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42D6440A-508F-47D6-86D9-81860B45AB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42D6440A-508F-47D6-86D9-81860B45AB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75947021-8088-40EA-9D13-1F7F297EBFDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75947021-8088-40EA-9D13-1F7F297EBFDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75947021-8088-40EA-9D13-1F7F297EBFDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75947021-8088-40EA-9D13-1F7F297EBFDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5DF7C6B-83E2-4100-88E3-DA8B831BE170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5DF7C6B-83E2-4100-88E3-DA8B831BE170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5DF7C6B-83E2-4100-88E3-DA8B831BE170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5DF7C6B-83E2-4100-88E3-DA8B831BE170}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
