@@ -27,7 +27,12 @@ services:
       - /app/bin
   postgres:
     image: postgres:17
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: development
     volumes:
+      - ./sql-init:/docker-entrypoint-initdb.d
       - ./postgres-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
