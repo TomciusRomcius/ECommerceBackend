@@ -3,14 +3,20 @@ services:
     build: 
       dockerfile: Dockerfile
       context: ./MainApi
+      target: build
     command: ["dotnet", "watch", "--project", "ECommerce.Presentation", "--no-hot-reload"]
     ports:
       - 8080:8080
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_WEBHOOK_SIGNATURE: ${STRIPE_WEBHOOK_SIGNATURE}
+      MASTER_USER_EMAIL:  ${MASTER_USER_EMAIL}
+      MASTER_USER_PASSWORD: ${MASTER_USER_PASSWORD}
     volumes:
       - ./MainApi:/app
+      - /app/bin
   payment-service:
     build: 
       dockerfile: Dockerfile
@@ -22,6 +28,8 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_WEBHOOK_SIGNATURE: ${STRIPE_WEBHOOK_SIGNATURE}
     volumes:
       - ./PaymentService:/app
       - /app/bin

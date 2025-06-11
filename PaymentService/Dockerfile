@@ -11,6 +11,7 @@ COPY ["PaymentService.Presentation/PaymentService.Presentation.csproj", "Payment
 COPY ["PaymentService.Infrastructure/PaymentService.Infrastructure.csproj", "PaymentService.Infrastructure/PaymentService.Infrastructure.csproj"]
 COPY ["PaymentService.Application/PaymentService.Application.csproj", "PaymentService.Application/PaymentService.Application.csproj"]
 COPY ["PaymentService.Domain/PaymentService.Domain.csproj", "PaymentService.Domain/PaymentService.Domain.csproj"]
+COPY ["PaymentService.sln", "PaymentService.sln"]
 
 RUN dotnet restore "./PaymentService.Presentation/PaymentService.Presentation.csproj"
 COPY . .
