@@ -1,10 +1,17 @@
 services:
   main-api:
-    build: 
+    build:
       dockerfile: Dockerfile
       context: ./MainApi
       target: build
-    command: ["dotnet", "watch", "--project", "ECommerce.Presentation", "--no-hot-reload"]
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "ECommerce.Presentation",
+        "--no-hot-reload",
+      ]
     ports:
       - 8080:8080
     environment:
@@ -12,17 +19,24 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       STRIPE_API_KEY: ${STRIPE_API_KEY}
       STRIPE_WEBHOOK_SIGNATURE: ${STRIPE_WEBHOOK_SIGNATURE}
-      MASTER_USER_EMAIL:  ${MASTER_USER_EMAIL}
+      MASTER_USER_EMAIL: ${MASTER_USER_EMAIL}
       MASTER_USER_PASSWORD: ${MASTER_USER_PASSWORD}
     volumes:
       - ./MainApi:/app
       - /app/bin
   payment-service:
-    build: 
+    build:
       dockerfile: Dockerfile
       context: ./PaymentService
       target: build
-    command: ["dotnet", "watch", "--project", "PaymentService.Presentation", "--no-hot-reload"]
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "PaymentService.Presentation",
+        "--no-hot-reload",
+      ]
     ports:
       - "8081:8080"
     environment:
@@ -49,9 +63,9 @@ services:
     ports:
       - 9000:8080
   zookeeper:
-    image: wurstmeister/zookeeper:latest
+    image: bitnami/zookeeper:latest
   kafka:
-    image: wurstmeister/kafka:latest
+    image: bitnami/kafka:latest
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
