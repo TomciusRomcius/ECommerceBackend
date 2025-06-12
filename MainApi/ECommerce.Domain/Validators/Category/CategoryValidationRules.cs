@@ -2,9 +2,9 @@
 
 namespace ECommerce.Domain.Validators.Category
 {
-    public static class CategoryValidationRules
+    internal static class CategoryValidationRules
     {
-        public static IRuleBuilderOptions<T, string?> IsCategoryName<T>(
+        internal static IRuleBuilderOptions<T, string?> IsCategoryName<T>(
             this IRuleBuilder<T, string?> ruleBuilder) where T : class
         {
             return ruleBuilder

@@ -2,9 +2,9 @@
 
 namespace ECommerce.Domain.Validators.Manufacturer
 {
-    public static class ManufacturerValidationRules
+    internal static class ManufacturerValidationRules
     {
-        public static IRuleBuilderOptions<T, string?> IsManufacturerName<T>(
+        internal static IRuleBuilderOptions<T, string?> IsManufacturerName<T>(
             this IRuleBuilder<T, string?> ruleBuilder) where T : class
         {
             return ruleBuilder

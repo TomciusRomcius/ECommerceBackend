@@ -2,9 +2,9 @@
 
 namespace ECommerce.Domain.Validators.Product
 {
-    public static class StoreLocationValidationRules
+    internal static class StoreLocationValidationRules
     {
-        public static IRuleBuilderOptions<T, string?> IsStoreLocationDisplayName<T>(
+        internal static IRuleBuilderOptions<T, string?> IsStoreLocationDisplayName<T>(
             this IRuleBuilder<T, string?> ruleBuilder
         ) where T : class
         {
@@ -13,7 +13,7 @@ namespace ECommerce.Domain.Validators.Product
                 .MaximumLength(60).WithMessage("StoreLocation display name length must not exceed 60 characters!");
         }
 
-        public static IRuleBuilderOptions<T, string?> IsStoreLocationAddress<T>(
+        internal static IRuleBuilderOptions<T, string?> IsStoreLocationAddress<T>(
             this IRuleBuilder<T, string?> ruleBuilder
         ) where T : class
         {
