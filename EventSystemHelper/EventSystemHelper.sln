@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSystemHelper", "KafkaHelper\EventSystemHelper.csproj", "{68EF4A70-8439-4C1C-BEEE-4B11EBD05C97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSystemHelper.Tests", "EventSystemHelper.Tests\EventSystemHelper.Tests.csproj", "{A2A6B651-AED5-4EBA-A924-D2082417EECA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68EF4A70-8439-4C1C-BEEE-4B11EBD05C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68EF4A70-8439-4C1C-BEEE-4B11EBD05C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68EF4A70-8439-4C1C-BEEE-4B11EBD05C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68EF4A70-8439-4C1C-BEEE-4B11EBD05C97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2A6B651-AED5-4EBA-A924-D2082417EECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A6B651-AED5-4EBA-A924-D2082417EECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A6B651-AED5-4EBA-A924-D2082417EECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A6B651-AED5-4EBA-A924-D2082417EECA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
