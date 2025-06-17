@@ -1,12 +1,20 @@
 {
   "profiles": {
-    "ECommerce.Presentation": {
+    "http": {
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:50175;http://localhost:50176"
+      "applicationUrl": "http://localhost:8080;"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:8080"
     }
   }
 }
