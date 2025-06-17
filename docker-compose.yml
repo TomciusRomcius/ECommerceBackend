@@ -82,7 +82,7 @@ services:
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
       BITNAMI_DEBUG: yes
     ports:
-      - 9093:9093
+      - 9092:9092
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     environment:
