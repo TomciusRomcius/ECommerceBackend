@@ -2,6 +2,11 @@ namespace PaymentService.Infrastructure.Utils;
 
 public class StripeSettings
 {
-    public required string ApiKey { get; set; }
-    public required string WebhookSignature { get; set; }
+    public required string ApiKey { get; init; }
+    public required string WebhookSignature { get; init; }
+
+    public StripeSettings()
+    {
+
+    }
 }
