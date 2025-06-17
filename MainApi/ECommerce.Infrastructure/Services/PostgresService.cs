@@ -1,4 +1,5 @@
 using ECommerce.Infrastructure.Utils;
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace ECommerce.Infrastructure.Services;
@@ -20,15 +21,15 @@ public class PostgresService : IPostgresService
 {
     private PostgresConfiguration _postgresConfiguration;
 
-    public PostgresService(PostgresConfiguration postgresConfiguration)
+    public PostgresService(IOptions<PostgresConfiguration> postgresConfiguration)
     {
-        _postgresConfiguration = postgresConfiguration;
+        _postgresConfiguration = postgresConfiguration.Value;
         Connection = new NpgsqlConnection($@"
-                HOST={postgresConfiguration.Host};
-                PORT={postgresConfiguration.Port};
-                USERNAME={postgresConfiguration.Username};
-                PASSWORD={postgresConfiguration.Password};
-                DATABASE={postgresConfiguration.Database};
+                HOST={_postgresConfiguration.Host};
+                PORT={_postgresConfiguration.Port};
+                USERNAME={_postgresConfiguration.Username};
+                PASSWORD={_postgresConfiguration.Password};
+                DATABASE={_postgresConfiguration.Database};
             ");
         Connection.Open();
     }

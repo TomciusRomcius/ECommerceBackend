@@ -18,23 +18,10 @@ public static class DataAccessInitialization
 {
     public static void InitDb(WebApplicationBuilder builder)
     {
-        // EXTERNAL_DB is set when running on docker-compose. If thats the case, set host to db dns name
-        string? host = Environment.GetEnvironmentVariable("EXTERNAL_DB") is null
-            ? builder.Configuration.GetValue<string>("PostgreSQL:Host")
-            : "db";
-
-        var user = builder.Configuration.GetValue<string>("PostgreSQL:Username");
-        var password = builder.Configuration.GetValue<string>("PostgreSQL:Password");
-        var database = builder.Configuration.GetValue<string>("PostgreSQL:Database");
-
-        if (host is null || user is null || password is null || database is null)
-            throw new DataException(
-                @"Configuration: PostgreSQL:Host, PostgreSQL:User, 
-                PostgreSQL:Password, PostgreSQL:Database must be defined!"
-            );
-
-        builder.Services.AddSingleton<PostgresConfiguration>(_ =>
-            new PostgresConfiguration(host, user, password, database));
+        builder.Services.AddOptions<PostgresConfiguration>()
+            .Bind(builder.Configuration.GetSection("Database"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         builder.Services.AddSingleton<IPostgresService, PostgresService>();
     }
 
