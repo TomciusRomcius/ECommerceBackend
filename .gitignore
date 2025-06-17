@@ -118,3 +118,5 @@ src/.vs/config/applicationhost.config
 .idea/
 .env
 /postgres-data
+
+appsettings.json
