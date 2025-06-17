@@ -5,6 +5,7 @@ namespace PaymentService.Infrastructure.Interfaces
 {
     public interface IStripeWebhookStrategy
     {
+        string EventType { get; }
         Task<ResultError?> RunAsync(IHasObject ev);
     }
 }

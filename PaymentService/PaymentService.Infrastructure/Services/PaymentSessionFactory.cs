@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using PaymentService.Application.Interfaces;
 using PaymentService.Domain.Enums;
 using PaymentService.Infrastructure.Utils;
@@ -8,9 +9,9 @@ public class PaymentSessionFactory : IPaymentSessionFactory
 {
     private readonly StripeSettings _stripeSettings;
 
-    public PaymentSessionFactory(StripeSettings stripeSettings)
+    public PaymentSessionFactory(IOptions<StripeSettings> stripeSettings)
     {
-        _stripeSettings = stripeSettings;
+        _stripeSettings = stripeSettings.Value;
     }
 
     public IPaymentSessionService CreatePaymentSessionService(PaymentProvider provider)
