@@ -24,6 +24,7 @@ services:
     volumes:
       - ./MainApi:/app
       - /app/bin
+      - /app/obj
   payment-service:
     build:
       dockerfile: Dockerfile
@@ -47,6 +48,7 @@ services:
     volumes:
       - ./PaymentService:/app
       - /app/bin
+      - /app/obj
   postgres:
     image: postgres:17
     environment:
