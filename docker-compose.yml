@@ -11,6 +11,8 @@ services:
         "--project",
         "ECommerce.Presentation",
         "--no-hot-reload",
+        "--launch-profile",
+        "http",
       ]
     ports:
       - 8080:8080
