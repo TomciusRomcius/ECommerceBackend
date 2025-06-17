@@ -29,48 +29,47 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
 
     public async Task HandlePaymentWebhook(string json, string signature)
     {
-        Func<CancellationToken, Task> paymentTask = async cancellationToken =>
+        using IServiceScope? scope = _serviceScopeFactory.CreateScope();
+        var paymentSessionFactory = scope.ServiceProvider.GetRequiredService<IPaymentSessionFactory>();
+
+        IPaymentSessionService paymentSessionService =
+            paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
+
+        Result<Event> result = await paymentSessionService.ParseWebhookEvent<Event>(json, signature);
+        if (result.Errors.Any())
         {
-            using IServiceScope? scope = _serviceScopeFactory.CreateScope();
-            var paymentSessionFactory = scope.ServiceProvider.GetRequiredService<IPaymentSessionFactory>();
+            _logger.LogError(result.ErrorsToString());
+            return;
+        }
 
-            IPaymentSessionService paymentSessionService =
-                paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
+        Event paymentEvent = result.GetValue();
+        IWebhookEventStrategyMap? strategyMap = _strategyMaps.GetStrategyMap(PaymentProvider.STRIPE);
+        if (strategyMap == null)
+        {
+            _logger.LogError("Failed to retrieve Stripe webhook strategy map");
+            return;
+        }
 
-            Result<Event> result = await paymentSessionService.ParseWebhookEvent<Event>(json, signature);
-            if (result.Errors.Any())
+        Result<IStripeWebhookStrategy> webhookHandlerStrategyResult = strategyMap.TryGetStrategy<IStripeWebhookStrategy>(paymentEvent.Type);
+        if (webhookHandlerStrategyResult.Errors.Any())
+        {
+            ResultError firstError = webhookHandlerStrategyResult.Errors.First();
+            if (firstError.ErrorType == ResultErrorType.UNSUPPORTED
+                && webhookHandlerStrategyResult.Errors.Count() == 1)
             {
-                _logger.LogError(result.ErrorsToString());
-                return;
+                _logger.LogWarning(firstError.Message);
             }
-
-            Event paymentEvent = result.GetValue();
-            IWebhookEventStrategyMap? strategyMap = _strategyMaps.GetStrategyMap(PaymentProvider.STRIPE);
-            if (strategyMap == null)
+            else
             {
-                _logger.LogError("Failed to retrieve Stripe webhook strategy map");
-                return;
+                _logger.LogError($"{webhookHandlerStrategyResult.ErrorsToString()}");
             }
-
-            Result<IStripeWebhookStrategy> webhookHandlerStrategyResult = strategyMap.TryGetStrategy<IStripeWebhookStrategy>(paymentEvent.Type);
-            if (webhookHandlerStrategyResult.Errors.Any())
-            {
-                ResultError firstError = webhookHandlerStrategyResult.Errors.First();
-                if (firstError.ErrorType == ResultErrorType.UNSUPPORTED
-                    && webhookHandlerStrategyResult.Errors.Count() == 1)
-                {
-                    _logger.LogWarning(firstError.Message);
-                }
-                else
-                {
-                    _logger.LogError($"{webhookHandlerStrategyResult.ErrorsToString()}");
-                }
-
-                IStripeWebhookStrategy webhookHandlerStrategy = webhookHandlerStrategyResult.GetValue();
-                await webhookHandlerStrategy.RunAsync(paymentEvent.Data.Object);
-            };
+            return;
         };
-
-        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(paymentTask);
+        IStripeWebhookStrategy webhookHandlerStrategy = webhookHandlerStrategyResult.GetValue();
+        ResultError? runnerError = await webhookHandlerStrategy.RunAsync(paymentEvent.Data.Object);
+        if (runnerError != null)
+        {
+            _logger.LogError("Encountered an error when running a webhook strategy: {}", runnerError);
+        }
     }
 }
