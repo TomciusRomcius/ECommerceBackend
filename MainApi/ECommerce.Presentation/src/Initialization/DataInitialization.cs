@@ -3,24 +3,24 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Presentation.Initialization;
 
-public static class Initialization
+internal static class Initialization
 {
-    public static async Task CreateDefaultRolesAndMasterUser(WebApplication app, ConfigurationManager configuration)
+    internal static async Task CreateDefaultRolesAndMasterUser(WebApplication app)
     {
         using (IServiceScope? scope = app.Services.CreateScope())
         {
-            string? email = configuration["MASTER_USER_EMAIL"];
-            string? password = configuration["MASTER_USER_PASSWORD"];
+            string? email = app.Configuration.GetSection("Master")["Email"];
+            string? password = app.Configuration.GetSection("Master")["Password"];
 
-            if (email is null) throw new ArgumentNullException("Master user email cannot be null");
-            if (password is null) throw new ArgumentNullException("Master user password cannot be null");
+            if (email == null) throw new ArgumentNullException("Master user email cannot be null");
+            if (password == null) throw new ArgumentNullException("Master user password cannot be null");
 
             await CreateDefaultRoles(scope);
             await CreateDefaultMasterUser(scope, email, password);
         }
     }
 
-    private static async Task CreateDefaultRoles(IServiceScope scope)
+    internal static async Task CreateDefaultRoles(IServiceScope scope)
     {
         var defaultRoles = new[] { "MERCHANT", "ADMINISTRATOR" };
 
@@ -33,7 +33,7 @@ public static class Initialization
                 await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
     }
 
-    private static async Task CreateDefaultMasterUser(IServiceScope scope, string email, string password)
+    internal static async Task CreateDefaultMasterUser(IServiceScope scope, string email, string password)
     {
         // TODO: use secrets for this
         var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
@@ -48,7 +48,7 @@ public static class Initialization
             user = new ApplicationUser("master", "master", email, "");
 
             IdentityResult result = await userManager.CreateAsync(user, password);
-            if (result.Errors.Count() > 0) throw new Exception(result.Errors.ToString());
+            if (result.Errors.Count() > 0) throw new Exception(result.Errors.First().Description);
         }
 
         if (!await userManager.IsInRoleAsync(user, "ADMINISTRATOR"))

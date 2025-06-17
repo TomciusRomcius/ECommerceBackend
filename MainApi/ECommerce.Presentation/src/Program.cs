@@ -48,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-await Initialization.CreateDefaultRolesAndMasterUser(app, builder.Configuration);
+await Initialization.CreateDefaultRolesAndMasterUser(app);
 DataAccessInitialization.InitializeStripeWebhookStrategies(app);
 
 app.MapControllers();
