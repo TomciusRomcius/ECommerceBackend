@@ -51,7 +51,7 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
       Stripe__ApiKey: ${Stripe__ApiKey}
-      Stripe__WebhookSignature: ${Stripe__WebhookSignature}
+      Stripe__WebhookSecret: ${Stripe__WebhookSecret}
       Kafka__Servers: kafka:9092
     volumes:
       - ./PaymentService:/app

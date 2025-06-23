@@ -60,7 +60,7 @@ public class StripeSessionService : IPaymentSessionService
         }
         // TODO: throwOnApiVersionMismatch = true on production
         // Construct webhook event + verify the signature
-        Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSignature,
+        Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSecret,
             throwOnApiVersionMismatch: false);
         return Task.FromResult(new Result<T>((T)(object)ev));
     }
