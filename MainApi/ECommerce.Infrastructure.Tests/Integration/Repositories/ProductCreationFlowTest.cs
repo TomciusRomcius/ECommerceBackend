@@ -9,7 +9,7 @@ using TestUtils;
     Tests primarily product repository but also tests category and manufacturer repository CreateAsync methods
 */
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 [Collection("Product operations")]
 public class ProductCreationFlowTest : IClassFixture<TestDatabase>
@@ -39,11 +39,11 @@ public class ProductCreationFlowTest : IClassFixture<TestDatabase>
         Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("manufacturer");
         Assert.Empty(manufacturerResult.Errors);
         int manufacturerId = manufacturerResult.GetValue();
-        
+
         Result<int> categoryResult = await categoryRepository.CreateAsync("category");
         Assert.Empty(categoryResult.Errors);
         int categoryId = categoryResult.GetValue();
-        
+
         const string name = "New product name";
         const string description = "New product description";
         const decimal price = 5.99m;

@@ -3,7 +3,7 @@ using ECommerce.Domain.Models;
 using ECommerce.Infrastructure.Repositories;
 using TestUtils;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class RoleTypeRepositoryIntegrationTest
 {

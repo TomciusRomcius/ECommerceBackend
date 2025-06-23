@@ -1,10 +1,9 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class CategoryRepositoryTest
 {
@@ -21,7 +20,7 @@ public class CategoryRepositoryTest
 
         // Find category
         CategoryEntity? retrieved = await categoryRepository.FindByNameAsync(name);
-        
+
         Assert.Empty(categoryResult.Errors);
         Assert.NotNull(retrieved);
         Assert.Equal(name, retrieved.Name);

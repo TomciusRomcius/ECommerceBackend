@@ -1,18 +1,13 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Utils;
-using ECommerce.Domain.Validators.Product;
-using ECommerce.Domain.Validators.User;
 using ECommerce.Infrastructure.Repositories;
-using ECommerce.Infrastructure.Tests.Utils;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System.Data;
 using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.Tests.Utils;
+using System.Data;
 using TestUtils;
-using Xunit.Abstractions;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class CartProductsRepositoryTest
 {
@@ -24,17 +19,17 @@ public class CartProductsRepositoryTest
 
         // Create user
         UserRepository userRepository = RepositoryFactories.CreateUserRepository(postgres);
-        
+
         var user = new UserEntity(
-            Guid.NewGuid().ToString(), 
-            "email@gmail.com", 
-            "passwordhash", 
+            Guid.NewGuid().ToString(),
+            "email@gmail.com",
+            "passwordhash",
             "firstname",
             "lastname"
         );
         ResultError? userCreationError = await userRepository.CreateAsync(user);
         Assert.Null(userCreationError);
-        
+
         // Create manufacturer
         ManufacturerRepository manufacturerRepository = RepositoryFactories.CreateManufacturerRepository(postgres);
         Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("Name");
@@ -88,7 +83,7 @@ public class CartProductsRepositoryTest
 
         // Get user cart products
         Result<List<CartProductModel>> itemsResult = await cartProductsRepository.GetUserCartProductsDetailedAsync(user.UserId);
-        
+
         Assert.Empty(itemsResult.Errors);
         List<CartProductModel> items = itemsResult.GetValue();
         CartProductModel? targetItem = items.FirstOrDefault();

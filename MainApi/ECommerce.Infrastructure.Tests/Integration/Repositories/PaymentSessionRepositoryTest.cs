@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TestUtils;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class PaymentSessionRepositoryTest
 {

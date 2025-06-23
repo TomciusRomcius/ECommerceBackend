@@ -4,7 +4,7 @@ using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class ManufacturerRepositoryTest
 {

@@ -5,7 +5,7 @@ using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 
-namespace ECommerce.Infrastructure.Tests.Integration;
+namespace ECommerce.Infrastructure.Tests.Integration.Repositories;
 
 public class ProductStoreLocationRepositoryTest
 {
@@ -22,12 +22,12 @@ public class ProductStoreLocationRepositoryTest
         Result<int> manufacturerResult = await manufacturerRepository.CreateAsync("Manufacturer");
         Assert.Empty(manufacturerResult.Errors);
         int manufacturerId = manufacturerResult.GetValue();
-        
+
         Result<int> categoryResult = await categoryRepository.CreateAsync("Category");
         Assert.Empty(categoryResult.Errors);
 
         int categoryId = categoryResult.GetValue();
-        
+
         var productEntity = new ProductEntity(
             "Product Name", "Description", 2.99m, manufacturerId, categoryId
         );
@@ -36,7 +36,7 @@ public class ProductStoreLocationRepositoryTest
             testContainer._postgresService
         );
 
-        Result<ProductEntity> productResult= await productRepository.CreateAsync(productEntity);
+        Result<ProductEntity> productResult = await productRepository.CreateAsync(productEntity);
         Assert.Empty(productResult.Errors);
         var product = productResult.GetValue();
 
@@ -92,11 +92,11 @@ public class ProductStoreLocationRepositoryTest
         var quantity = 3;
 
         var cartProductEntity = new CartProductEntity(
-            Guid.NewGuid().ToString(), 
+            Guid.NewGuid().ToString(),
             testData.Item2.ProductId,
             testData.Item1.StoreLocationId,
             quantity);
-        
+
         await productStoreLocationRepository.UpdateStock([
             cartProductEntity,
         ]);
