@@ -61,7 +61,7 @@ public class OrderService : IOrderService
         var paymentOptions = new GeneratePaymentSessionOptions
         {
             UserId = userId.ToString(),
-            Price = (int)_orderPriceCalculator.CalculatePrice(items) * 100 // TODO: may be dangerous
+            Price = (int)_orderPriceCalculator.CalculatePrice(items) * 100 // Convert to cents
         };
 
         IPaymentSessionService paymentSessionService =
@@ -70,8 +70,11 @@ public class OrderService : IOrderService
         PaymentProviderSession intentSession = await paymentSessionService.GeneratePaymentSession(paymentOptions);
 
         // TODO: remove hard-coded provider
-        await _mediator.Send(new CreatePaymentSessionCommand(userId, intentSession.SessionId, PaymentProvider.STRIPE));
-
+        ResultError? createSessionError = await _mediator.Send(new CreatePaymentSessionCommand(userId, intentSession.SessionId, PaymentProvider.STRIPE));
+        if (createSessionError != null)
+        {
+            // TODO: handle
+        }
         return intentSession;
     }
 

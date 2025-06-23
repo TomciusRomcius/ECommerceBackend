@@ -1,5 +1,4 @@
 using ECommerce.Domain.Entities;
-using ECommerce.Domain.Validators.User;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
@@ -17,11 +16,19 @@ public class PaymentSessionRepositoryTest
 
         // Create test user
         var userRepository = RepositoryFactories.CreateUserRepository(testContainer._postgresService);
-        var userModel = new UserEntity(Guid.NewGuid().ToString(), "email@gmail.com", "passwordhash", "firstname",
-            "lastname");
+        var userModel = new UserEntity(
+            Guid.NewGuid().ToString(),
+            "email@gmail.com",
+            "passwordhash",
+            "firstname",
+            "lastname"
+        );
         await userRepository.CreateAsync(userModel);
 
-        var paymentSessionRepository = new PaymentSessionRepository(testContainer._postgresService);
+        var paymentSessionRepository = new PaymentSessionRepository(
+            testContainer._postgresService,
+            new Mock<ILogger<PaymentSessionRepository>>().Object
+        );
 
         // Create payment session
         PaymentSessionEntity? paymentSession = new("1234-1234-1234-1234", new Guid(userModel.UserId), "stripe");

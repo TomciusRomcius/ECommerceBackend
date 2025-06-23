@@ -1,20 +1,25 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Utils;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace ECommerce.Infrastructure.Repositories;
 
 public class PaymentSessionRepository : IPaymentSessionRepository
 {
     private readonly IPostgresService _postgresService;
+    private readonly ILogger<PaymentSessionRepository> _logger;
 
-    public PaymentSessionRepository(IPostgresService postgresService)
+    public PaymentSessionRepository(IPostgresService postgresService, ILogger<PaymentSessionRepository> logger)
     {
         _postgresService = postgresService;
+        _logger = logger;
     }
 
-    public async Task CreatePaymentSessionAsync(PaymentSessionEntity paymentSessionEntity)
+    public async Task<ResultError?> CreatePaymentSessionAsync(PaymentSessionEntity paymentSessionEntity)
     {
         var query = @"
                 INSERT INTO paymentSessions (paymentSessionId, userId, paymentSessionProvider)
@@ -28,7 +33,34 @@ public class PaymentSessionRepository : IPaymentSessionRepository
             new(paymentSessionEntity.PaymentSessionProvider)
         ];
 
-        await _postgresService.ExecuteScalarAsync(query, parameters);
+        try
+        {
+            await _postgresService.ExecuteScalarAsync(query, parameters);
+        }
+        catch (NpgsqlException ex)
+        {
+            if (ex is PostgresException)
+            {
+                if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    return new ResultError(
+                        ResultErrorType.INVALID_OPERATION_ERROR,
+                        "Trying to create a payment session when there is an ongoing session"
+                    );
+                }
+
+                _logger.LogError("Encountered an unknown database error: {}", ex);
+                return new ResultError(ResultErrorType.UNKNOWN_ERROR, "Encountered an unknown database error");
+            }
+        }
+
+        catch (Exception ex)
+        {
+            _logger.LogError("Encountered an unknown exceptiopn: {}", ex);
+            return new ResultError(ResultErrorType.UNKNOWN_ERROR, "Unknown error");
+        }
+
+        return null;
     }
 
     public async Task<PaymentSessionEntity?> GetPaymentSession(Guid userId)

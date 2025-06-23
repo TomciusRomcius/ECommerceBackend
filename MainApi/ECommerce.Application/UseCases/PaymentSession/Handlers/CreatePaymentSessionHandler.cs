@@ -1,11 +1,12 @@
 using ECommerce.Application.UseCases.PaymentSession.Commands;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
+using ECommerce.Domain.Utils;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.PaymentSession.Handlers;
 
-public class CreatePaymentSessionHandler : IRequestHandler<CreatePaymentSessionCommand>
+public class CreatePaymentSessionHandler : IRequestHandler<CreatePaymentSessionCommand, ResultError?>
 {
     private readonly IPaymentSessionRepository _paymentSessionRepository;
 
@@ -14,10 +15,10 @@ public class CreatePaymentSessionHandler : IRequestHandler<CreatePaymentSessionC
         _paymentSessionRepository = paymentSessionRepository;
     }
 
-    public async Task Handle(CreatePaymentSessionCommand request, CancellationToken cancellationToken)
+    public async Task<ResultError?> Handle(CreatePaymentSessionCommand request, CancellationToken cancellationToken)
     {
         // TODO: use provider enum
-        await _paymentSessionRepository.CreatePaymentSessionAsync(
+        return await _paymentSessionRepository.CreatePaymentSessionAsync(
             new PaymentSessionEntity(request.PaymentSessionId, request.UserId, "stripe")
         );
     }
