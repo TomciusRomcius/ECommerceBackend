@@ -1,10 +1,10 @@
-using ECommerce.Application.UseCases.Common.Notifications;
+using ECommerce.Application.EventTypes;
 using ECommerce.Domain.Repositories;
 using MediatR;
 
 namespace ECommerce.Application.UseCases.PaymentSession.NotificationHandlers;
 
-public class OnChargeSucceededRemovePaymentSessionHandler : INotificationHandler<ChargeSucceededNotification>
+public class OnChargeSucceededRemovePaymentSessionHandler : INotificationHandler<ChargeSucceededEvent>
 {
     private readonly IPaymentSessionRepository _paymentSessionRepository;
 
@@ -13,8 +13,8 @@ public class OnChargeSucceededRemovePaymentSessionHandler : INotificationHandler
         _paymentSessionRepository = paymentSessionRepository;
     }
 
-    public async Task Handle(ChargeSucceededNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(ChargeSucceededEvent notification, CancellationToken cancellationToken)
     {
-        await _paymentSessionRepository.DeletePaymentSession(notification.UserId);
+        await _paymentSessionRepository.DeletePaymentSession(new Guid(notification.UserId));
     }
 }
