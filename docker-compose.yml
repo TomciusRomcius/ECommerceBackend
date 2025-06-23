@@ -15,7 +15,7 @@ services:
         "http",
       ]
     ports:
-      - 8080:8080
+      - 5042:8080
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
@@ -92,6 +92,11 @@ services:
       BITNAMI_DEBUG: yes
     ports:
       - 9092:9092
+  init-kafka:
+    image: bitnami/kafka:4.0.0
+    entrypoint: ["/scripts/kafka-create-topics.sh"]
+    volumes:
+      - ./scripts/kafka-create-topics.sh:/scripts/kafka-create-topics.sh
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     environment:
