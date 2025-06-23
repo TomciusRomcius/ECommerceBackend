@@ -25,29 +25,32 @@ namespace ECommerce.Application.Services.Consumers
             _logger = logger;
         }
 
-        protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            return Task.Run(async () =>
             {
-                try
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    ChargeSucceededEvent? ev = _consumer.Consume<ChargeSucceededEvent>(stoppingToken);
-                    if (ev != null)
+                    try
                     {
-                        _logger.LogInformation(ev.UserId);
-                        await _mediator.Publish(ev);
-                    }
-                    else
-                    {
-                        _logger.LogError("ChargeSucceededConsumer: failed to parse ChargeSucceededEvent");
-                    }
+                        ChargeSucceededEvent? ev = _consumer.Consume<ChargeSucceededEvent>(stoppingToken);
+                        if (ev != null)
+                        {
+                            _logger.LogInformation(ev.UserId);
+                            await _mediator.Publish(ev);
+                        }
+                        else
+                        {
+                            _logger.LogError("ChargeSucceededConsumer: failed to parse ChargeSucceededEvent");
+                        }
 
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("An exception was caught in ChargeSucceededConsumer: {}", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError("An exception was caught in ChargeSucceededConsumer: {}", ex.Message);
-                }
-            }
+            }, stoppingToken);
         }
     }
 }
