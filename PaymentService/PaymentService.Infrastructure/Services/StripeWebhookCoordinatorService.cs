@@ -69,7 +69,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
         ResultError? runnerError = await webhookHandlerStrategy.RunAsync(paymentEvent.Data.Object);
         if (runnerError != null)
         {
-            _logger.LogError("Encountered an error when running a webhook strategy: {}", runnerError);
+            _logger.LogError("Encountered an error when running a webhook strategy: {}", runnerError.Message);
         }
     }
 }
