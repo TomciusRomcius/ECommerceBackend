@@ -28,6 +28,7 @@ services:
       Database__Database: development
       Database__Username: user
       Database__Password: password
+      Kafka__Servers: kafka:9092
     volumes:
       - ./MainApi:/app
       - /app/bin
