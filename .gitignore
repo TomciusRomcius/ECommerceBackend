@@ -120,3 +120,4 @@ src/.vs/config/applicationhost.config
 /postgres-data
 
 appsettings*.json
+charts

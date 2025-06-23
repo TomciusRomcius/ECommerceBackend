@@ -1,0 +1,67 @@
+services:
+  payment-service:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "PaymentService.Presentation",
+        "--no-hot-reload",
+      ]
+    ports:
+      - "8081:8080"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Trace
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Database__Host: payment-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Stripe__ApiKey: ${Stripe__ApiKey}
+      Stripe__WebhookSecret: ${Stripe__WebhookSecret}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
+      - ./PaymentService.Infrastructure/src:/app/PaymentService.Infrastructure/src
+      - ./PaymentService.Application/src:/app/PaymentService.Application/src
+      - ./PaymentService.Domain/src:/app/PaymentService.Domain/src
+  payment-service-postgres-migrate:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "ef",
+        "database",
+        "update",
+        "--project",
+        "PaymentService.Application",
+        "--startup-project",
+        "PaymentService.Presentation",
+      ]
+    environment:
+      Database__Host: payment-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
+      - ./PaymentService.Infrastructure/src:/app/PaymentService.Infrastructure/src
+      - ./PaymentService.Application/src:/app/PaymentService.Application/src
+      - ./PaymentService.Application/Migrations:/app/PaymentService.Application/Migrations
+      - ./PaymentService.Domain/src:/app/PaymentService.Domain/src
+  payment-service-postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${Database__Username}
+      POSTGRES_PASSWORD: ${Database__Password}
+      POSTGRES_DB: ${Database__Database}

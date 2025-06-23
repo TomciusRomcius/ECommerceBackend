@@ -1,0 +1,64 @@
+services:
+  store-service:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "StoreService.Presentation",
+      ]
+    ports:
+      - "8083:8080"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Trace
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Database__Host: store-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./StoreService.Presentation/Src:/app/StoreService.Presentation/Src
+      - ./StoreService.Infrastructure/Src:/app/StoreService.Infrastructure/Src
+      - ./StoreService.Application/Src:/app/StoreService.Application/Src
+      - ./StoreService.Domain/Src:/app/StoreService.Domain/Src
+  store-service-postgres-migrate:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "ef",
+        "database",
+        "update",
+        "--project",
+        "StoreService.Application",
+        "--startup-project",
+        "StoreService.Presentation",
+      ]
+    environment:
+      Database__Host: store-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./StoreService.Presentation/Src:/app/StoreService.Presentation/Src
+      - ./StoreService.Infrastructure/Src:/app/StoreService.Infrastructure/Src
+      - ./StoreService.Application/Src:/app/StoreService.Application/Src
+      - ./StoreService.Application/Migrations:/app/StoreService.Application/Migrations
+      - ./StoreService.Domain/Src:/app/StoreService.Domain/Src
+  store-service-postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${Database__Username}
+      POSTGRES_PASSWORD: ${Database__Password}
+      POSTGRES_DB: ${Database__Database}

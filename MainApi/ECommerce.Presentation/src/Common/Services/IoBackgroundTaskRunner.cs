@@ -1,14 +1,14 @@
-using ECommerce.Application.Interfaces;
+using ECommerce.Application.src.Interfaces;
 
-namespace ECommerce.Presentation.Common.Services;
+namespace ECommerce.Presentation.src.Common.Services;
 
 public class IoBackgroundTaskRunner : BackgroundService
 {
     private readonly IBackgroundTaskQueue _backgroundQueue;
-    private readonly ILogger _logger;
+    private readonly ILogger<IoBackgroundTaskRunner> _logger;
     public static int TaskBatchSize = 5;
 
-    public IoBackgroundTaskRunner(IBackgroundTaskQueue backgroundQueue, ILogger logger)
+    public IoBackgroundTaskRunner(IBackgroundTaskQueue backgroundQueue, ILogger<IoBackgroundTaskRunner> logger)
     {
         _backgroundQueue = backgroundQueue;
         _logger = logger;

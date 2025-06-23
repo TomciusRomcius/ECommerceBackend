@@ -1,9 +1,12 @@
-using ECommerce.Application.Interfaces;
-using ECommerce.Application.Services;
-using ECommerce.Domain.Services.Order;
-using ECommerce.Presentation.Identity;
-using ECommerce.Presentation.src.Controllers.Categories;
+using ECommerce.Application.src.Interfaces;
+using ECommerce.Application.src.Services;
+using ECommerce.Domain.src.Interfaces.Services;
+using ECommerce.Domain.src.Services.Order;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Persistence;
+using ECommerce.Persistence.src;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ECommerce.Presentation.Initialization;
 
@@ -11,28 +14,25 @@ public static class ServicesInitialization
 {
     public static void InitializeServices(WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<ICategoriesService, CategoriesService>();
-        builder.Services.AddSingleton<IOrderService, OrderService>();
-        builder.Services.AddSingleton<IOrderValidator, OrderValidator>();
-        builder.Services.AddSingleton<IOrderPriceCalculator, OrderPriceCalculator>();
+        builder.Services.AddTransient<IOrderService, OrderService>();
+        builder.Services.AddTransient<IOrderPriceCalculator, OrderPriceCalculator>();
+        builder.Services.AddTransient<IPaymentSessionService, PaymentSessionService>();
     }
 
     public static void InitializeIdentity(WebApplicationBuilder builder)
     {
-        // TODO: define issuer in appsettings
-        var issuer = "localhost";
-
-        // Auth setup
-        builder.Services.AddIdentityCore<ApplicationUser>(options => { options.Tokens.AuthenticatorIssuer = issuer; })
-            .AddRoles<ApplicationUserRole>()
-            .AddUserStore<PostgresUserStore>()
-            .AddUserManager<UserManager<ApplicationUser>>()
-            .AddRoleStore<PostgresRoleStore>()
-            .AddSignInManager<SignInManager<ApplicationUser>>()
-            .AddRoleManager<RoleManager<ApplicationUserRole>>();
+        // TODO: Setup issuer correctly
+        builder.Services.AddIdentityCore<IdentityUser>()
+            .AddEntityFrameworkStores<DatabaseContext>()
+            .AddRoles<IdentityRole>()
+            .AddUserStore<UserStore<IdentityUser, IdentityRole, DatabaseContext>>()
+            .AddRoleStore<RoleStore<IdentityRole, DatabaseContext>>()
+            .AddUserManager<UserManager<IdentityUser>>()
+            .AddRoleManager<RoleManager<IdentityRole>>()
+            .AddSignInManager<SignInManager<IdentityUser>>();
 
         builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-            .AddCookie("Identity.Application", o =>
+            .AddCookie(IdentityConstants.ApplicationScheme, o =>
             {
                 o.Cookie.Name = "user";
                 o.Cookie.Domain = "localhost";

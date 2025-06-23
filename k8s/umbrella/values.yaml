@@ -1,0 +1,47 @@
+payment-service:
+  Kafka__Servers: umbrella-kafka:9092
+
+main-api-postgres:
+  volumePermissions:
+      enabled: true
+  auth:
+    existingSecret: main-api-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: main-api-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+payment-service-postgres:
+  volumePermissions:
+      enabled: true
+  auth:
+    existingSecret: payment-service-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: payment-service-postgres
+  primary:
+    persistence:
+    
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+kafka:
+  fullnameOverride: kafka
+  clusterId: 3f6c7185-aafc-4fc0-9431-e7295b3b1ec0
+  broker:
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: "2"
+        memory: "6Gi"
+      limits:
+        cpu: "2"
+        memory: "6Gi"
+      

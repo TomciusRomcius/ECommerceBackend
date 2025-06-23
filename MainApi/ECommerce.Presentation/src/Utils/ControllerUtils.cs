@@ -1,4 +1,4 @@
-﻿using ECommerce.Domain.Utils;
+﻿using ECommerce.Domain.src.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Presentation.src.Utils
@@ -21,7 +21,7 @@ namespace ECommerce.Presentation.src.Utils
                 StatusCode = statusCode
             };
         }
-        
+
         public static IActionResult ResultErrorsToResponse(IEnumerable<ResultError> errors)
         {
             return ResultErrorToResponse(errors.First());

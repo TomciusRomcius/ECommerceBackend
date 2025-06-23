@@ -1,0 +1,2 @@
+ASPNETCORE_ENVIRONMENT: production
+Kafka__Servers: kafka

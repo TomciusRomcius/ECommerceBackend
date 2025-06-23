@@ -1,0 +1,25 @@
+apiVersion: v2
+name: umbrella
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+
+dependencies:
+  - name: main-api
+    version: 0.1.0
+    repository: file://../main-api
+  - name: payment-service
+    version: 0.1.0
+    repository: file://../payment-service
+  - name: kafka
+    version: 32.4.3
+    repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    alias: main-api-postgres
+    version: 16.7.14
+    repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    alias: payment-service-postgres
+    version: 16.7.14
+    repository: https://charts.bitnami.com/bitnami

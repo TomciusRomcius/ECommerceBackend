@@ -1,0 +1,41 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using StoreService.Application.Utils;
+using StoreService.Domain.Entities;
+
+namespace StoreService.Application.Persistence;
+
+public class DatabaseContext : DbContext
+{
+    private IOptions<PostgresConfiguration> _postgresConfiguration;
+
+    public DatabaseContext(IOptions<PostgresConfiguration> postgresConfiguration)
+        : base()
+    {
+        _postgresConfiguration = postgresConfiguration;
+    }
+
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        var conf = _postgresConfiguration.Value;
+
+        var conString = $@"
+            Host={conf.Host};Database={conf.Database};Username={conf.Username};Password={conf.Password}
+        ";
+
+        optionsBuilder.UseNpgsql(conString);
+        base.OnConfiguring(optionsBuilder);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ProductStoreLocationEntity>()
+            .HasKey(psl => new { psl.StoreLocationId, psl.ProductId });
+
+        base.OnModelCreating(modelBuilder);
+    }
+
+    public DbSet<StoreLocationEntity> StoreLocations { get; set; }
+    public DbSet<ProductStoreLocationEntity> ProductStoreLocations { get; set; }
+}

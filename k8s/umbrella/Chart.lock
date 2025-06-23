@@ -1,0 +1,18 @@
+dependencies:
+- name: main-api
+  repository: file://../main-api
+  version: 0.1.0
+- name: payment-service
+  repository: file://../payment-service
+  version: 0.1.0
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 32.4.3
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.7.14
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.7.14
+digest: sha256:e74531c3b150afacb127f9a0b5809f0b75a1b792858ba9d5059c4c73f58525fa
+generated: "2025-08-29T10:50:29.745167463+03:00"

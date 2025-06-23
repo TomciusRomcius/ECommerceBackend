@@ -7,6 +7,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /app
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
 COPY ["PaymentService.Presentation/PaymentService.Presentation.csproj", "PaymentService.Presentation/PaymentService.Presentation.csproj"]
 COPY ["PaymentService.Infrastructure/PaymentService.Infrastructure.csproj", "PaymentService.Infrastructure/PaymentService.Infrastructure.csproj"]
 COPY ["PaymentService.Application/PaymentService.Application.csproj", "PaymentService.Application/PaymentService.Application.csproj"]
@@ -17,12 +20,15 @@ RUN dotnet restore "./PaymentService.Presentation/PaymentService.Presentation.cs
 COPY . .
 RUN dotnet build -c $BUILD_CONFIGURATION -o ../app-build/build
 
-# This stage is used to publish the service project to be copied to the final stage
+FROM build as migrate
+WORKDIR /app
+# TODO: add back --no-build flag after solving deps.json does not exist error.
+CMD ["dotnet", "ef", "database", "update", "--project", "PaymentService.Application", "--startup-project", "PaymentService.Presentation"]
+
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./PaymentService.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "PaymentService.Presentation" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

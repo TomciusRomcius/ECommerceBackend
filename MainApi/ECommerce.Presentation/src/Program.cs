@@ -1,15 +1,16 @@
-using ECommerce.Application;
-using ECommerce.Application.Interfaces;
-using ECommerce.Application.Services;
-using ECommerce.Application.Services.Consumers;
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Services.Order;
-using ECommerce.Presentation.Common.Services;
-using ECommerce.Presentation.Common.Utils;
-using ECommerce.Presentation.Initialization;
+using ECommerce.Application.src;
+using ECommerce.Application.src.Interfaces;
+using ECommerce.Application.src.Services;
+using ECommerce.Application.src.Services.Consumers;
+using ECommerce.Application.src.Utils;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Services.Order;
+using ECommerce.Presentation.src.Common.Services;
 using EventSystemHelper.Kafka.Utils;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 using System.Reflection;
+using ECommerce.Presentation.Initialization;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +23,17 @@ builder.Services.AddSwaggerGen(setup =>
     setup.IncludeXmlComments(xmlPath);
 });
 
-string? kafkaServers = builder.Configuration.GetSection("Kafka").GetValue<string>("Servers");
-builder.Services.AddSingleton<KafkaConfiguration>(_ => new KafkaConfiguration(kafkaServers));
+builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
+builder.Services.AddLogging();
+
+// Not the best way, but currently the only way as KafkaConfiguration does not have a default constructor
+string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];
+if (String.IsNullOrWhiteSpace(kafkaServers)) throw new InvalidDataException("Kafka__Servers is not set!");
+var kafkaConfiguration = new KafkaConfiguration(kafkaServers);
+builder.Services.AddSingleton<IOptions<KafkaConfiguration>>(_ => Options.Create(kafkaConfiguration));
+
+builder.Services.AddOptions<MicroserviceNetworkConfig>().Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"));
 builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 
@@ -36,9 +44,9 @@ builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHostedService<IoBackgroundTaskRunner>();
 builder.Services.AddHostedService<ChargeSucceededConsumer>();
 
+builder.Services.Configure<MicroserviceNetworkConfig>(builder.Configuration.GetSection("MicroserviceNetworkConfig"));
+
 DataAccessInitialization.InitDb(builder);
-DataAccessInitialization.InitRepositories(builder);
-DataAccessInitialization.InitStripe(builder);
 
 ServicesInitialization.InitializeServices(builder);
 ServicesInitialization.InitializeIdentity(builder);
@@ -54,8 +62,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-await Initialization.CreateDefaultRolesAndMasterUser(app);
-DataAccessInitialization.InitializeStripeWebhookStrategies(app);
+await DataAccessInitialization.WaitForConnectionAndAppliedMigrations(app);
 
 app.MapControllers();
 

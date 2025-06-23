@@ -1,0 +1,81 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using StoreService.Application.UseCases.Store.Commands;
+using StoreService.Application.UseCases.Store.Queries;
+using StoreService.Domain.Entities;
+using StoreService.Presentation.Controllers.ProductStoreLocation.dtos;
+using StoreService.Presentation.Utils;
+
+namespace StoreService.Presentation.Controllers.ProductStoreLocation;
+
+[ApiController]
+[Route("[controller]")]
+public class ProductStoreLocationController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public ProductStoreLocationController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetProductsFromStore([FromBody] GetProductsFromStoreDto getProductsFromStoreDto)
+    {
+        var isDetailed = HttpContext.Request.Query["detailed"].FirstOrDefault() == "1";
+
+        object result;
+        if (isDetailed)
+            result = await _mediator.Send(new GetProductsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
+
+        else
+            result = await _mediator.Send(new GetProductIdsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
+
+        return Ok(result);
+    }
+
+    [HttpPost]
+    // TODO: add back
+    // [Authorize(Roles = "ADMINISTRATOR")]
+    public async Task<IActionResult> AddProductToStore([FromBody] AddProductToStoreDto addProductToStoreDto)
+    {
+        var model = new ProductStoreLocationEntity(
+            addProductToStoreDto.StoreLocationId,
+            addProductToStoreDto.ProductId,
+            addProductToStoreDto.Stock
+        );
+
+        var error = await _mediator.Send(new AddProductToStoreCommand(model));
+        return error == null ? Ok() : ControllerUtils.ResultErrorToResponse(error);
+    }
+
+    [HttpDelete]
+    // TODO: add back
+    // [Authorize(Roles = "ADMINISTRATOR")]
+    public async Task<IActionResult> RemoveProductFromStore(
+        [FromBody] RemoveProductFromStoreDto removeProductFromStoreDto)
+    {
+        await _mediator.Send(
+            new RemoveProductFromStoreCommand(removeProductFromStoreDto.StoreLocationId,
+                removeProductFromStoreDto.ProductId
+            ));
+        return Ok();
+    }
+
+
+    [HttpPatch]
+    // TODO: add back
+    // [Authorize(Roles = "ADMINISTRATOR")]
+    public async Task<IActionResult> ModifyProductFromStore([FromBody] AddProductToStoreDto addProductToStoreDto)
+    {
+        var model = new ProductStoreLocationEntity(
+            addProductToStoreDto.StoreLocationId,
+            addProductToStoreDto.ProductId,
+            addProductToStoreDto.Stock
+        );
+
+        await _mediator.Send(new UpdateProductStockCommand(model));
+        return Ok();
+    }
+}

@@ -1,0 +1,52 @@
+using MediatR;
+using Microsoft.Extensions.Logging;
+using ProductService.Application.Persistence;
+using ProductService.Application.UseCases.Manufacturer.Commands;
+using ProductService.Domain.Entities;
+using ProductService.Domain.Utils;
+
+namespace ProductService.Application.UseCases.Manufacturer.Handlers;
+
+public class CreateManufacturerHandler : IRequestHandler<CreateManufacturerCommand, Result<int>>
+{
+    private readonly DatabaseContext _context;
+    private readonly ILogger<CreateManufacturerHandler> _logger;
+
+    public CreateManufacturerHandler(
+        ILogger<CreateManufacturerHandler> logger,
+        DatabaseContext context)
+    {
+        _logger = logger;
+        _context = context;
+    }
+
+    public async Task<Result<int>> Handle(CreateManufacturerCommand request,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogTrace("Entered Handle");
+        var entity = new ManufacturerEntity(request.Name);
+        _logger.LogDebug("Creating manufacturer: {@Manufacturer}", entity);
+
+        await _context.Manufacturers.AddAsync(entity);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An exception was thrown while persisting to the database.");
+
+            return new Result<int>([
+                new ResultError(
+                    ResultErrorType.UNKNOWN_ERROR,
+                    "Failed to create manufacturer"
+                )
+            ]);
+        }
+
+        _logger.LogDebug("Created manufacturer with id: {Id}", entity.ManufacturerId);
+        return new Result<int>(entity.ManufacturerId);
+    }
+}

@@ -1,5 +1,5 @@
 using System.Data;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Utils;
 
 namespace ECommerce.Infrastructure.Tests.Unit;
 

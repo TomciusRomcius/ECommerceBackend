@@ -1,0 +1,70 @@
+services:
+  user-service:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "UserService.Presentation",
+      ]
+    ports:
+      - "8084:8080"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Trace
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Database__Host: user-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Jwt__SigningKey: ${Jwt__SigningKey}
+      Stripe__ApiKey: ${Stripe__ApiKey}
+      Stripe__WebhookSecret: ${Stripe__WebhookSecret}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./UserService.Presentation/Src:/app/UserService.Presentation/Src
+      - ./UserService.Infrastructure/Src:/app/UserService.Infrastructure/Src
+      - ./UserService.Application/Src:/app/UserService.Application/Src
+      - ./UserService.Domain/Src:/app/UserService.Domain/Src
+  user-service-postgres-migrate:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "ef",
+        "database",
+        "update",
+        "--project",
+        "UserService.Application",
+        "--",
+        "--environment=Production",
+        "--host=${Database__Host}",
+        "--database=${Database__Database}",
+        "--username=${Database__Username}",
+        "--password=${Database__Password}"
+      ]
+    environment:
+      Database__Host: ${Database__Host}
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+    volumes:
+      - ./UserService.Presentation/Src:/app/UserService.Presentation/Src
+      - ./UserService.Infrastructure/Src:/app/UserService.Infrastructure/Src
+      - ./UserService.Application/Src:/app/UserService.Application/Src
+      - ./UserService.Application/Migrations:/app/UserService.Application/Migrations
+      - ./UserService.Domain/Src:/app/UserService.Domain/Src
+  user-service-postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${Database__Username}
+      POSTGRES_PASSWORD: ${Database__Password}
+      POSTGRES_DB: ${Database__Database}
