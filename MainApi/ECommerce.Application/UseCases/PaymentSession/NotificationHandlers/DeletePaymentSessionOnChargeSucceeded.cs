@@ -4,11 +4,11 @@ using MediatR;
 
 namespace ECommerce.Application.UseCases.PaymentSession.NotificationHandlers;
 
-public class OnChargeSucceededRemovePaymentSessionHandler : INotificationHandler<ChargeSucceededEvent>
+public class DeletePaymentSessionOnChargeSucceeded : INotificationHandler<ChargeSucceededEvent>
 {
     private readonly IPaymentSessionRepository _paymentSessionRepository;
 
-    public OnChargeSucceededRemovePaymentSessionHandler(IPaymentSessionRepository paymentSessionRepository)
+    public DeletePaymentSessionOnChargeSucceeded(IPaymentSessionRepository paymentSessionRepository)
     {
         _paymentSessionRepository = paymentSessionRepository;
     }

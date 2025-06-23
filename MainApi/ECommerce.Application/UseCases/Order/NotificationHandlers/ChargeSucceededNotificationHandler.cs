@@ -1,7 +1,6 @@
 using ECommerce.Application.EventTypes;
 using ECommerce.Application.UseCases.Cart.Commands;
 using ECommerce.Application.UseCases.Cart.Queries;
-using ECommerce.Application.UseCases.PaymentSession.Commands;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
@@ -31,6 +30,5 @@ public class ChargeSucceededNotificationHandler : INotificationHandler<ChargeSuc
         }
         await _productStoreLocationRepository.UpdateStock(cartItemsResult.GetValue());
         await _mediator.Send(new EraseUserCartCommand(new Guid(notification.UserId)));
-        await _mediator.Send(new DeletePaymentSessionCommand(new Guid(notification.UserId)));
     }
 }
