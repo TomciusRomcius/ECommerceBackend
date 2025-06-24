@@ -5,22 +5,26 @@
   ```docker compose up```
 * Note: if you are on Windows, it is recommended to run this in WSL.
 ## Tech stack
-* ASP.NET Core(.NET 9).
+* Backend: ASP.NET Core(.NET 9).
 * Database: PostgreSQL.
-* Docker, Docker Compose.
+* Containerization & Orchestration: Docker, Docker Compose.
+* Event streaming: Kafka.
 
 ## Features
 * Create, delete, and update store locations.
-* Create, delete, and update products.
+* Create, delete, and update products, categories, and manufacturers.
 * User authentication and role-based authorization.
 * User cart + making orders.
-* Minimalistic payment support using Stripe + modify product stock after a purchase.
+* Payment support using Stripe.
 
 ## Design
-* Followed Clean Architecture principles.
-* Implemented auth using Identity API.
+* Followed Clean Architecture and CQRS design patterns.
+* Implemented auth using the Identity API.
 * Containerized the backend using Docker + set up a development environment using Docker Compose.
-* Followed a database-first approach by writing SQL to initialize the database.
+* Followed a database-first approach to database design.
 * Implemented repository pattern to separate database logic from application logic.
 * Set up testing using xUnit and TestContainers.
+* Built a dedicated payment microservice to improve payment system resiliency, integrating Stripe for transaction processing.
+* Architected the payment system to support adding additional payment providers in the future.
+* Used MediatR for in-process messaging and separation of concerns, and Kafka for inter-service communication.
 
