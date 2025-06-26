@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-api-deployment
+  labels:
+    app: main-api
+spec:
+  selector:
+    matchLabels:
+      app: main-api
+  template:
+    metadata:
+      name: main-api-pod
+      labels:
+        app: main-api
+    spec:
+      containers:
+      - image: main-api:latest
+        name: main-api
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: app-secrets
+        env:
+          - name: ASPNETCORE_URLS
+            value: http://+:8080
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: Database__Host
+            value: postgres
+          - name: Database__Port
+            value: "8080"
+          - name: Database__Database
+            value: development
+          - name: Kafka__Servers
+            value: kafka:9092
