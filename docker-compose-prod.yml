@@ -3,17 +3,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./MainApi
-      target: build
-    command:
-      [
-        "dotnet",
-        "watch",
-        "--project",
-        "ECommerce.Presentation",
-        "--no-hot-reload",
-        "--launch-profile",
-        "http",
-      ]
+      target: final
     ports:
       - 5042:8080
     environment:
