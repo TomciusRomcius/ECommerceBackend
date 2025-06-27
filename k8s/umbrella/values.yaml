@@ -1,0 +1,12 @@
+postgresql:
+  fullnameOverride: postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+    initdb:
+      scriptsConfigMap: postgres-init
+  volumePermissions:
+    enabled: true

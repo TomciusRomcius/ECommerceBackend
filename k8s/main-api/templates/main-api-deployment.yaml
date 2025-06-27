@@ -18,6 +18,9 @@ spec:
       - image: main-api:latest
         name: main-api
         imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: postgres-connection-config 
         env:
           - name: Database__Password
             valueFrom:
@@ -38,14 +41,6 @@ spec:
             value: http://+:8080
           - name: ASPNETCORE_ENVIRONMENT
             value: Development
-          - name: Database__Username
-            value: postgres
-          - name: Database__Host
-            value: postgresql
-          - name: Database__Port
-            value: "5432"
-          - name: Database__Database
-            value: postgres
           - name: Kafka__Servers
             value: kafka:9092
           - name: STRIPE_API_KEY
