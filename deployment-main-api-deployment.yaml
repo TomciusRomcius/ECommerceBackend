@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "15"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"main-api"},"name":"main-api-deployment","namespace":"default"},"spec":{"selector":{"matchLabels":{"app":"main-api"}},"template":{"metadata":{"labels":{"app":"main-api"},"name":"main-api-pod"},"spec":{"containers":[{"env":[{"name":"Database__Password","valueFrom":{"secretKeyRef":{"key":"postgres-password","name":"postgresql"}}},{"name":"Master__Email","valueFrom":{"secretKeyRef":{"key":"Master__Email","name":"master-user-secrets"}}},{"name":"Master__Password","valueFrom":{"secretKeyRef":{"key":"Master__Password","name":"master-user-secrets"}}},{"name":"ASPNETCORE_URLS","value":"http://+:8080"},{"name":"ASPNETCORE_ENVIRONMENT","value":"Development"},{"name":"Database__Username","value":"postgres"},{"name":"Database__Host","value":"postgresql"},{"name":"Database__Port","value":"5432"},{"name":"Database__Database","value":"postgres"},{"name":"Kafka__Servers","value":"kafka:9092"},{"name":"STRIPE_API_KEY","value":"stripe"},{"name":"STRIPE_WEBHOOK_SIGNATURE","value":"secret"}],"image":"main-api:latest","imagePullPolicy":"IfNotPresent","name":"main-api","resources":{"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"0.5","memory":"0.5Gi"}}}]}}}}
+  creationTimestamp: "2025-06-27T05:48:35Z"
+  generation: 15
+  labels:
+    app: main-api
+  name: main-api-deployment
+  namespace: default
+  resourceVersion: "24813"
+  uid: 96aed59e-3ead-4740-8156-bc85deae9209
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: main-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-06-27T09:51:12+03:00"
+      labels:
+        app: main-api
+      name: main-api-pod
+    spec:
+      containers:
+      - env:
+        - name: Database__Password
+          valueFrom:
+            secretKeyRef:
+              key: postgres-password
+              name: postgresql
+        - name: Master__Email
+          valueFrom:
+            secretKeyRef:
+              key: Master__Email
+              name: master-user-secrets
+        - name: Master__Password
+          valueFrom:
+            secretKeyRef:
+              key: Master__Password
+              name: master-user-secrets
+        - name: ASPNETCORE_URLS
+          value: http://+:8080
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: Database__Username
+          value: postgres
+        - name: Database__Host
+          value: postgresql
+        - name: Database__Port
+          value: "5432"
+        - name: Database__Database
+          value: postgres
+        - name: Kafka__Servers
+          value: kafka:9092
+        - name: STRIPE_API_KEY
+          value: stripe
+        - name: STRIPE_WEBHOOK_SIGNATURE
+          value: secret
+        image: main-api:latest
+        imagePullPolicy: IfNotPresent
+        name: main-api
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  conditions:
+  - lastTransitionTime: "2025-06-27T05:58:45Z"
+    lastUpdateTime: "2025-06-27T06:59:21Z"
+    message: ReplicaSet "main-api-deployment-74f4bfd9cb" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2025-06-27T07:02:35Z"
+    lastUpdateTime: "2025-06-27T07:02:35Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  observedGeneration: 15
+  replicas: 1
+  unavailableReplicas: 1
+  updatedReplicas: 1
