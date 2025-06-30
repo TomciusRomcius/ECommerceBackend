@@ -1,4 +1,6 @@
 postgresql:
+  auth:
+    existingSecret: postgres
   fullnameOverride: postgres
   primary:
     persistence:
