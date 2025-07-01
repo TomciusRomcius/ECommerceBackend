@@ -12,3 +12,5 @@ postgresql:
       scriptsConfigMap: postgres-init
   volumePermissions:
     enabled: true
+kafka:
+  replicaCount: 1
