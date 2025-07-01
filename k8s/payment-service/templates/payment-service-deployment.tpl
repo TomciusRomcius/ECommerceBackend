@@ -33,5 +33,5 @@ spec:
                   name: app-secrets
                   key: Stripe__WebhookSecret
             - name: Kafka__Servers
-              value: kafka:9092
+              value: {{ .Values.Kafka__Servers }}
           resources: # TODO: configure resources

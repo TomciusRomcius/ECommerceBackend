@@ -1,6 +1,8 @@
 postgresql:
   auth:
-    existingSecret: postgres
+    existingSecret: app-secrets
+    secretKeys:
+      adminPasswordKey: Database__Password
   fullnameOverride: postgres
   primary:
     persistence:
@@ -12,5 +14,19 @@ postgresql:
       scriptsConfigMap: postgres-init
   volumePermissions:
     enabled: true
+
+payment-service:
+  Kafka__Servers: umbrella-kafka:9092
+
 kafka:
-  replicaCount: 1
+  clusterId: 3f6c7185-aafc-4fc0-9431-e7295b3b1ec0
+  broker:
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: "2"
+        memory: "6Gi"
+      limits:
+        cpu: "2"
+        memory: "6Gi"
+      

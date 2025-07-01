@@ -18,24 +18,25 @@ spec:
         - image: main-api:latest
           name: main-api
           imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: postgres-connection-config
           env:
+            - name: Database__Host
+              value: postgres
+            - name: Database__Port
+              value: "5432"
             - name: Database__Password
               valueFrom:
                 secretKeyRef:
-                  name: postgres
-                  key: postgres-password
+                  name: app-secrets
+                  key: Database__Password
             - name: Master__Email
               valueFrom:
                 secretKeyRef:
-                  name: master-user-secrets
+                  name: app-secrets
                   key: Master__Email
             - name: Master__Password
               valueFrom:
                 secretKeyRef:
-                  name: master-user-secrets
+                  name: app-secrets
                   key: Master__Password
             - name: ASPNETCORE_URLS
               value: http://+:8080
