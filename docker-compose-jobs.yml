@@ -1,0 +1,17 @@
+services:
+  init-administrator:
+    build:
+      dockerfile: Dockerfile
+      context: ./Jobs/InitializeRolesAndAdmin
+    environment:
+      Database__Host: postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Master__Email: ${Master__Email}
+      Master__Password: ${Master__Password}
+  init-kafka:
+    image: bitnami/kafka:4.0.0
+    entrypoint: ["/scripts/kafka-create-topics.sh"]
+    volumes:
+      - ./scripts/kafka-create-topics.sh:/scripts/kafka-create-topics.sh
