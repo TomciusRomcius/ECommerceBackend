@@ -1,0 +1,55 @@
+services:
+  payment-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./PaymentService
+      target: build
+    command:
+      [
+        "dotnet",
+        "watch",
+        "--project",
+        "PaymentService.Presentation",
+        "--no-hot-reload",
+      ]
+    ports:
+      - "8081:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      Database__Host: payment-service-postgres
+      Database__Database: ${PaymentService__Database__Database}
+      Database__Username: ${PaymentService__Database__Username}
+      Database__Password: ${PaymentService__Database__Password}
+      Stripe__ApiKey: ${PaymentService__Stripe__ApiKey}
+      Stripe__WebhookSecret: ${PaymentService__Stripe__WebhookSecret}
+      Kafka__Servers: kafka:9092
+    volumes:
+      - ./PaymentService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      payment-service-postgres:
+        condition: service_healthy
+  payment-service-postgres-migrate:
+    build:
+      dockerfile: Dockerfile
+      context: ./PaymentService
+      target: build
+    command: ["dotnet", "ef", "database", "update"]
+    depends_on:
+      payment-service-postgres:
+        condition: service_healthy
+  payment-service-postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${PaymentService__Database__Username}
+      POSTGRES_PASSWORD: ${PaymentService__Database__Password}
+      POSTGRES_DB: ${PaymentService__Database__Database}
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 10
+      timeout: 10s

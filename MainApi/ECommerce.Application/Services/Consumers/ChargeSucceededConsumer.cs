@@ -4,6 +4,7 @@ using EventSystemHelper.Kafka.Utils;
 using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ECommerce.Application.Services.Consumers
 {
@@ -13,10 +14,10 @@ namespace ECommerce.Application.Services.Consumers
         private IMediator _mediator;
         private ILogger _logger;
 
-        public ChargeSucceededConsumer(KafkaConfiguration kafkaConfiguration, IMediator mediator, ILogger<ChargeSucceededConsumer> logger)
+        public ChargeSucceededConsumer(IOptions<KafkaConfiguration> kafkaConfiguration, IMediator mediator, ILogger<ChargeSucceededConsumer> logger)
         {
             _consumer = new KafkaEventConsumer(
-                kafkaConfiguration,
+                kafkaConfiguration.Value,
                 Confluent.Kafka.AutoOffsetReset.Earliest,
                 "main-api",
                 "charge-succeeded"
@@ -27,21 +28,24 @@ namespace ECommerce.Application.Services.Consumers
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogDebug("Started ExecuteAsync");
+
             return Task.Run(async () =>
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
+
                     try
                     {
                         ChargeSucceededEvent? ev = _consumer.Consume<ChargeSucceededEvent>(stoppingToken);
                         if (ev != null)
                         {
-                            _logger.LogInformation(ev.UserId);
+                            _logger.LogDebug("Parsed incoming event");
                             await _mediator.Publish(ev);
                         }
                         else
                         {
-                            _logger.LogError("ChargeSucceededConsumer: failed to parse ChargeSucceededEvent");
+                            _logger.LogError("Failed to parse event");
                         }
 
                     }

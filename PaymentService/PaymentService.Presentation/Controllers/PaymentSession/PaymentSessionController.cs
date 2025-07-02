@@ -22,12 +22,14 @@ namespace PaymentService.Presentation.Controllers.PaymentSession
             return new string[] { "value1", "value2" };
         }
 
+        //TODO: JWT auth
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
+        // TODO: JWT auth
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Guid userId, [FromBody] int priceCents, [FromBody] PaymentProvider paymentProvider)
         {

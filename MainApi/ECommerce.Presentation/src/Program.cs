@@ -23,8 +23,7 @@ builder.Services.AddSwaggerGen(setup =>
     setup.IncludeXmlComments(xmlPath);
 });
 
-string? kafkaServers = builder.Configuration.GetSection("Kafka").GetValue<string>("Servers");
-builder.Services.AddSingleton<KafkaConfiguration>(_ => new KafkaConfiguration(kafkaServers));
+builder.Services.Configure<KafkaConfiguration>(builder.Configuration.GetSection("Kafka"));
 
 builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
 builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();
@@ -41,7 +40,6 @@ builder.Services.Configure<MicroserviceNetworkConfig>(builder.Configuration.GetS
 
 DataAccessInitialization.InitDb(builder);
 DataAccessInitialization.InitRepositories(builder);
-DataAccessInitialization.InitStripe(builder);
 
 ServicesInitialization.InitializeServices(builder);
 ServicesInitialization.InitializeIdentity(builder);
@@ -58,7 +56,6 @@ if (app.Environment.IsDevelopment())
 }
 
 await Initialization.CreateDefaultRolesAndMasterUser(app);
-DataAccessInitialization.InitializeStripeWebhookStrategies(app);
 
 app.MapControllers();
 
