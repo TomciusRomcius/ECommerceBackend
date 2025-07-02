@@ -25,9 +25,9 @@ services:
       Master__Password: ${Master__Password}
       Database__Host: postgres
       Database__Port: 5432
-      Database__Database: development
-      Database__Username: user
-      Database__Password: password
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
       Kafka__Servers: kafka:9092
     volumes:
       - ./MainApi:/app
@@ -69,7 +69,7 @@ services:
     environment:
       POSTGRES_USER: ${Database__Username}
       POSTGRES_PASSWORD: ${Database__Password}
-      POSTGRES_DB: development
+      POSTGRES_DB: ${Database__Database}
     volumes:
       - ./sql-init:/docker-entrypoint-initdb.d
       - ./postgres-data:/var/lib/postgresql/data
