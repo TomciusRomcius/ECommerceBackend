@@ -29,6 +29,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
 
     public async Task HandlePaymentWebhook(string json, string signature)
     {
+        _logger.LogDebug("Handling a stripe payment webhook event");
         using IServiceScope? scope = _serviceScopeFactory.CreateScope();
         var paymentSessionFactory = scope.ServiceProvider.GetRequiredService<IPaymentSessionFactory>();
 
@@ -70,6 +71,9 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
         if (runnerError != null)
         {
             _logger.LogError("Encountered an error when running a webhook strategy: {}", runnerError.Message);
+            return;
         }
+
+        _logger.LogDebug("Succesfully handled stripe webhook event");
     }
 }
