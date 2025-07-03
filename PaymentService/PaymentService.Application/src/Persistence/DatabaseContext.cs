@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PaymentService.Application.Utils;
-using PaymentService.Domain.Entities;
+using PaymentService.Application.src.Utils;
+using PaymentService.Domain.src.Entities;
 
-namespace PaymentService.Application.Persistence
+namespace PaymentService.Application.src.Persistence
 {
     public class DatabaseContext : DbContext
     {
@@ -23,7 +23,6 @@ namespace PaymentService.Application.Persistence
             string password = _postgresConfiguration.Password;
             optionsBuilder.UseNpgsql($"Host={host};Database={database};Username={username};Password={password}");
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

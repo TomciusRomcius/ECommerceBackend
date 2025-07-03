@@ -1,6 +1,6 @@
-using PaymentService.Domain.Enums;
+using PaymentService.Domain.src.Enums;
 
-namespace PaymentService.Domain.Models;
+namespace PaymentService.Domain.src.Models;
 
 public class PaymentProviderSession
 {

@@ -1,13 +1,13 @@
 using EventSystemHelper.Kafka.Utils;
 using Microsoft.Extensions.Options;
-using PaymentService.Application.Interfaces;
-using PaymentService.Application.Persistence;
-using PaymentService.Application.Services;
-using PaymentService.Application.Utils;
-using PaymentService.Domain.Enums;
-using PaymentService.Infrastructure.Interfaces;
-using PaymentService.Infrastructure.Services;
-using PaymentService.Infrastructure.Utils;
+using PaymentService.Application.src.Interfaces;
+using PaymentService.Application.src.Persistence;
+using PaymentService.Application.src.Services;
+using PaymentService.Application.src.Utils;
+using PaymentService.Domain.src.Enums;
+using PaymentService.Infrastructure.src.Interfaces;
+using PaymentService.Infrastructure.src.Services;
+using PaymentService.Infrastructure.src.Utils;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
