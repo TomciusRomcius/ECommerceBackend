@@ -10,12 +10,11 @@ using PaymentService.Infrastructure.src.Services;
 using PaymentService.Infrastructure.src.Utils;
 using System.Reflection;
 
+// TODO: separate initialization logic
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddLogging();
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 
 builder.Services.AddOptions<StripeSettings>()
