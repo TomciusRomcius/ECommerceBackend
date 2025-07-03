@@ -2,7 +2,6 @@ services:
   payment-service:
     build:
       dockerfile: Dockerfile
-      context: ./PaymentService
       target: build
     command:
       [
