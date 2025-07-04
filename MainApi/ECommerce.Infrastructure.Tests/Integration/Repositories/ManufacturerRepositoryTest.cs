@@ -1,6 +1,5 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using TestUtils;
 

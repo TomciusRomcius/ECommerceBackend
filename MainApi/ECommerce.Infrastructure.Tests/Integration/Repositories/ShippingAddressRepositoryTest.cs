@@ -1,5 +1,5 @@
 using ECommerce.Domain.Entities;
-using ECommerce.Infrastructure.Repositories;
+using ECommerce.Infrastructure.src.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Validators.Category;
+using ECommerce.Domain.Validators.Manufacturer;
 using ECommerce.Domain.Validators.Product;
 using ECommerce.Domain.Validators.User;
 using ECommerce.Infrastructure.src.Repositories;
@@ -24,7 +25,7 @@ namespace ECommerce.Infrastructure.Tests.Utils
                 new ProductEntityValidator(),
                 new UpdateProductModelValidator()
             );
-        
+
         public static ManufacturerRepository CreateManufacturerRepository(IPostgresService postgresService) =>
             new ManufacturerRepository(
                 postgresService,

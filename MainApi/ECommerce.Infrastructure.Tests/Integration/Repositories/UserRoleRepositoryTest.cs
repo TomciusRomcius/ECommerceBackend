@@ -1,7 +1,7 @@
 // using ECommerce.Domain.Entities;
 // using ECommerce.Domain.Models;
 // using ECommerce.Domain.Repositories;
-// using ECommerce.Infrastructure.Repositories;
+// using ECommerce.Infrastructure.src.Repositories;
 // using ECommerce.Infrastructure.Tests.Utils;
 // using Microsoft.Extensions.Logging;
 // using Moq;
