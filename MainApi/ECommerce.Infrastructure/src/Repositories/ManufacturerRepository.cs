@@ -3,12 +3,12 @@ using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Infrastructure.src.Utils;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace ECommerce.Infrastructure.Repositories;
+namespace ECommerce.Infrastructure.src.Repositories;
 
 public class ManufacturerRepository : IManufacturerRepository
 {
@@ -16,8 +16,8 @@ public class ManufacturerRepository : IManufacturerRepository
     private readonly IValidator<ManufacturerEntity> _manufacturerValidator;
     private readonly IValidator<UpdateManufacturerModel> _updateManufacturerValidator;
 
-    public ManufacturerRepository(IPostgresService postgresService, 
-        IValidator<ManufacturerEntity> manufacturerValidator, 
+    public ManufacturerRepository(IPostgresService postgresService,
+        IValidator<ManufacturerEntity> manufacturerValidator,
         IValidator<UpdateManufacturerModel> updateManufacturerValidator)
     {
         _postgresService = postgresService;
@@ -35,7 +35,7 @@ public class ManufacturerRepository : IManufacturerRepository
                 ResultUtils.ValidationFailuresToResultErrors(errors)
             );
         }
-        
+
         var query = @"
                 INSERT INTO manufacturers (name)
                 VALUES ($1)
@@ -46,18 +46,18 @@ public class ManufacturerRepository : IManufacturerRepository
 
         object? res = await _postgresService.ExecuteScalarAsync(query, parameters);
 
-        if (res is not int) 
+        if (res is not int)
         {
             var error = new ResultError(
                 ResultErrorType.UNKNOWN_ERROR,
                 "Failed to create the manufacturer."
             );
-            
+
             return new Result<int>([error]);
         }
-        
+
         var id = Convert.ToInt32(res);
-        return new Result<int>(id);    
+        return new Result<int>(id);
     }
 
     public async Task DeleteAsync(int manufacturerId)

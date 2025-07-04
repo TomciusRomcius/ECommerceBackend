@@ -1,5 +1,5 @@
-using ECommerce.Presentation.Identity;
 using ECommerce.Presentation.src.Controllers.Auth.dtos;
+using ECommerce.Presentation.src.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;

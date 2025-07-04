@@ -1,8 +1,9 @@
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Utils;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace ECommerce.Infrastructure.Services;
+namespace ECommerce.Infrastructure.src.Services;
 
 public interface IPostgresService
 {
@@ -19,33 +20,45 @@ public interface IPostgresService
 
 public class PostgresService : IPostgresService
 {
-    private PostgresConfiguration _postgresConfiguration;
+    public NpgsqlConnection Connection { get; }
+    private readonly PostgresConfiguration _postgresConfiguration;
+    private readonly ILogger<PostgresService> _logger;
 
-    public PostgresService(IOptions<PostgresConfiguration> postgresConfiguration)
+    public PostgresService(IOptions<PostgresConfiguration> postgresConfiguration, ILogger<PostgresService> logger)
     {
+
         _postgresConfiguration = postgresConfiguration.Value;
-        Connection = new NpgsqlConnection($@"
-                HOST={_postgresConfiguration.Host};
-                PORT={_postgresConfiguration.Port};
-                USERNAME={_postgresConfiguration.Username};
-                PASSWORD={_postgresConfiguration.Password};
-                DATABASE={_postgresConfiguration.Database};
-            ");
+        _logger = logger;
+        _logger.LogTrace("Entering PostgresService constructor");
+        _logger.LogInformation("Connecting to {}:{}", _postgresConfiguration.Host, _postgresConfiguration.Port);
+
+        string connectionString = $@"
+            HOST={_postgresConfiguration.Host};
+            PORT={_postgresConfiguration.Port};
+            USERNAME={_postgresConfiguration.Username};
+            PASSWORD={_postgresConfiguration.Password};
+            DATABASE={_postgresConfiguration.Database};
+        ";
+
+        _logger.LogDebug("Connecting to PostgreSQL. Connection string: {}", connectionString);
+
+        Connection = new NpgsqlConnection(connectionString);
         Connection.Open();
     }
 
     // Mostly used during integration tests
     public PostgresService(string connectionString)
     {
-        _postgresConfiguration = null;
+        _postgresConfiguration = null!;
         Connection = new NpgsqlConnection(connectionString);
         Connection.Open();
+        _logger = LoggerFactory.Create(options => options.SetMinimumLevel(LogLevel.Debug)).CreateLogger<PostgresService>();
     }
-
-    public NpgsqlConnection Connection { get; }
 
     public async Task<List<Dictionary<string, object>>> ExecuteAsync(string query, QueryParameter[]? parameters = null)
     {
+        _logger.LogTrace("ExecuteAsync called");
+        _logger.LogDebug("Executing query via ExecuteAsync. Query: {} Parameters: {}", query, parameters);
         var cmd = new NpgsqlCommand(query, Connection);
 
         if (parameters != null)
@@ -74,6 +87,9 @@ public class PostgresService : IPostgresService
 
     public async Task<object?> ExecuteScalarAsync(string query, QueryParameter[]? parameters = null)
     {
+        _logger.LogTrace("ExecuteScalarAsync called");
+        _logger.LogDebug("Executing query via ExecuteScalarAsync. Query: {} Parameters: {}", query, parameters);
+
         var cmd = new NpgsqlCommand(query, Connection);
 
         if (parameters != null)

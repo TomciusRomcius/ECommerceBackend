@@ -1,4 +1,4 @@
-using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.src.Services;
 using Testcontainers.PostgreSql;
 
 namespace TestUtils;

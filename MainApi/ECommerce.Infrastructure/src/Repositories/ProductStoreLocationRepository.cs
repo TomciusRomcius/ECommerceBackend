@@ -3,11 +3,11 @@ using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Infrastructure.src.Utils;
 using Npgsql;
 
-namespace ECommerce.Infrastructure.Repositories;
+namespace ECommerce.Infrastructure.src.Repositories;
 
 public class ProductStoreLocationRepository : IProductStoreLocationRepository
 {
@@ -47,7 +47,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
                     "Trying to add product to store location, when product or store location does not exist!"
                 );
             }
-            
+
             else if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
             {
                 error = new ResultError(
@@ -72,7 +72,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
                 "Failed to add product to store location due to unknown reasons."
             );
         }
-        
+
         return error;
     }
 

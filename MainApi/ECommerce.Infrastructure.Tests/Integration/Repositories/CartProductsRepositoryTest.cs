@@ -1,8 +1,8 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Repositories;
-using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.src.Repositories;
+using ECommerce.Infrastructure.src.Services;
 using ECommerce.Infrastructure.Tests.Utils;
 using System.Data;
 using TestUtils;

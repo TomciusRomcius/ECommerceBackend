@@ -1,8 +1,8 @@
 using ECommerce.Domain.Repositories;
-using ECommerce.Infrastructure.Repositories;
-using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.src.Repositories;
+using ECommerce.Infrastructure.src.Services;
 
-namespace ECommerce.Presentation.Initialization;
+namespace ECommerce.Presentation.src.Initialization;
 
 public static class DataAccessInitialization
 {

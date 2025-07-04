@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ECommerce.Domain.Validators.Product
+namespace ECommerce.Domain.Validators.StoreLocation
 {
     internal static class StoreLocationValidationRules
     {

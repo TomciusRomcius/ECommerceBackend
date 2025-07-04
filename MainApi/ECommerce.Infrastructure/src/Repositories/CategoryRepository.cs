@@ -2,13 +2,13 @@ using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Infrastructure.src.Utils;
 using FluentValidation;
 using FluentValidation.Results;
 using Npgsql;
 
-namespace ECommerce.Infrastructure.Repositories;
+namespace ECommerce.Infrastructure.src.Repositories;
 
 public class CategoryRepository : ICategoryRepository
 {
@@ -24,7 +24,7 @@ public class CategoryRepository : ICategoryRepository
     public async Task<Result<int>> CreateAsync(string categoryName)
     {
         var categoryEntity = new CategoryEntity(categoryName);
-        
+
         List<ValidationFailure> errors = _categoryValidator.Validate(categoryEntity).Errors;
         if (errors.Any())
         {
@@ -32,7 +32,7 @@ public class CategoryRepository : ICategoryRepository
                 ResultUtils.ValidationFailuresToResultErrors(errors)
             );
         }
-        
+
         var query = @"
             INSERT INTO categories (name) 
             VALUES ($1)
@@ -75,7 +75,7 @@ public class CategoryRepository : ICategoryRepository
                     ResultErrorType.UNKNOWN_ERROR,
                     "Failed to create a category for unknown reasons"
                 );
-                
+
                 result = new Result<int>([error]);
             }
         }
@@ -86,10 +86,10 @@ public class CategoryRepository : ICategoryRepository
                 ResultErrorType.UNKNOWN_ERROR,
                 "Failed to create a category for unknown reasons"
             );
-            
+
             result = new Result<int>([error]);
         }
-        
+
         return result;
     }
 

@@ -1,7 +1,7 @@
-using ECommerce.Presentation.Identity;
+using ECommerce.Presentation.src.Identity;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Presentation.Initialization;
+namespace ECommerce.Presentation.src.Initialization;
 
 internal static class Initialization
 {

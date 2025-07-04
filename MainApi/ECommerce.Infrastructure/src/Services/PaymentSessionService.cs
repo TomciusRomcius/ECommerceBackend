@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace ECommerce.Infrastructure.Services
+namespace ECommerce.Infrastructure.src.Services
 {
     public class PaymentSessionService : IPaymentSessionService
     {

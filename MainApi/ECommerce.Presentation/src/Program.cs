@@ -5,10 +5,11 @@ using ECommerce.Application.Services.Consumers;
 using ECommerce.Application.Utils;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Services.Order;
-using ECommerce.Presentation.Common.Services;
-using ECommerce.Presentation.Initialization;
+using ECommerce.Presentation.src.Common.Services;
+using ECommerce.Presentation.src.Initialization;
 using EventSystemHelper.Kafka.Utils;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,12 @@ builder.Services.AddSwaggerGen(setup =>
 builder.Services.AddHttpClient();
 
 builder.Services.AddLogging();
-builder.Services.Configure<KafkaConfiguration>(builder.Configuration.GetSection("Kafka"));
+
+// Not the best way, but currently the only way as KafkaConfiguration does not have a default constructor
+string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];
+if (String.IsNullOrWhiteSpace(kafkaServers)) throw new InvalidDataException("Kafka__Servers is not set!");
+var kafkaConfiguration = new KafkaConfiguration(kafkaServers);
+builder.Services.AddSingleton<IOptions<KafkaConfiguration>>(_ => Options.Create(kafkaConfiguration));
 
 builder.Services.AddOptions<MicroserviceNetworkConfig>().Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"));
 builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();

@@ -2,7 +2,7 @@
 using ECommerce.Domain.Models;
 using FluentValidation;
 
-namespace ECommerce.Domain.Validators.Product
+namespace ECommerce.Domain.Validators.StoreLocation
 {
     public class StoreLocationEntityValidation : AbstractValidator<StoreLocationEntity>
     {

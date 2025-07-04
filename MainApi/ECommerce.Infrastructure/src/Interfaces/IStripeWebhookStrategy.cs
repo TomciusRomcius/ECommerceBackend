@@ -1,7 +1,7 @@
 ﻿using ECommerce.Domain.Utils;
 using Stripe;
 
-namespace ECommerce.Infrastructure.Interfaces
+namespace ECommerce.Infrastructure.src.Interfaces
 {
     public interface IStripeWebhookStrategy
     {

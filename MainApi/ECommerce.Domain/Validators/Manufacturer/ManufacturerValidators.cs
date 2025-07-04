@@ -1,9 +1,8 @@
 ﻿using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
-using ECommerce.Domain.Validators.Manufacturer;
 using FluentValidation;
 
-namespace ECommerce.Domain.Validators.Category
+namespace ECommerce.Domain.Validators.Manufacturer
 {
     public class ManufacturerEntityValidators : AbstractValidator<ManufacturerEntity>
     {

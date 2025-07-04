@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Infrastructure.Services;
+namespace ECommerce.Infrastructure.src.Services;
 
 public class PostgresConfiguration
 {

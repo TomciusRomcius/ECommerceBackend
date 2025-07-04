@@ -1,4 +1,4 @@
-namespace ECommerce.Infrastructure.Utils;
+namespace ECommerce.Infrastructure.src.Utils;
 
 public class StripeSettings
 {

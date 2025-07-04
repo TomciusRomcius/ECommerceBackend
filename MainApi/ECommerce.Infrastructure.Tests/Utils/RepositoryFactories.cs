@@ -1,8 +1,8 @@
 ﻿using ECommerce.Domain.Validators.Category;
 using ECommerce.Domain.Validators.Product;
 using ECommerce.Domain.Validators.User;
-using ECommerce.Infrastructure.Repositories;
-using ECommerce.Infrastructure.Services;
+using ECommerce.Infrastructure.src.Repositories;
+using ECommerce.Infrastructure.src.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 

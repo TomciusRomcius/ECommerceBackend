@@ -2,12 +2,12 @@ using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
 using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Services.Order;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Presentation.Identity;
+using ECommerce.Infrastructure.src.Services;
 using ECommerce.Presentation.src.Controllers.Categories;
+using ECommerce.Presentation.src.Identity;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Presentation.Initialization;
+namespace ECommerce.Presentation.src.Initialization;
 
 public static class ServicesInitialization
 {

@@ -1,10 +1,10 @@
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Repositories;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Infrastructure.src.Utils;
 using Microsoft.Extensions.Logging;
 
-namespace ECommerce.Infrastructure.Repositories;
+namespace ECommerce.Infrastructure.src.Repositories;
 
 public class UserRoleRepository : IUserRoleRepository
 {

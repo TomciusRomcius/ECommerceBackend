@@ -6,7 +6,7 @@ using ECommerce.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace ECommerce.Presentation.Identity;
+namespace ECommerce.Presentation.src.Identity;
 
 public class PostgresUserStore :
     IUserEmailStore<ApplicationUser>,

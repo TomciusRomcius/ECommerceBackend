@@ -2,13 +2,13 @@ using ECommerce.Domain.Entities;
 using ECommerce.Domain.Models;
 using ECommerce.Domain.Repositories;
 using ECommerce.Domain.Utils;
-using ECommerce.Infrastructure.Services;
-using ECommerce.Infrastructure.Utils;
+using ECommerce.Infrastructure.src.Services;
+using ECommerce.Infrastructure.src.Utils;
 using FluentValidation;
 using FluentValidation.Results;
 using Npgsql;
 
-namespace ECommerce.Infrastructure.Repositories;
+namespace ECommerce.Infrastructure.src.Repositories;
 
 public class ProductRepository : IProductRepository
 {
@@ -16,8 +16,8 @@ public class ProductRepository : IProductRepository
     private readonly IValidator<ProductEntity> _productValidator;
     private readonly IValidator<UpdateProductModel> _updateProductValidator;
 
-    public ProductRepository(IPostgresService postgresService, 
-        IValidator<ProductEntity> productValidator, 
+    public ProductRepository(IPostgresService postgresService,
+        IValidator<ProductEntity> productValidator,
         IValidator<UpdateProductModel> updateProductValidator)
     {
         _postgresService = postgresService;
