@@ -27,6 +27,5 @@ public static class DataAccessInitialization
         builder.Services.AddSingleton<IShippingAddressRepository, ShippingAddressRepository>();
         builder.Services.AddSingleton<IStoreLocationRepository, StoreLocationRepository>();
         builder.Services.AddSingleton<IProductStoreLocationRepository, ProductStoreLocationRepository>();
-        builder.Services.AddSingleton<IPaymentSessionRepository, PaymentSessionRepository>();
     }
 }
