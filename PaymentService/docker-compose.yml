@@ -33,7 +33,6 @@ services:
   payment-service-postgres-migrate:
     build:
       dockerfile: Dockerfile
-      context: ./PaymentService
       target: build
     command: ["dotnet", "ef", "database", "update"]
     depends_on:
