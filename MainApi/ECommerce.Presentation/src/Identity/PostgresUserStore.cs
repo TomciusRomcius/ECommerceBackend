@@ -13,11 +13,11 @@ public class PostgresUserStore :
     IUserPasswordStore<ApplicationUser>,
     IUserRoleStore<ApplicationUser>
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<PostgresUserStore> _logger;
     private readonly IMediator _mediator;
     private readonly IUserRoleRepository _userRoleRepository;
 
-    public PostgresUserStore(IUserRoleRepository userRoleRepository, ILogger logger, IMediator mediator)
+    public PostgresUserStore(IUserRoleRepository userRoleRepository, ILogger<PostgresUserStore> logger, IMediator mediator)
     {
         _userRoleRepository = userRoleRepository;
         _logger = logger;

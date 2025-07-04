@@ -8,7 +8,7 @@ namespace ECommerce.Presentation.Identity;
 public class PostgresRoleStore(
     IRoleTypeRepository _roleTypeRepository,
     ILookupNormalizer _keyNormalizer,
-    ILogger _logger
+    ILogger<PostgresRoleStore> _logger
 )
     : IRoleStore<ApplicationUserRole>
 {

@@ -1,4 +1,3 @@
-using ECommerce.Presentation.Common.Utils;
 using ECommerce.Presentation.Identity;
 using ECommerce.Presentation.src.Controllers.Auth.dtos;
 using Microsoft.AspNetCore.Identity;
@@ -11,16 +10,15 @@ namespace ECommerce.Presentation.src.Controllers.Auth;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly ILogger _logger = LoggerManager.GetInstance().CreateLogger("AuthController");
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+    public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<AuthController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-
-        _logger.LogInformation((userManager != null).ToString());
+        _logger = logger;
     }
 
     [HttpPost("sign-up-with-password")]

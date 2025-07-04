@@ -3,6 +3,7 @@ using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Models.PaymentSession;
 using ECommerce.Domain.Utils;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace ECommerce.Infrastructure.Services
@@ -13,10 +14,10 @@ namespace ECommerce.Infrastructure.Services
         private readonly MicroserviceNetworkConfig _networkConfig;
         private readonly ILogger<PaymentSessionService> _logger;
 
-        public PaymentSessionService(IHttpClientFactory httpClientFactory, MicroserviceNetworkConfig networkConfig, ILogger<PaymentSessionService> logger)
+        public PaymentSessionService(HttpClient httpClient, IOptions<MicroserviceNetworkConfig> networkConfig, ILogger<PaymentSessionService> logger)
         {
-            _httpClient = httpClientFactory.CreateClient(typeof(PaymentSessionService).Name);
-            _networkConfig = networkConfig;
+            _httpClient = httpClient;
+            _networkConfig = networkConfig.Value;
             _logger = logger;
         }
 

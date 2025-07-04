@@ -12,13 +12,13 @@ namespace ECommerce.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<UserRepository> _logger;
     private readonly IPostgresService _postgresService;
     private readonly IValidator<UserEntity> _userValidator;
     private readonly IValidator<UpdateUserModel> _updateUserValidator;
 
-    public UserRepository(IPostgresService postgresService, 
-        ILogger logger, 
+    public UserRepository(IPostgresService postgresService,
+        ILogger<UserRepository> logger,
         IValidator<UserEntity> userValidator,
         IValidator<UpdateUserModel> updateUserValidator)
     {

@@ -6,7 +6,6 @@ using ECommerce.Application.Utils;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Services.Order;
 using ECommerce.Presentation.Common.Services;
-using ECommerce.Presentation.Common.Utils;
 using ECommerce.Presentation.Initialization;
 using EventSystemHelper.Kafka.Utils;
 using FluentValidation;
@@ -23,9 +22,12 @@ builder.Services.AddSwaggerGen(setup =>
     setup.IncludeXmlComments(xmlPath);
 });
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddLogging();
 builder.Services.Configure<KafkaConfiguration>(builder.Configuration.GetSection("Kafka"));
 
-builder.Services.AddSingleton<ILogger>(_ => LoggerManager.GetInstance().CreateLogger("ECommerceBackend"));
+builder.Services.AddOptions<MicroserviceNetworkConfig>().Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"));
 builder.Services.AddSingleton<IObjectValidator, ObjectValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 

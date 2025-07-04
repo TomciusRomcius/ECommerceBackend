@@ -8,11 +8,11 @@ namespace ECommerce.Infrastructure.Repositories;
 
 public class UserRoleRepository : IUserRoleRepository
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<UserRoleRepository> _logger;
     private readonly IPostgresService _postgresService;
 
 
-    public UserRoleRepository(IPostgresService postgresService, ILogger logger)
+    public UserRoleRepository(IPostgresService postgresService, ILogger<UserRoleRepository> logger)
     {
         _postgresService = postgresService;
         _logger = logger;
@@ -20,7 +20,6 @@ public class UserRoleRepository : IUserRoleRepository
 
     public async Task AddToRoleAsync(string userid, string roleName)
     {
-        _logger.LogInformation("User role repository");
         var query = @" 
                 INSERT INTO userRoles (userId, roleTypeId)
                 VALUES ($1, (
