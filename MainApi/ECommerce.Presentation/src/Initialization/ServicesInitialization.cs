@@ -1,6 +1,8 @@
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Services;
+using ECommerce.Domain.Interfaces.Services;
 using ECommerce.Domain.Services.Order;
+using ECommerce.Infrastructure.Services;
 using ECommerce.Presentation.Identity;
 using ECommerce.Presentation.src.Controllers.Categories;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +17,7 @@ public static class ServicesInitialization
         builder.Services.AddSingleton<IOrderService, OrderService>();
         builder.Services.AddSingleton<IOrderValidator, OrderValidator>();
         builder.Services.AddSingleton<IOrderPriceCalculator, OrderPriceCalculator>();
+        builder.Services.AddSingleton<IPaymentSessionService, PaymentSessionService>();
     }
 
     public static void InitializeIdentity(WebApplicationBuilder builder)
