@@ -34,7 +34,6 @@ namespace ECommerce.Application.Services.Consumers
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-
                     try
                     {
                         ChargeSucceededEvent? ev = _consumer.Consume<ChargeSucceededEvent>(stoppingToken);
@@ -47,7 +46,6 @@ namespace ECommerce.Application.Services.Consumers
                         {
                             _logger.LogError("Failed to parse event");
                         }
-
                     }
                     catch (Exception ex)
                     {
