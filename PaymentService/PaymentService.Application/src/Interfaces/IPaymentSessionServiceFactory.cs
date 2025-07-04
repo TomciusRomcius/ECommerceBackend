@@ -4,5 +4,5 @@ namespace PaymentService.Application.src.Interfaces;
 
 public interface IPaymentSessionFactory
 {
-    IPaymentSessionService CreatePaymentSessionService(PaymentProvider provider);
+    IProviderPaymentSessionService CreatePaymentSessionService(PaymentProvider provider);
 }

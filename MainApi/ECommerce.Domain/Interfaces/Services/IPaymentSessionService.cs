@@ -1,3 +1,4 @@
+using ECommerce.Domain.Enums;
 using ECommerce.Domain.Models.PaymentSession;
 using ECommerce.Domain.Utils;
 
@@ -6,16 +7,13 @@ namespace ECommerce.Domain.Interfaces.Services;
 public class GeneratePaymentSessionOptions
 {
     public required string UserId { get; set; }
-
-    /// <summary>
-    ///     Price in cents
-    /// </summary>
-    public required int Price { get; set; }
-    // TODO: get rid of magic strings
+    public required int PriceCents { get; set; }
+    public required PaymentProvider PaymentProvider { get; set; }
 }
 
 public interface IPaymentSessionService
 {
-    public Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions);
-    public Task<Result<T>> ParseWebhookEvent<T>(string json, string signature);
+    /// <returns>Payment intent json</returns>
+    public Task<Result<PaymentProviderSession>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions);
+    public Task<Result<PaymentProviderSession?>> GetPaymentSessionAsync(Guid userId);
 }

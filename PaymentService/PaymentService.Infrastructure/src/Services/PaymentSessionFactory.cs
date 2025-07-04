@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Options;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Domain.src.Enums;
-using PaymentService.Infrastructure.Services;
 using PaymentService.Infrastructure.src.Utils;
 
 namespace PaymentService.Infrastructure.src.Services;
@@ -15,9 +14,9 @@ public class PaymentSessionFactory : IPaymentSessionFactory
         _stripeSettings = stripeSettings.Value;
     }
 
-    public IPaymentSessionService CreatePaymentSessionService(PaymentProvider provider)
+    public IProviderPaymentSessionService CreatePaymentSessionService(PaymentProvider provider)
     {
-        IPaymentSessionService? result = null;
+        IProviderPaymentSessionService? result = null;
 
         if (provider == PaymentProvider.STRIPE) result = new StripeSessionService(_stripeSettings);
 

@@ -14,30 +14,29 @@ using ECommerce.Domain.Utils;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 
 namespace ECommerce.Application.Services;
 
 public class OrderService : IOrderService
 {
     private readonly ILogger<OrderService> _logger;
+    private readonly IPaymentSessionService _paymentSessionService;
     private readonly IMediator _mediator;
     private readonly IOrderPriceCalculator _orderPriceCalculator;
     private readonly IOrderValidator _orderValidator;
     private readonly MicroserviceNetworkConfig _microserviceNetworkConfig;
-    private readonly IPaymentSessionFactory _paymentSessionFactory;
     private readonly IProductStoreLocationRepository _productStoreLocationRepository;
 
     public OrderService(
         ILogger<OrderService> logger,
         IOptions<MicroserviceNetworkConfig> microserviceNetworkConfig,
-        IPaymentSessionFactory paymentSessionFactory,
+        IPaymentSessionService paymentSessionService,
         IProductStoreLocationRepository productStoreLocationRepository, IMediator mediator,
         IOrderValidator orderValidator, IOrderPriceCalculator orderPriceCalculator)
     {
         _logger = logger;
+        _paymentSessionService = paymentSessionService;
         _microserviceNetworkConfig = microserviceNetworkConfig.Value;
-        _paymentSessionFactory = paymentSessionFactory;
         _productStoreLocationRepository = productStoreLocationRepository;
         _mediator = mediator;
         _orderValidator = orderValidator;
@@ -46,10 +45,9 @@ public class OrderService : IOrderService
 
     public async Task<PaymentProviderSession?> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider)
     {
-        _logger.LogDebug("Creating order payment session. UserId: {}", userId);
+        _logger.LogTrace("Creating order payment session. UserId: {}", userId);
 
         // TODO: check if payment session already exists
-
         Result<List<CartProductModel>> itemsResult = await _mediator.Send(new GetUserCartItemsDetailedQuery(userId));
         if (itemsResult.Errors.Any())
         {
@@ -69,27 +67,29 @@ public class OrderService : IOrderService
         decimal price = _orderPriceCalculator.CalculatePrice(items);
 
         // Create payment session. TODO: extract to separate method
-        var client = new HttpClient();
-        var createSessionJson = new StringContent(JsonUtils.Serialize(new
-        {
-            UserId = userId,
-            Price = price * 100 // Convert to cents
-        }));
 
-        // TODO: gRPC, protect route using JWT
-        // TODO: handle errors
-        HttpResponseMessage sessionRes = await client
-            .PostAsync($"{_microserviceNetworkConfig.PaymentServiceUrl}/paymentsession", createSessionJson);
-        PaymentProviderSession? intentSession = JsonSerializer.Deserialize<PaymentProviderSession>(sessionRes.Content.ReadAsStream());
+        var intentSession = await _paymentSessionService.GeneratePaymentSessionAsync(
+            new GeneratePaymentSessionOptions
+            {
+                PaymentProvider = paymentProvider,
+                PriceCents = Convert.ToInt32(price * 100), // Convert to cents
+                UserId = userId.ToString(),
+            }
+        );
 
-        _logger.LogDebug("Received payment session: {}", intentSession);
-        if (intentSession == null)
+        if (intentSession.Errors.Any())
         {
             // TODO: handle
-            _logger.LogError("Received payment session is null");
+            _logger.LogError("Failed to create payment intent for user: {}", userId);
+            return null;
+        }
+        else
+        {
+            _logger.LogDebug("Created payment session: {}", intentSession);
+            _logger.LogTrace("Created payment session for user: {}", userId);
         }
 
-        return intentSession;
+        return intentSession.GetValue();
     }
 
     public async Task OnCharge(Guid userId)

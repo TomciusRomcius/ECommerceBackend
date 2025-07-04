@@ -1,4 +1,6 @@
-﻿namespace PaymentService.Domain.src.Entities
+﻿using PaymentService.Domain.src.Enums;
+
+namespace PaymentService.Domain.src.Entities
 {
     public class PaymentSessionEntity
     {
@@ -7,7 +9,6 @@
 
         public required Guid UserId { get; set; }
 
-        // TODO: get rid of magical strings
-        public required string PaymentSessionProvider { get; set; }
+        public required PaymentProvider PaymentSessionProvider { get; set; }
     }
 }

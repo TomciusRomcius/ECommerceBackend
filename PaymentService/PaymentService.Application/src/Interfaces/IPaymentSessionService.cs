@@ -5,7 +5,7 @@ namespace PaymentService.Application.src.Interfaces;
 
 public class GeneratePaymentSessionOptions
 {
-    public required string UserId { get; set; }
+    public required Guid UserId { get; set; }
 
     /// <summary>
     ///     Price in cents
@@ -14,7 +14,7 @@ public class GeneratePaymentSessionOptions
     // TODO: get rid of magic strings
 }
 
-public interface IPaymentSessionService
+public interface IProviderPaymentSessionService
 {
     public Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions);
     public Task<Result<T>> ParseWebhookEvent<T>(string json, string signature);

@@ -7,7 +7,7 @@ using Stripe;
 
 namespace PaymentService.Infrastructure.src.Services;
 
-public class StripeSessionService : IPaymentSessionService
+public class StripeSessionService : IProviderPaymentSessionService
 {
     private readonly StripeSettings _stripeSettings;
 
@@ -25,7 +25,7 @@ public class StripeSessionService : IPaymentSessionService
             Currency = "usd",
             Metadata = new Dictionary<string, string>
             {
-                { "userId", sessionOptions.UserId }
+                { "userId", sessionOptions.UserId.ToString() }
             },
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {
@@ -36,20 +36,16 @@ public class StripeSessionService : IPaymentSessionService
 
         var service = new PaymentIntentService();
         PaymentIntent? result = await service.CreateAsync(options);
-        // TODO: have not hard coded currency
         return new PaymentProviderSession
         {
             Provider = PaymentProvider.STRIPE,
-            UserId = sessionOptions.UserId,
+            UserId = sessionOptions.UserId.ToString(),
             ClientSecret = result.ClientSecret,
             SessionId = result.Id,
             Currency = "usd"
         };
     }
 
-    // TODO: not ideal, figure out a way to do this without having to mass a generic parameter
-    // everytime this needs to be called
-    // T = IHasResult
     public Task<Result<T>> ParseWebhookEvent<T>(string json, string signature)
     {
         if (typeof(T) != typeof(Event))

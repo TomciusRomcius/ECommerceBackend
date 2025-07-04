@@ -1,4 +1,4 @@
-﻿namespace PaymentService.Infrastructure.EventTypes
+﻿namespace PaymentService.Infrastructure.src.EventTypes
 {
     internal class ChargeSucceededEvent
     {

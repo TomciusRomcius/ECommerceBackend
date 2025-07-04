@@ -33,7 +33,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
         using IServiceScope? scope = _serviceScopeFactory.CreateScope();
         var paymentSessionFactory = scope.ServiceProvider.GetRequiredService<IPaymentSessionFactory>();
 
-        IPaymentSessionService paymentSessionService =
+        IProviderPaymentSessionService paymentSessionService =
             paymentSessionFactory.CreatePaymentSessionService(PaymentProvider.STRIPE);
 
         Result<Event> result = await paymentSessionService.ParseWebhookEvent<Event>(json, signature);

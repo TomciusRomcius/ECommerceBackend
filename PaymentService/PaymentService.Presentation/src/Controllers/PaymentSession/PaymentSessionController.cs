@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaymentService.Application.src.Interfaces;
-using PaymentService.Application.src.Persistence;
 using PaymentService.Domain.src.Models;
 
 namespace PaymentService.Presentation.src.Controllers.PaymentSession
@@ -10,25 +9,17 @@ namespace PaymentService.Presentation.src.Controllers.PaymentSession
     public class PaymentSessionController : ControllerBase
     {
         private readonly IPaymentSessionFactory _paymentSessionFactory;
-        private readonly DatabaseContext _ctx;
 
-        public PaymentSessionController(IPaymentSessionFactory paymentSessionFactory, DatabaseContext ctx)
+        public PaymentSessionController(IPaymentSessionFactory paymentSessionFactory)
         {
             _paymentSessionFactory = paymentSessionFactory;
-            _ctx = ctx;
-        }
-
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok(_ctx.PaymentSessions);
         }
 
         //TODO: JWT auth
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        public IActionResult Get()
         {
-            return "value";
+            return Ok();
         }
 
         // TODO: JWT auth
@@ -36,10 +27,10 @@ namespace PaymentService.Presentation.src.Controllers.PaymentSession
         public async Task<IActionResult> CreatePaymentSession([FromBody] CreatePaymentSessionDto dto)
         {
             // TODO: error handling
-            IPaymentSessionService paymentSessionService = _paymentSessionFactory.CreatePaymentSessionService(dto.PaymentProvider);
+            IProviderPaymentSessionService paymentSessionService = _paymentSessionFactory.CreatePaymentSessionService(dto.PaymentProvider);
             PaymentProviderSession session = await paymentSessionService.GeneratePaymentSession(new GeneratePaymentSessionOptions
             {
-                UserId = dto.UserId.ToString(),
+                UserId = dto.UserId,
                 Price = dto.PriceCents
             });
 
