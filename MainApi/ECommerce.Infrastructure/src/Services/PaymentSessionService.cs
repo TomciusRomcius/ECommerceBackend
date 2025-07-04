@@ -23,27 +23,46 @@ namespace ECommerce.Infrastructure.src.Services
 
         public async Task<Result<PaymentProviderSession>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
         {
+            _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
+            _logger.LogDebug("Creating session with options: {}", sessionOptions);
+
             var httpContent = new StringContent(JsonUtils.Serialize(sessionOptions));
+
             HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession", httpContent);
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogError(
+                    "Failed to create payment session. HTTP body: {}. HTTP Status code: {}",
+                    await response.Content.ReadAsStringAsync(),
+                    response.StatusCode
+                );
                 return new Result<PaymentProviderSession>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
+
             string json = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug("Payment session json: {}", json);
             PaymentProviderSession? session = JsonSerializer.Deserialize<PaymentProviderSession>(json);
             if (session == null)
             {
                 _logger.LogError("Failed to create payment session. Payment service response was either empty or current response model is malformed");
                 return new Result<PaymentProviderSession>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
+
             return new Result<PaymentProviderSession>(session);
         }
 
         public async Task<Result<PaymentProviderSession?>> GetPaymentSessionAsync(Guid userId)
         {
+            _logger.LogTrace("Entered PaymentSessionService.GetPaymentSessionAsync");
             HttpResponseMessage? response = await _httpClient.GetAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession?userId={userId.ToString()}");
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogError(
+                    "Failed to get user payment session. UserId: {}. Http body: {}. Http status code: {}.",
+                    userId,
+                    await response.Content.ReadAsStringAsync(),
+                    response.StatusCode
+                );
                 return new Result<PaymentProviderSession?>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
             string json = await response.Content.ReadAsStringAsync();
