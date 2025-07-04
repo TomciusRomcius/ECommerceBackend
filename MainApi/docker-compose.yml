@@ -18,6 +18,9 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
       STRIPE_API_KEY: ${Stripe__ApiKey}
       STRIPE_WEBHOOK_SIGNATURE: ${Stripe__WebhookSignature}
       Master__Email: ${MainApi__Master__Email}
