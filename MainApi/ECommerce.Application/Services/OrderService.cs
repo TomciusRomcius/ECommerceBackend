@@ -1,7 +1,5 @@
 using ECommerce.Application.Interfaces;
-using ECommerce.Application.UseCases.Cart.Commands;
 using ECommerce.Application.UseCases.Cart.Queries;
-using ECommerce.Application.UseCases.PaymentSession.Commands;
 using ECommerce.Application.Utils;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
@@ -90,21 +88,5 @@ public class OrderService : IOrderService
         }
 
         return intentSession.GetValue();
-    }
-
-    public async Task OnCharge(Guid userId)
-    {
-        _logger.LogDebug("Running OnCharge: {}", userId);
-
-        Result<List<CartProductEntity>> cartItemsResult = await _mediator.Send(new GetUserCartItemsQuery(userId));
-        if (cartItemsResult.Errors.Any())
-        {
-            // TODO: handle
-            return;
-        }
-
-        await _productStoreLocationRepository.UpdateStock(cartItemsResult.GetValue());
-        await _mediator.Send(new EraseUserCartCommand(userId));
-        await _mediator.Send(new DeletePaymentSessionCommand(userId));
     }
 }

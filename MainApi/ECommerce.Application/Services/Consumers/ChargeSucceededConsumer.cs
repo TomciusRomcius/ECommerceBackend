@@ -51,7 +51,7 @@ namespace ECommerce.Application.Services.Consumers
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("An exception was caught in ChargeSucceededConsumer: {}", ex);
+                        _logger.LogError("An exception was caught: {}", ex);
                     }
                 }
             }, stoppingToken);
