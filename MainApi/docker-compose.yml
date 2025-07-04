@@ -2,7 +2,6 @@ services:
   main-api:
     build:
       dockerfile: Dockerfile
-      context: ./MainApi
       target: build
     command:
       [
