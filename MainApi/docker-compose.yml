@@ -30,24 +30,23 @@ services:
       MicroserviceNetworkConfig__PaymentServiceUrl: payment-service:8080
       Kafka__Servers: kafka:9092
     volumes:
-      - ./MainApi:/app
-      - /app/bin
-      - /app/obj
+      - ./ECommerce.Presentation/src:/app/ECommerce.Presentation/src
+      - ./ECommerce.Infrastructure/src:/app/ECommerce.Infrastructure/src
+      - ./ECommerce.Application/src:/app/ECommerce.Application/src
+      - ./ECommerce.Domain/src:/app/ECommerce.Domain/src
     depends_on:
       main-api-postgres:
         condition: service_healthy
   main-api-postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${Database__Username}
-      POSTGRES_PASSWORD: ${Database__Password}
-      POSTGRES_DB: ${Database__Database}
+      POSTGRES_USER: ${MainApi__Database__Username}
+      POSTGRES_PASSWORD: ${MainApi__Database__Password}
+      POSTGRES_DB: ${MainApi__Database__Database}
     volumes:
-      - ./sql-init:/docker-entrypoint-initdb.d
-    ports:
-      - 5432:5432
+      - ./SqlInit:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       retries: 10
       timeout: 10s

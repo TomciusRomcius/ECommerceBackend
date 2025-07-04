@@ -24,9 +24,10 @@ services:
       Stripe__WebhookSecret: ${PaymentService__Stripe__WebhookSecret}
       Kafka__Servers: kafka:9092
     volumes:
-      - ./PaymentService:/app
-      - /app/bin
-      - /app/obj
+      - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
+      - ./PaymentService.Infrastructure/src:/app/PaymentService.Infrastructure/src
+      - ./PaymentService.Application/src:/app/PaymentService.Application/src
+      - ./PaymentService.Domain/src:/app/PaymentService.Domain/src
     depends_on:
       payment-service-postgres:
         condition: service_healthy
@@ -44,8 +45,6 @@ services:
       POSTGRES_USER: ${PaymentService__Database__Username}
       POSTGRES_PASSWORD: ${PaymentService__Database__Password}
       POSTGRES_DB: ${PaymentService__Database__Database}
-    ports:
-      - 5432:5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
