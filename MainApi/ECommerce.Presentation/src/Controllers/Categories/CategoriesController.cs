@@ -1,5 +1,5 @@
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Utils;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Utils;
 using ECommerce.Presentation.src.Controllers.Categories.dtos;
 using ECommerce.Presentation.src.Utils;
 using Microsoft.AspNetCore.Authorization;

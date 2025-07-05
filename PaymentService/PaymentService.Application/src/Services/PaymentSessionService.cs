@@ -26,10 +26,12 @@ namespace PaymentService.Application.src.Services
 
         public async Task<ResultError?> CreateAsync(GeneratePaymentSessionOptions options, PaymentProvider provider)
         {
+            _logger.LogTrace("Entered CreateAsync");
             _logger.LogDebug("Creating payment session for user: {}", options.UserId);
             var paymentProviderSessionService = _paymentSessionServiceFactory.CreatePaymentSessionService(provider);
 
             PaymentProviderSession paymentSession = await paymentProviderSessionService.GeneratePaymentSession(options);
+            _logger.LogDebug("Created payment session: {}", paymentSession);
             var sessionEntity = new PaymentSessionEntity
             {
                 PaymentSessionId = paymentSession.SessionId,
@@ -37,10 +39,14 @@ namespace PaymentService.Application.src.Services
                 PaymentSessionProvider = provider
             };
 
+            _logger.LogDebug("Created session entity: {}", sessionEntity);
+
             try
             {
+                _logger.LogDebug("Inserting the payment session into the database");
                 _databaseContext.PaymentSessions.Add(sessionEntity);
                 await _databaseContext.SaveChangesAsync();
+                _logger.LogDebug("Succesfully inserted the payment session into the database");
             }
             catch (Exception ex)
             {

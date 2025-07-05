@@ -1,7 +1,7 @@
-using ECommerce.Application.Interfaces;
-using ECommerce.Application.Services;
-using ECommerce.Domain.Interfaces.Services;
-using ECommerce.Domain.Services.Order;
+using ECommerce.Application.src.Interfaces;
+using ECommerce.Application.src.Services;
+using ECommerce.Domain.src.Interfaces.Services;
+using ECommerce.Domain.src.Services.Order;
 using ECommerce.Infrastructure.src.Services;
 using ECommerce.Presentation.src.Controllers.Categories;
 using ECommerce.Presentation.src.Identity;

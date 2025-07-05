@@ -1,4 +1,4 @@
-﻿using ECommerce.Domain.Utils;
+﻿using ECommerce.Domain.src.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Presentation.src.Utils

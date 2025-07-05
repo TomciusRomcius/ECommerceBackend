@@ -1,5 +1,5 @@
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Repositories;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Repositories;
 using ECommerce.Infrastructure.src.Services;
 using ECommerce.Infrastructure.src.Utils;
 using Microsoft.Extensions.Logging;

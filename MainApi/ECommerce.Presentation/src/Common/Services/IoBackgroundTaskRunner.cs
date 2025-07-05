@@ -1,4 +1,4 @@
-using ECommerce.Application.Interfaces;
+using ECommerce.Application.src.Interfaces;
 
 namespace ECommerce.Presentation.src.Common.Services;
 

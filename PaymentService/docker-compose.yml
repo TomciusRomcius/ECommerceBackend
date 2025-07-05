@@ -17,11 +17,11 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
       Database__Host: payment-service-postgres
-      Database__Database: ${PaymentService__Database__Database}
-      Database__Username: ${PaymentService__Database__Username}
-      Database__Password: ${PaymentService__Database__Password}
-      Stripe__ApiKey: ${PaymentService__Stripe__ApiKey}
-      Stripe__WebhookSecret: ${PaymentService__Stripe__WebhookSecret}
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+      Stripe__ApiKey: ${Stripe__ApiKey}
+      Stripe__WebhookSecret: ${Stripe__WebhookSecret}
       Kafka__Servers: kafka:9092
     volumes:
       - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
@@ -42,9 +42,9 @@ services:
   payment-service-postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${PaymentService__Database__Username}
-      POSTGRES_PASSWORD: ${PaymentService__Database__Password}
-      POSTGRES_DB: ${PaymentService__Database__Database}
+      POSTGRES_USER: ${Database__Username}
+      POSTGRES_PASSWORD: ${Database__Password}
+      POSTGRES_DB: ${Database__Database}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s

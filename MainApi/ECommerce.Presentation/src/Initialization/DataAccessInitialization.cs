@@ -1,4 +1,4 @@
-using ECommerce.Domain.Repositories;
+using ECommerce.Domain.src.Repositories;
 using ECommerce.Infrastructure.src.Repositories;
 using ECommerce.Infrastructure.src.Services;
 

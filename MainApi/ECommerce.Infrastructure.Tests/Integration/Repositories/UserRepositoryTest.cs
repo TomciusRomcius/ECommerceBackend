@@ -1,6 +1,6 @@
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Repositories;
-using ECommerce.Domain.Utils;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Repositories;
+using ECommerce.Domain.src.Utils;
 using ECommerce.Infrastructure.src.Repositories;
 using ECommerce.Infrastructure.Tests.Utils;
 using Microsoft.Extensions.Logging;

@@ -1,10 +1,10 @@
-using ECommerce.Application;
-using ECommerce.Application.Interfaces;
-using ECommerce.Application.Services;
-using ECommerce.Application.Services.Consumers;
-using ECommerce.Application.Utils;
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Services.Order;
+using ECommerce.Application.src;
+using ECommerce.Application.src.Interfaces;
+using ECommerce.Application.src.Services;
+using ECommerce.Application.src.Services.Consumers;
+using ECommerce.Application.src.Utils;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Services.Order;
 using ECommerce.Presentation.src.Common.Services;
 using ECommerce.Presentation.src.Initialization;
 using EventSystemHelper.Kafka.Utils;

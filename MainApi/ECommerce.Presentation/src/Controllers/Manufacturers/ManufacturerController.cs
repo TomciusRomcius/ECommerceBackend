@@ -1,7 +1,7 @@
 using ECommerce.Application.UseCases.Manufacturer.Commands;
 using ECommerce.Application.UseCases.Manufacturer.Queries;
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Utils;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Utils;
 using ECommerce.Presentation.src.Controllers.Manufacturers.dtos;
 using ECommerce.Presentation.src.Utils;
 using MediatR;

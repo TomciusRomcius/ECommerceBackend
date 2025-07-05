@@ -1,7 +1,7 @@
 using ECommerce.Application.UseCases.Store.Commands;
 using ECommerce.Application.UseCases.Store.Queries;
 using ECommerce.Domain.Entities;
-using ECommerce.Domain.Utils;
+using ECommerce.Domain.src.Utils;
 using ECommerce.Presentation.src.Controllers.ProductStoreLocation.dtos;
 using ECommerce.Presentation.src.Utils;
 using MediatR;
