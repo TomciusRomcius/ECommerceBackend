@@ -1,3 +1,7 @@
+include:
+  - ./MainApi/docker-compose.yml
+  - ./PaymentService/docker-compose.yml
+
 services:
   kafka:
     image: bitnami/kafka:4.0.0

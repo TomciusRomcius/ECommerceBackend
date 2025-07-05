@@ -15,6 +15,7 @@ services:
       ]
     ports:
       - 5042:8080
+
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
@@ -27,9 +28,9 @@ services:
       Master__Password: ${MainApi__Master__Password}
       Database__Host: main-api-postgres
       Database__Port: 5432
-      Database__Database: ${MainApi__Database__Database}
-      Database__Username: ${MainApi__Database__Username}
-      Database__Password: ${MainApi__Database__Password}
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
       MicroserviceNetworkConfig__PaymentServiceUrl: payment-service:8080
       Kafka__Servers: kafka:9092
     volumes:
@@ -43,9 +44,9 @@ services:
   main-api-postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${MainApi__Database__Username}
-      POSTGRES_PASSWORD: ${MainApi__Database__Password}
-      POSTGRES_DB: ${MainApi__Database__Database}
+      POSTGRES_USER: ${Database__Username}
+      POSTGRES_PASSWORD: ${Database__Password}
+      POSTGRES_DB: ${Database__Database}
     volumes:
       - ./SqlInit:/docker-entrypoint-initdb.d
     healthcheck:
