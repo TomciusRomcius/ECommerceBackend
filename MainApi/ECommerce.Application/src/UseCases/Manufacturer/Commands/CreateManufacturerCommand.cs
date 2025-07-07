@@ -1,4 +1,3 @@
-using ECommerce.Domain.Entities;
 using ECommerce.Domain.src.Utils;
 using MediatR;
 

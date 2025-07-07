@@ -1,7 +1,7 @@
-using ECommerce.Application.UseCases.User.Commands;
-using ECommerce.Application.UseCases.User.Queries;
-using ECommerce.Domain.Models;
+using ECommerce.Application.src.UseCases.User.Commands;
+using ECommerce.Application.src.UseCases.User.Queries;
 using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Models;
 using ECommerce.Domain.src.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

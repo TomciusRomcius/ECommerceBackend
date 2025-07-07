@@ -1,5 +1,5 @@
-using ECommerce.Domain.Models;
 using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Models;
 using ECommerce.Infrastructure.src.Repositories;
 using TestUtils;
 

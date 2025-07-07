@@ -1,6 +1,6 @@
 using ECommerce.Application.src.Interfaces;
+using ECommerce.Application.src.UseCases.Cart.Queries;
 using ECommerce.Application.src.Utils;
-using ECommerce.Application.UseCases.Cart.Queries;
 using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Enums;
 using ECommerce.Domain.src.Interfaces.Services;

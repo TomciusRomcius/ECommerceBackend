@@ -1,6 +1,6 @@
 using ECommerce.Application.src.EventTypes;
-using ECommerce.Application.UseCases.Cart.Commands;
-using ECommerce.Application.UseCases.Cart.Queries;
+using ECommerce.Application.src.UseCases.Cart.Commands;
+using ECommerce.Application.src.UseCases.Cart.Queries;
 using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Repositories;
 using ECommerce.Domain.src.Utils;

@@ -1,5 +1,4 @@
 using ECommerce.Application.src.UseCases.Manufacturer.Commands;
-using ECommerce.Domain.Entities;
 using ECommerce.Domain.src.Repositories;
 using ECommerce.Domain.src.Services.Order;
 using ECommerce.Domain.src.Utils;

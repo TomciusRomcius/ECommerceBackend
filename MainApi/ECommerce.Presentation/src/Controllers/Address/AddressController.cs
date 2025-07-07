@@ -1,11 +1,11 @@
-using System.Security.Claims;
-using ECommerce.Application.UseCases.ShippingAddress.Commands;
-using ECommerce.Application.UseCases.ShippingAddress.Queries;
-using ECommerce.Domain.Models;
+using ECommerce.Application.src.UseCases.ShippingAddress.Commands;
+using ECommerce.Application.src.UseCases.ShippingAddress.Queries;
 using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Models;
 using ECommerce.Presentation.src.Controllers.Address.dtos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerce.Presentation.src.Controllers.Address;
 

@@ -1,7 +1,7 @@
-using ECommerce.Application.UseCases.StoreLocation.Commands;
-using ECommerce.Application.UseCases.StoreLocation.Queries;
-using ECommerce.Domain.Models;
+using ECommerce.Application.src.UseCases.StoreLocation.Commands;
+using ECommerce.Application.src.UseCases.StoreLocation.Queries;
 using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Models;
 using ECommerce.Presentation.src.Controllers.StoreLocation.dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using ECommerce.Application.UseCases.Cart.Commands;
-using ECommerce.Application.UseCases.Cart.Queries;
-using ECommerce.Domain.Entities;
+using ECommerce.Application.src.UseCases.Cart.Commands;
+using ECommerce.Application.src.UseCases.Cart.Queries;
+using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Models;
 using ECommerce.Domain.src.Utils;
 using ECommerce.Presentation.src.Controllers.Cart.dtos;
@@ -9,6 +8,7 @@ using ECommerce.Presentation.src.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerce.Presentation.src.Controllers.Cart;
 

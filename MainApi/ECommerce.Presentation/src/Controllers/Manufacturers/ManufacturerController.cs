@@ -1,5 +1,5 @@
-using ECommerce.Application.UseCases.Manufacturer.Commands;
-using ECommerce.Application.UseCases.Manufacturer.Queries;
+using ECommerce.Application.src.UseCases.Manufacturer.Commands;
+using ECommerce.Application.src.UseCases.Manufacturer.Queries;
 using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Utils;
 using ECommerce.Presentation.src.Controllers.Manufacturers.dtos;

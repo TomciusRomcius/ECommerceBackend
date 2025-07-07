@@ -1,5 +1,5 @@
-using ECommerce.Domain.Entities;
-using ECommerce.Domain.Services.Order;
+using ECommerce.Domain.src.Entities;
+using ECommerce.Domain.src.Services.Order;
 using ECommerce.Domain.src.Utils;
 
 namespace ECommerce.Domain.Tests.Unit;
