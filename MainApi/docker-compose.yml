@@ -31,7 +31,7 @@ services:
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
       Database__Password: ${Database__Password}
-      MicroserviceNetworkConfig__PaymentServiceUrl: payment-service:8080
+      MicroserviceNetworkConfig__PaymentServiceUrl: http://payment-service:8080/api
       Kafka__Servers: kafka:9092
     volumes:
       - ./ECommerce.Presentation/src:/app/ECommerce.Presentation/src
