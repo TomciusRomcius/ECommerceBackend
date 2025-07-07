@@ -24,8 +24,8 @@ services:
       Logging__LogLevel__Microsoft.AspNetCore: Warning
       STRIPE_API_KEY: ${Stripe__ApiKey}
       STRIPE_WEBHOOK_SIGNATURE: ${Stripe__WebhookSignature}
-      Master__Email: ${MainApi__Master__Email}
-      Master__Password: ${MainApi__Master__Password}
+      Master__Email: ${Master__Email}
+      Master__Password: ${Master__Password}
       Database__Host: main-api-postgres
       Database__Port: 5432
       Database__Database: ${Database__Database}
