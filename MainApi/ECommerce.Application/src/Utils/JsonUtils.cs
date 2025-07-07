@@ -11,5 +11,12 @@ namespace ECommerce.Application.src.Utils
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             });
         }
+        public static T? Deserialize<T>(string json)
+        {
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
+        }
     }
 }

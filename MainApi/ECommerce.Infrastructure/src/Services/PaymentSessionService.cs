@@ -4,6 +4,7 @@ using ECommerce.Domain.src.Models.PaymentSession;
 using ECommerce.Domain.src.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text;
 using System.Text.Json;
 
 namespace ECommerce.Infrastructure.src.Services
@@ -24,9 +25,9 @@ namespace ECommerce.Infrastructure.src.Services
         public async Task<Result<PaymentProviderSession>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
         {
             _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
-            _logger.LogDebug("Creating session with options: {}", sessionOptions);
+            _logger.LogDebug("Creating session with options: {}", JsonUtils.Serialize(sessionOptions));
 
-            var httpContent = new StringContent(JsonUtils.Serialize(sessionOptions));
+            var httpContent = new StringContent(JsonUtils.Serialize(sessionOptions), Encoding.UTF8, "application/json");
 
             HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession", httpContent);
             if (!response.IsSuccessStatusCode)
@@ -41,7 +42,7 @@ namespace ECommerce.Infrastructure.src.Services
 
             string json = await response.Content.ReadAsStringAsync();
             _logger.LogDebug("Payment session json: {}", json);
-            PaymentProviderSession? session = JsonSerializer.Deserialize<PaymentProviderSession>(json);
+            PaymentProviderSession? session = JsonUtils.Deserialize<PaymentProviderSession>(json);
             if (session == null)
             {
                 _logger.LogError("Failed to create payment session. Payment service response was either empty or current response model is malformed");

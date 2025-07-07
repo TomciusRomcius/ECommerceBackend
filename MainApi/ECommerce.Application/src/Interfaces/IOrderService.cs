@@ -5,5 +5,6 @@ namespace ECommerce.Application.src.Interfaces;
 
 public interface IOrderService
 {
+    // TODO: result pattern
     public Task<PaymentProviderSession?> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider);
 }
