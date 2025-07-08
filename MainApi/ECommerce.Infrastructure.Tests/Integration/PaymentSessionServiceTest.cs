@@ -30,7 +30,6 @@ namespace ECommerce.Infrastructure.Tests.Integration
             DotNetEnv.Env.TraversePath().Load();
 
             var cfg = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true)
                 .AddEnvironmentVariables()
                 .Build();
 
