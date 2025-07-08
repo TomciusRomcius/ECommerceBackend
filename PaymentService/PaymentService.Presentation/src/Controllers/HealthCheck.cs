@@ -3,16 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace PaymentService.Presentation.src.Controllers
 {
     [ApiController]
-    [Route("")]
-    public class RootController : ControllerBase
+    [Route("api/[controller]")]
+    public class HealthCheck : ControllerBase
     {
-        private readonly ILogger<RootController> _logger;
-
-        public RootController(ILogger<RootController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpGet()]
         public IActionResult ApiHealth()
         {
