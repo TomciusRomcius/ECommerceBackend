@@ -1,10 +1,11 @@
-﻿using PaymentService.Domain.src.Enums;
+﻿using PaymentService.Domain.src.Entities;
 using PaymentService.Domain.src.Utils;
 
 namespace PaymentService.Application.src.Interfaces
 {
-    public interface IPaymentSessionService
+    public interface IPaymentSessionPersistenceService
     {
-        Task<ResultError?> CreateAsync(GeneratePaymentSessionOptions options, PaymentProvider provider);
+        Task<ResultError?> CreateAsync(PaymentSessionEntity entity);
+        Task<PaymentSessionEntity?> GetUserSessionAsync(Guid userId);
     }
 }

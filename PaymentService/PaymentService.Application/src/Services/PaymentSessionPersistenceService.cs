@@ -1,20 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Application.src.Persistence;
+using PaymentService.Application.src.Utils;
 using PaymentService.Domain.src.Entities;
-using PaymentService.Domain.src.Enums;
-using PaymentService.Domain.src.Models;
 using PaymentService.Domain.src.Utils;
 
 namespace PaymentService.Application.src.Services
 {
-    public class PaymentSessionService : IPaymentSessionService
+    public class PaymentSessionPersistenceService : IPaymentSessionPersistenceService
     {
         private readonly ILogger _logger;
         private readonly DatabaseContext _databaseContext;
         private readonly IPaymentSessionFactory _paymentSessionServiceFactory;
 
-        public PaymentSessionService(ILogger<PaymentSessionService> logger,
+        public PaymentSessionPersistenceService(ILogger<PaymentSessionPersistenceService> logger,
             DatabaseContext databaseContext,
             IPaymentSessionFactory paymentSessionFactory,
             IPaymentSessionFactory paymentSessionServiceFactory)
@@ -24,27 +24,14 @@ namespace PaymentService.Application.src.Services
             _paymentSessionServiceFactory = paymentSessionServiceFactory;
         }
 
-        public async Task<ResultError?> CreateAsync(GeneratePaymentSessionOptions options, PaymentProvider provider)
+        public async Task<ResultError?> CreateAsync(PaymentSessionEntity entity)
         {
             _logger.LogTrace("Entered CreateAsync");
-            _logger.LogDebug("Creating payment session for user: {}", options.UserId);
-            var paymentProviderSessionService = _paymentSessionServiceFactory.CreatePaymentSessionService(provider);
-
-            PaymentProviderSession paymentSession = await paymentProviderSessionService.GeneratePaymentSession(options);
-            _logger.LogDebug("Created payment session: {}", paymentSession);
-            var sessionEntity = new PaymentSessionEntity
-            {
-                PaymentSessionId = paymentSession.SessionId,
-                UserId = options.UserId,
-                PaymentSessionProvider = provider
-            };
-
-            _logger.LogDebug("Created session entity: {}", sessionEntity);
+            _logger.LogDebug("Inserting the payment session into the database: {}", JsonUtils.Serialize(entity));
 
             try
             {
-                _logger.LogDebug("Inserting the payment session into the database");
-                _databaseContext.PaymentSessions.Add(sessionEntity);
+                _databaseContext.PaymentSessions.Add(entity);
                 await _databaseContext.SaveChangesAsync();
                 _logger.LogDebug("Succesfully inserted the payment session into the database");
             }
@@ -55,6 +42,19 @@ namespace PaymentService.Application.src.Services
             }
 
             return null;
+        }
+
+        public async Task<PaymentSessionEntity?> GetUserSessionAsync(Guid userId)
+        {
+            _logger.LogTrace("Entered GetUserSessionAsync");
+            _logger.LogDebug("UserId: {}", userId);
+
+            PaymentSessionEntity? result = await _databaseContext.PaymentSessions
+                .Where(ps => ps.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            _logger.LogDebug("Retrieved payment session: {}", JsonUtils.Serialize(result));
+            return result;
         }
     }
 }

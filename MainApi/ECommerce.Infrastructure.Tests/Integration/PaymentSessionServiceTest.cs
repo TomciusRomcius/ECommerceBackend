@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Xunit.Abstractions;
 
 namespace ECommerce.Infrastructure.Tests.Integration
 {
@@ -17,9 +18,12 @@ namespace ECommerce.Infrastructure.Tests.Integration
     {
         private readonly IFutureDockerImage _image;
         private IContainer _container;
+        private readonly ITestOutputHelper _output;
 
-        public PaymentSessionServiceTest()
+        public PaymentSessionServiceTest(ITestOutputHelper output)
         {
+            _output = output;
+
             _image = new ImageFromDockerfileBuilder()
                 .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory(), "../PaymentService")
                 .WithDockerfile("Dockerfile")
@@ -55,6 +59,9 @@ namespace ECommerce.Infrastructure.Tests.Integration
 
         public async Task DisposeAsync()
         {
+            var logs = await _container.GetLogsAsync();
+            _output.WriteLine(logs.Stderr);
+            _output.WriteLine(logs.Stdout);
             await _container.DisposeAsync();
         }
 
@@ -68,7 +75,7 @@ namespace ECommerce.Infrastructure.Tests.Integration
         }
 
         [Fact]
-        public async Task PaymentSessionService_ShouldBeAbleToRequestToCreateAPaymentSession()
+        public async Task PaymentSessionService_ShouldBeAbleToCreateAndGetAPaymentSession()
         {
             string userId = Guid.NewGuid().ToString();
 
@@ -91,10 +98,25 @@ namespace ECommerce.Infrastructure.Tests.Integration
             };
             Result<PaymentProviderSession> paymentSessionResult = await service.GeneratePaymentSessionAsync(sessionOptions);
 
+            // Assertions
             Assert.Empty(paymentSessionResult.Errors);
             PaymentProviderSession session = paymentSessionResult.GetValue();
 
             Assert.Equal(userId, session.UserId);
+
+            // Getting payment service
+
+            Result<PaymentProviderSession?> retrievedSessionResult = await service.GetPaymentSessionAsync(new Guid(userId));
+
+            // Assertions
+            Assert.Empty(retrievedSessionResult.Errors);
+
+            PaymentProviderSession? retrievedSession = retrievedSessionResult.GetValue();
+
+            Assert.NotNull(retrievedSession);
+            Assert.Equal(session.SessionId, retrievedSession.SessionId);
+            Assert.Equal(session.UserId, retrievedSession.UserId);
+            Assert.Equal(session.Provider, retrievedSession.Provider);
         }
     }
 }

@@ -58,9 +58,12 @@ builder.Services.AddOptions<KafkaConfiguration>()
     .Bind(builder.Configuration.GetSection("Kafka"))
     .ValidateDataAnnotations();
 builder.Services.AddSingleton<WebhookEventStrategyMapContainer>();
-builder.Services.AddSingleton<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
+builder.Services.AddTransient<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-builder.Services.AddSingleton<IPaymentSessionFactory, PaymentSessionFactory>();
+builder.Services.AddTransient<IPaymentSessionFactory, PaymentSessionFactory>();
+builder.Services.AddTransient<IPaymentSessionPersistenceService, PaymentSessionPersistenceService>();
+builder.Services.AddTransient<IPaymentSessionCoordinator, PaymentSessionCoordinator>();
+
 
 // Get all stripe webhook event handling strategies and register them to the DI container
 Assembly? infrastructureAssembly = Assembly.GetAssembly(typeof(IStripeWebhookStrategy));

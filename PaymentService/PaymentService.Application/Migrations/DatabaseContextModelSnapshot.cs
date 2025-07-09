@@ -22,14 +22,17 @@ namespace PaymentService.Application.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PaymentService.Domain.Entities.PaymentSessionEntity", b =>
+            modelBuilder.Entity("PaymentService.Domain.src.Entities.PaymentSessionEntity", b =>
                 {
                     b.Property<string>("PaymentSessionId")
                         .HasColumnType("text");
 
-                    b.Property<string>("PaymentSessionProvider")
+                    b.Property<string>("ClientSecret")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("PaymentSessionProvider")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

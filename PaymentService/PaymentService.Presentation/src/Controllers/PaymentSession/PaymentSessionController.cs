@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommerce.Presentation.src.Utils;
+using Microsoft.AspNetCore.Mvc;
 using PaymentService.Application.src.Interfaces;
-using PaymentService.Domain.src.Models;
+using PaymentService.Domain.src.Entities;
+using PaymentService.Domain.src.Utils;
 
 namespace PaymentService.Presentation.src.Controllers.PaymentSession
 {
@@ -8,18 +10,19 @@ namespace PaymentService.Presentation.src.Controllers.PaymentSession
     [ApiController]
     public class PaymentSessionController : ControllerBase
     {
-        private readonly IPaymentSessionFactory _paymentSessionFactory;
+        private readonly IPaymentSessionCoordinator _paymentCoordinator;
 
-        public PaymentSessionController(IPaymentSessionFactory paymentSessionFactory)
+        public PaymentSessionController(IPaymentSessionCoordinator paymentCoordinator)
         {
-            _paymentSessionFactory = paymentSessionFactory;
+            _paymentCoordinator = paymentCoordinator;
         }
 
         //TODO: JWT auth
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetPaymentSessionAsync([FromQuery] Guid userId)
         {
-            return Ok();
+            PaymentSessionEntity? result = await _paymentCoordinator.GetUserSessionAsync(userId);
+            return Ok(result);
         }
 
         // TODO: JWT auth
@@ -27,14 +30,20 @@ namespace PaymentService.Presentation.src.Controllers.PaymentSession
         public async Task<IActionResult> CreatePaymentSession([FromBody] CreatePaymentSessionDto dto)
         {
             // TODO: error handling
-            IProviderPaymentSessionService paymentSessionService = _paymentSessionFactory.CreatePaymentSessionService(dto.PaymentProvider);
-            PaymentProviderSession session = await paymentSessionService.GeneratePaymentSession(new GeneratePaymentSessionOptions
+
+            var options = new GeneratePaymentSessionOptions
             {
                 UserId = dto.UserId,
-                Price = dto.PriceCents
-            });
+                Price = dto.PriceCents,
+            };
+            Result<PaymentSessionEntity?> result = await _paymentCoordinator.CreatePaymentSessionAsync(dto.PaymentProvider, options);
 
-            return Created("", session);
+            if (result.Errors.Any())
+            {
+                return ControllerUtils.ResultErrorToResponse(result.Errors.First());
+            }
+
+            return Created("", result.GetValue());
         }
 
         [HttpDelete]

@@ -16,8 +16,9 @@ namespace PaymentService.Application.Migrations
                 columns: table => new
                 {
                     PaymentSessionId = table.Column<string>(type: "text", nullable: false),
+                    ClientSecret = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PaymentSessionProvider = table.Column<string>(type: "text", nullable: false)
+                    PaymentSessionProvider = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
