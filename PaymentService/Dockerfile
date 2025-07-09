@@ -7,6 +7,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /app
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
 COPY ["PaymentService.Presentation/PaymentService.Presentation.csproj", "PaymentService.Presentation/PaymentService.Presentation.csproj"]
 COPY ["PaymentService.Infrastructure/PaymentService.Infrastructure.csproj", "PaymentService.Infrastructure/PaymentService.Infrastructure.csproj"]
 COPY ["PaymentService.Application/PaymentService.Application.csproj", "PaymentService.Application/PaymentService.Application.csproj"]

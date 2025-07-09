@@ -35,7 +35,28 @@ services:
     build:
       dockerfile: Dockerfile
       target: build
-    command: ["dotnet", "ef", "database", "update"]
+    command:
+      [
+        "dotnet",
+        "ef",
+        "database",
+        "update",
+        "--project",
+        "PaymentService.Application",
+        "--startup-project",
+        "PaymentService.Presentation",
+      ]
+    environment:
+      Database__Host: payment-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+    volumes:
+      - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
+      - ./PaymentService.Infrastructure/src:/app/PaymentService.Infrastructure/src
+      - ./PaymentService.Application/src:/app/PaymentService.Application/src
+      - ./PaymentService.Application/Migrations:/app/PaymentService.Application/Migrations
+      - ./PaymentService.Domain/src:/app/PaymentService.Domain/src
     depends_on:
       payment-service-postgres:
         condition: service_healthy
