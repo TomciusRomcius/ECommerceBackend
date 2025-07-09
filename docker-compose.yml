@@ -1,6 +1,7 @@
 include:
   - ./MainApi/docker-compose.yml
   - ./PaymentService/docker-compose.yml
+  - ./docker-compose-debug-tools.yml
 
 services:
   init-kafka:
