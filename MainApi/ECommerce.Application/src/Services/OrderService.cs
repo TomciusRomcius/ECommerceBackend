@@ -5,7 +5,6 @@ using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Enums;
 using ECommerce.Domain.src.Interfaces.Services;
 using ECommerce.Domain.src.Models;
-using ECommerce.Domain.src.Models.PaymentSession;
 using ECommerce.Domain.src.Repositories;
 using ECommerce.Domain.src.Services.Order;
 using ECommerce.Domain.src.Utils;
@@ -41,7 +40,7 @@ public class OrderService : IOrderService
         _orderPriceCalculator = orderPriceCalculator;
     }
 
-    public async Task<PaymentProviderSession?> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider)
+    public async Task<PaymentSessionModel?> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider)
     {
         _logger.LogTrace("Creating order payment session. UserId: {}", userId);
 

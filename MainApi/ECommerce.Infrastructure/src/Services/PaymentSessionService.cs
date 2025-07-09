@@ -1,6 +1,6 @@
 ﻿using ECommerce.Application.src.Utils;
 using ECommerce.Domain.src.Interfaces.Services;
-using ECommerce.Domain.src.Models.PaymentSession;
+using ECommerce.Domain.src.Models;
 using ECommerce.Domain.src.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,7 +22,7 @@ namespace ECommerce.Infrastructure.src.Services
             _logger = logger;
         }
 
-        public async Task<Result<PaymentProviderSession>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
+        public async Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
         {
             _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
             _logger.LogDebug("Creating session with options: {}", JsonUtils.Serialize(sessionOptions));
@@ -37,22 +37,22 @@ namespace ECommerce.Infrastructure.src.Services
                     await response.Content.ReadAsStringAsync(),
                     response.StatusCode
                 );
-                return new Result<PaymentProviderSession>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
+                return new Result<PaymentSessionModel>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
 
             string json = await response.Content.ReadAsStringAsync();
             _logger.LogDebug("Payment session json: {}", json);
-            PaymentProviderSession? session = JsonUtils.Deserialize<PaymentProviderSession>(json);
+            PaymentSessionModel? session = JsonUtils.Deserialize<PaymentSessionModel>(json);
             if (session == null)
             {
                 _logger.LogError("Failed to create payment session. Payment service response was either empty or current response model is malformed");
-                return new Result<PaymentProviderSession>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
+                return new Result<PaymentSessionModel>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
 
-            return new Result<PaymentProviderSession>(session);
+            return new Result<PaymentSessionModel>(session);
         }
 
-        public async Task<Result<PaymentProviderSession?>> GetPaymentSessionAsync(Guid userId)
+        public async Task<Result<PaymentSessionModel?>> GetPaymentSessionAsync(Guid userId)
         {
             _logger.LogTrace("Entered PaymentSessionService.GetPaymentSessionAsync");
             HttpResponseMessage? response = await _httpClient.GetAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession?userId={userId.ToString()}");
@@ -64,11 +64,11 @@ namespace ECommerce.Infrastructure.src.Services
                     await response.Content.ReadAsStringAsync(),
                     response.StatusCode
                 );
-                return new Result<PaymentProviderSession?>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
+                return new Result<PaymentSessionModel?>([new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create payment session")]);
             }
             string json = await response.Content.ReadAsStringAsync();
-            PaymentProviderSession? session = JsonSerializer.Deserialize<PaymentProviderSession>(json);
-            return new Result<PaymentProviderSession?>(session);
+            PaymentSessionModel? session = JsonSerializer.Deserialize<PaymentSessionModel>(json);
+            return new Result<PaymentSessionModel?>(session);
         }
     }
 }

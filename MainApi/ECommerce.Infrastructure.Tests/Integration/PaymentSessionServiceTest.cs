@@ -3,7 +3,7 @@ using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Images;
 using ECommerce.Application.src.Utils;
 using ECommerce.Domain.src.Enums;
-using ECommerce.Domain.src.Models.PaymentSession;
+using ECommerce.Domain.src.Models;
 using ECommerce.Domain.src.Utils;
 using ECommerce.Infrastructure.src.Services;
 using Microsoft.Extensions.Configuration;
@@ -77,7 +77,7 @@ namespace ECommerce.Infrastructure.Tests.Integration
         [Fact]
         public async Task PaymentSessionService_ShouldBeAbleToCreateAndGetAPaymentSession()
         {
-            string userId = Guid.NewGuid().ToString();
+            Guid userId = Guid.NewGuid();
 
             var cfg = new MicroserviceNetworkConfig
             {
@@ -92,31 +92,31 @@ namespace ECommerce.Infrastructure.Tests.Integration
 
             var sessionOptions = new Domain.src.Interfaces.Services.GeneratePaymentSessionOptions
             {
-                UserId = userId,
+                UserId = userId.ToString(),
                 PaymentProvider = PaymentProvider.STRIPE,
                 PriceCents = 500,
             };
-            Result<PaymentProviderSession> paymentSessionResult = await service.GeneratePaymentSessionAsync(sessionOptions);
+            Result<PaymentSessionModel> paymentSessionResult = await service.GeneratePaymentSessionAsync(sessionOptions);
 
             // Assertions
             Assert.Empty(paymentSessionResult.Errors);
-            PaymentProviderSession session = paymentSessionResult.GetValue();
+            PaymentSessionModel session = paymentSessionResult.GetValue();
 
             Assert.Equal(userId, session.UserId);
 
             // Getting payment service
 
-            Result<PaymentProviderSession?> retrievedSessionResult = await service.GetPaymentSessionAsync(new Guid(userId));
+            Result<PaymentSessionModel?> retrievedSessionResult = await service.GetPaymentSessionAsync(userId);
 
             // Assertions
             Assert.Empty(retrievedSessionResult.Errors);
 
-            PaymentProviderSession? retrievedSession = retrievedSessionResult.GetValue();
+            PaymentSessionModel? retrievedSession = retrievedSessionResult.GetValue();
 
             Assert.NotNull(retrievedSession);
-            Assert.Equal(session.SessionId, retrievedSession.SessionId);
+            Assert.Equal(session.PaymentSessionId, retrievedSession.PaymentSessionId);
             Assert.Equal(session.UserId, retrievedSession.UserId);
-            Assert.Equal(session.Provider, retrievedSession.Provider);
+            Assert.Equal(session.PaymentSessionProvider, retrievedSession.PaymentSessionProvider);
         }
     }
 }

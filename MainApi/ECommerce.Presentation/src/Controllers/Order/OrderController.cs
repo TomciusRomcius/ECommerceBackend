@@ -1,6 +1,6 @@
 using ECommerce.Application.src.Interfaces;
 using ECommerce.Domain.src.Enums;
-using ECommerce.Domain.src.Models.PaymentSession;
+using ECommerce.Domain.src.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -33,7 +33,7 @@ public class OrderController : ControllerBase
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
 
         // TODO: result pattern
-        PaymentProviderSession? result = await _orderService.CreateOrderPaymentSession(new Guid(userId), PaymentProvider.STRIPE);
+        PaymentSessionModel? result = await _orderService.CreateOrderPaymentSession(new Guid(userId), PaymentProvider.STRIPE);
         return Ok(result);
     }
 }

@@ -1,12 +1,11 @@
-﻿using PaymentService.Domain.src.Enums;
+﻿using ECommerce.Domain.src.Enums;
 
-namespace PaymentService.Domain.src.Entities
+namespace ECommerce.Domain.src.Models
 {
-    public class PaymentSessionEntity
+    public class PaymentSessionModel
     {
         public required string PaymentSessionId { get; set; }
         public required string ClientSecret { get; set; }
-
         public required Guid UserId { get; set; }
         public required PaymentProvider PaymentSessionProvider { get; set; }
     }
