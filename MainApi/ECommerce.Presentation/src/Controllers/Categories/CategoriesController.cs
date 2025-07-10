@@ -29,13 +29,16 @@ public class CategoriesController : ControllerBase
     [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> CreateCategory([FromBody] RequestCreateCategoryDto createCategoryDto)
     {
-        Result<int> result = await _categoriesService.CreateCategory(createCategoryDto);
+        Result<int> result = await _categoriesService.CreateCategory(new CategoryEntity(createCategoryDto.Name));
         if (result.Errors.Any())
         {
             return ControllerUtils.ResultErrorToResponse(result.Errors.First());
         }
 
         int categoryId = result.GetValue();
-        return Created(nameof(CreateCategory), categoryId);
+        return Created(nameof(CreateCategory), new
+        {
+            categoryId
+        });
     }
 }

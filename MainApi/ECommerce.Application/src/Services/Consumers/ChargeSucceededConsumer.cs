@@ -2,6 +2,7 @@
 using EventSystemHelper.Kafka.Services;
 using EventSystemHelper.Kafka.Utils;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,19 +11,21 @@ namespace ECommerce.Application.src.Services.Consumers
 {
     public class ChargeSucceededConsumer : BackgroundService
     {
-        private KafkaEventConsumer _consumer;
-        private IMediator _mediator;
-        private ILogger _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly KafkaEventConsumer _consumer;
+        private readonly ILogger _logger;
 
-        public ChargeSucceededConsumer(IOptions<KafkaConfiguration> kafkaConfiguration, IMediator mediator, ILogger<ChargeSucceededConsumer> logger)
+        public ChargeSucceededConsumer(IServiceScopeFactory serviceScopeFactory,
+            IOptions<KafkaConfiguration> kafkaConfiguration,
+            ILogger<ChargeSucceededConsumer> logger)
         {
+            _serviceScopeFactory = serviceScopeFactory;
             _consumer = new KafkaEventConsumer(
                 kafkaConfiguration.Value,
                 Confluent.Kafka.AutoOffsetReset.Earliest,
                 "main-api",
                 "charge-succeeded"
             );
-            _mediator = mediator;
             _logger = logger;
         }
 
@@ -40,7 +43,11 @@ namespace ECommerce.Application.src.Services.Consumers
                         if (ev != null)
                         {
                             _logger.LogDebug("Parsed incoming event");
-                            await _mediator.Publish(ev);
+                            using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+                            {
+                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                                await mediator.Publish(ev);
+                            }
                         }
                         else
                         {

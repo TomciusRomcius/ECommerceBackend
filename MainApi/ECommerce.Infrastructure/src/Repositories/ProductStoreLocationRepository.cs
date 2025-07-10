@@ -1,4 +1,3 @@
-using System.Text;
 using ECommerce.Domain.src.Entities;
 using ECommerce.Domain.src.Models;
 using ECommerce.Domain.src.Repositories;
@@ -6,6 +5,7 @@ using ECommerce.Domain.src.Utils;
 using ECommerce.Infrastructure.src.Services;
 using ECommerce.Infrastructure.src.Utils;
 using Npgsql;
+using System.Text;
 
 namespace ECommerce.Infrastructure.src.Repositories;
 
@@ -21,7 +21,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
     public async Task<ResultError?> AddProductToStore(ProductStoreLocationEntity model)
     {
         var query = @"
-                INSERT INTO productStoreLocations (storeLocationId, productId, stock)
+                INSERT INTO ProductStoreLocations (storeLocationId, productId, stock)
                 VALUES ($1, $2, $3);
             ";
 
@@ -79,7 +79,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
     public async Task<List<int>> GetProductIdsFromStoreAsync(int storeLocationId)
     {
         var query = @"
-                SELECT productId FROM productStoreLocations WHERE storeLocationId = $1;
+                SELECT productId FROM ProductStoreLocations WHERE storeLocationId = $1;
             ";
 
         QueryParameter[] parameters = [new(storeLocationId)];
@@ -95,9 +95,9 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
     public async Task<List<DetailedProductModel>> GetProductsFromStoreAsync(int storeLocationId)
     {
         var query = @"
-                SELECT * FROM productStoreLocations
-                INNER JOIN products
-                ON productStoreLocations.productId = products.productId
+                SELECT * FROM ProductStoreLocations
+                INNER JOIN Products
+                ON ProductStoreLocations.productId = Products.productId
                 WHERE storeLocationId = $1;
             ";
 
@@ -131,7 +131,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
 
         var queryBuilder = new StringBuilder();
         queryBuilder.AppendLine(@"
-                SELECT * FROM productStoreLocations
+                SELECT * FROM ProductStoreLocations
                 WHERE (storeLocationId = $1 AND productId = $2)
             ");
 
@@ -173,7 +173,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
     public async Task RemoveProductFromStore(int storeLocationId, int productId)
     {
         var query = @"
-                DELETE FROM productStoreLocations WHERE storeLocationId = $1 AND productId = $2;
+                DELETE FROM ProductStoreLocations WHERE storeLocationId = $1 AND productId = $2;
             ";
 
         QueryParameter[] parameters =
@@ -188,7 +188,7 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
     public async Task UpdateProduct(ProductStoreLocationEntity model)
     {
         var query = @"
-                UPDATE productStoreLocations
+                UPDATE ProductStoreLocations
                 SET
                 stock = COALESCE($1, stock)
                 WHERE storeLocationId = $1 AND productId = $2;
@@ -222,20 +222,19 @@ public class ProductStoreLocationRepository : IProductStoreLocationRepository
 
             CartProductEntity entry = cartProducts[i];
 
-
             parameters.Add(new QueryParameter(entry.StoreLocationId));
             parameters.Add(new QueryParameter(entry.ProductId));
             parameters.Add(new QueryParameter(entry.Quantity));
         }
 
-        var queryBuilder = @$"
-                UPDATE productStoreLocations as a
-                SET stock = GREATEST(0, stock - b.dStock)
+        var queryBuilder = $"""
+                UPDATE "ProductStoreLocations" as a
+                SET "Stock" = GREATEST(0, "Stock" - b."DStock")
                 FROM (
                     {queryValues}
-                ) AS b(storeLocationId, productId, dStock)
-                WHERE a.storeLocationId = b.storeLocationId AND a.productId = b.productId;
-            ";
+                ) AS b("StoreLocationId", "ProductId", "DStock")
+                WHERE a."StoreLocationId" = b."StoreLocationId" AND a."ProductId" = b."ProductId";
+            """;
 
         await _postgresService.ExecuteScalarAsync(queryBuilder, parameters.ToArray());
     }

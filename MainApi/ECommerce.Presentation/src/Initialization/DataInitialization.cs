@@ -1,4 +1,3 @@
-using ECommerce.Presentation.src.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Presentation.src.Initialization;
@@ -24,28 +23,36 @@ internal static class Initialization
     {
         var defaultRoles = new[] { "MERCHANT", "ADMINISTRATOR" };
 
-        var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationUserRole>>();
+        var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
 
         if (roleManager is null) throw new InvalidOperationException("Role manager is null!");
 
         foreach (string role in defaultRoles)
+        {
             if (!await roleManager.RoleExistsAsync(role))
-                await roleManager.CreateAsync(new ApplicationUserRole { Name = role });
+            {
+                await roleManager.CreateAsync(new IdentityRole { Name = role });
+            }
+        }
+
     }
 
     internal static async Task CreateDefaultMasterUser(IServiceScope scope, string email, string password)
     {
         // TODO: use secrets for this
-        var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+        var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
 
         if (userManager is null) throw new InvalidOperationException("User manager is null!");
 
-        ApplicationUser? user = await userManager.FindByEmailAsync(email);
+        IdentityUser? user = await userManager.FindByEmailAsync(email);
 
         if (user is null)
         {
             // Pasword gets set in CreateAsync
-            user = new ApplicationUser("master", "master", email, "");
+            user = new IdentityUser(email)
+            {
+                Email = email
+            };
 
             IdentityResult result = await userManager.CreateAsync(user, password);
             if (result.Errors.Count() > 0) throw new Exception(result.Errors.First().Description);

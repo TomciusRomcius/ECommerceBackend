@@ -10,6 +10,7 @@ public class RoleTypeEntity
         Name = name;
     }
 
+    [Key]
     [Range(1, int.MaxValue, ErrorMessage = "Invalid RoleTypeId!")]
     public int RoleTypeId { get; set; }
 

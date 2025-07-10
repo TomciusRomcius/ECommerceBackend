@@ -29,7 +29,7 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
 
     public async Task HandlePaymentWebhook(string json, string signature)
     {
-        _logger.LogDebug("Handling a stripe payment webhook event");
+        _logger.LogTrace("Entered HandlePaymentWebhook");
         using IServiceScope? scope = _serviceScopeFactory.CreateScope();
         var paymentSessionFactory = scope.ServiceProvider.GetRequiredService<IPaymentSessionFactory>();
 
@@ -43,6 +43,8 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
             return;
         }
 
+        _logger.LogTrace("Succesfully parsed webhook event");
+
         Event paymentEvent = result.GetValue();
         IWebhookEventStrategyMap? strategyMap = _strategyMaps.GetStrategyMap(PaymentProvider.STRIPE);
         if (strategyMap == null)
@@ -50,6 +52,8 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
             _logger.LogError("Failed to retrieve Stripe webhook strategy map");
             return;
         }
+
+        _logger.LogTrace("Succesfully retrieved Stripe webhook event strategy map");
 
         Result<IStripeWebhookStrategy> webhookHandlerStrategyResult = strategyMap.TryGetStrategy<IStripeWebhookStrategy>(paymentEvent.Type);
         if (webhookHandlerStrategyResult.Errors.Any())
@@ -62,18 +66,27 @@ public class StripeWebhookCoordinatorService : IWebhookCoordinatorService
             }
             else
             {
-                _logger.LogError($"{webhookHandlerStrategyResult.ErrorsToString()}");
+                _logger.LogError(webhookHandlerStrategyResult.ErrorsToString());
             }
             return;
         };
+
+        _logger.LogTrace("Succesfully retrieved webhook handler strategy for event type: {EventType}", paymentEvent.Type);
+
         IStripeWebhookStrategy webhookHandlerStrategy = webhookHandlerStrategyResult.GetValue();
         ResultError? runnerError = await webhookHandlerStrategy.RunAsync(paymentEvent.Data.Object);
         if (runnerError != null)
         {
-            _logger.LogError("Encountered an error when running a webhook strategy: {}", runnerError.Message);
+            _logger.LogError(
+                "Encountered an error when running a webhook strategy with event type: {EventType}",
+                runnerError.Message
+            );
             return;
         }
 
-        _logger.LogDebug("Succesfully handled stripe webhook event");
+        _logger.LogDebug(
+            "Succesfully handled stripe webhook event with type: {EventType}",
+            paymentEvent.Type
+        );
     }
 }

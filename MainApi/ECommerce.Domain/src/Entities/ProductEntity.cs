@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Domain.src.Entities;
 
@@ -6,7 +7,6 @@ public class ProductEntity
 {
     public ProductEntity(string name, string description, decimal price, int manufacturerId, int categoryId)
     {
-        ProductId = -1;
         Name = name;
         Description = description;
         Price = price;
@@ -25,7 +25,7 @@ public class ProductEntity
         CategoryId = categoryId;
     }
 
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid ProductId")]
+    [Key]
     public int ProductId { get; set; }
 
     [MinLength(5, ErrorMessage = "Invalid ProductId")]
@@ -33,13 +33,12 @@ public class ProductEntity
 
     [MinLength(5, ErrorMessage = "Invalid ProductId")]
     public string Description { get; set; }
-
     [Range(0.1, double.MaxValue, ErrorMessage = "Invalid ProductId")]
     public decimal Price { get; set; }
-
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid ManufacturerId")]
+    [ForeignKey(nameof(Manufacturer))]
     public int ManufacturerId { get; set; }
-
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid CategoryId")]
+    [ForeignKey(nameof(Category))]
     public int CategoryId { get; set; }
+    public ManufacturerEntity? Manufacturer { get; set; }
+    public CategoryEntity? Category { get; set; }
 }

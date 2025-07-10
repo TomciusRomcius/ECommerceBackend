@@ -1,5 +1,4 @@
 using ECommerce.Presentation.src.Controllers.Auth.dtos;
-using ECommerce.Presentation.src.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
@@ -10,11 +9,11 @@ namespace ECommerce.Presentation.src.Controllers.Auth;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<AuthController> logger)
+    public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<AuthController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -25,8 +24,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> SignUpWithPassword(SignUpWithPasswordRequestDto signUpWithPasswordRequestDto)
     {
         // Pasword hash gets set in UserManager.CreateAsync
-        var user = new ApplicationUser(signUpWithPasswordRequestDto.Firstname, signUpWithPasswordRequestDto.Lastname,
-            signUpWithPasswordRequestDto.Email, "");
+        var user = new IdentityUser(signUpWithPasswordRequestDto.Email)
+        {
+            Email = signUpWithPasswordRequestDto.Email
+        };
+
         IdentityResult? result = await _userManager.CreateAsync(user, signUpWithPasswordRequestDto.Password);
 
         return Ok(result.Errors);
@@ -35,8 +37,12 @@ public class AuthController : ControllerBase
     [HttpPost("sign-in-with-password")]
     public async Task<IActionResult> SignInWithPassword(SignInWithPasswordRequestDto signInWithPasswordRequestDto)
     {
-        SignInResult? res = await _signInManager.PasswordSignInAsync(signInWithPasswordRequestDto.Email,
-            signInWithPasswordRequestDto.Password, true, false);
+        SignInResult? res = await _signInManager.PasswordSignInAsync(
+            signInWithPasswordRequestDto.Email,
+            signInWithPasswordRequestDto.Password,
+            true,
+            false
+        );
         return Ok(res.ToString());
     }
 }

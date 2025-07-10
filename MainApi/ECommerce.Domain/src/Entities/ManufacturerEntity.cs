@@ -6,7 +6,6 @@ public class ManufacturerEntity
 {
     public ManufacturerEntity(string name)
     {
-        ManufacturerId = -1;
         Name = name;
     }
 
@@ -16,7 +15,7 @@ public class ManufacturerEntity
         Name = name;
     }
 
+    [Key]
     public int ManufacturerId { get; set; }
-
     public string Name { get; set; }
 }

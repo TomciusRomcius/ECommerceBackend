@@ -4,7 +4,7 @@ using PaymentService.Application.src.Interfaces;
 namespace PaymentService.Presentation.src.Controllers.Webhook
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WebhookController : ControllerBase
     {
         private readonly ILogger<WebhookController> _logger;

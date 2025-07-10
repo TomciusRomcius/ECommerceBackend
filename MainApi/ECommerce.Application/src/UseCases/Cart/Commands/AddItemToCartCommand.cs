@@ -4,4 +4,4 @@ using MediatR;
 
 namespace ECommerce.Application.src.UseCases.Cart.Commands;
 
-public record AddItemToCartCommand(CartProductEntity cartProduct) : IRequest<ResultError?>;
+public record AddItemToCartCommand(CartProductEntity CartProduct) : IRequest<ResultError?>;

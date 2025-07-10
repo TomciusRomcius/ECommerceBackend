@@ -1,3 +1,4 @@
+using ECommerce.Application.src.Utils;
 using ECommerce.Infrastructure.src.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

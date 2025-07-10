@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Domain.src.Entities;
 
@@ -11,12 +12,15 @@ public class ProductStoreLocationEntity
         Stock = stock;
     }
 
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid StoreLocationId!")]
+    [ForeignKey(nameof(StoreLocation))]
     public int StoreLocationId { get; set; }
 
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid ProductId!")]
+    [ForeignKey(nameof(Product))]
     public int ProductId { get; set; }
 
     [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be lower than 0!")]
     public int Stock { get; set; }
+
+    public StoreLocationEntity? StoreLocation { get; set; }
+    public ProductEntity? Product { get; set; }
 }

@@ -4,6 +4,12 @@ namespace ECommerce.Domain.src.Entities;
 
 public class StoreLocationEntity
 {
+    public StoreLocationEntity(string displayName, string address)
+    {
+        DisplayName = displayName;
+        Address = address;
+    }
+
     public StoreLocationEntity(int storeLocationId, string displayName, string address)
     {
         StoreLocationId = storeLocationId;
@@ -11,7 +17,7 @@ public class StoreLocationEntity
         Address = address;
     }
 
-    [Range(1, int.MaxValue, ErrorMessage = "Invalid store location id!")]
+    [Key]
     public int StoreLocationId { get; set; }
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Display name cannot be empty")]

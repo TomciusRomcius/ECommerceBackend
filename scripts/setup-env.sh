@@ -1,5 +1,5 @@
 cd ../
-echo "Database__Host=postgres" > ./MainApi/.env 
+echo "Database__Host=main-api-postgres" > ./MainApi/.env 
 echo "Database__Port=5432" >> ./MainApi/.env 
 echo "Database__Database=postgres" >> ./MainApi/.env
 echo "Database__Username=postgres" >> ./MainApi/.env 

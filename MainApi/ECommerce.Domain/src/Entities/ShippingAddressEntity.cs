@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Domain.src.Entities;
 
 public class ShippingAddressEntity
 {
-    [Range(-1, int.MaxValue)] public long ShippingAddressId { get; set; } = -1;
+    [Key]
+    public long ShippingAddressId { get; set; }
 
-    [Required(AllowEmptyStrings = false, ErrorMessage = "User Id  cannot be empty!")]
+    [ForeignKey(nameof(User))]
     public required string UserId { get; set; }
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Recipient name cannot be empty!")]
@@ -32,4 +35,6 @@ public class ShippingAddressEntity
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Mobile number cannot be empty!")]
     public required string MobileNumber { get; set; }
+
+    public IdentityUser? User { get; set; }
 }

@@ -22,6 +22,8 @@ public class ChargeSucceededNotificationHandler : INotificationHandler<ChargeSuc
 
     public async Task Handle(ChargeSucceededEvent notification, CancellationToken cancellationToken)
     {
+        // TODO: get cart items safely as this is buggy. store product information on payment service db
+
         Result<List<CartProductEntity>> cartItemsResult = await _mediator.Send(new GetUserCartItemsQuery(new Guid(notification.UserId)));
         if (cartItemsResult.Errors.Any())
         {

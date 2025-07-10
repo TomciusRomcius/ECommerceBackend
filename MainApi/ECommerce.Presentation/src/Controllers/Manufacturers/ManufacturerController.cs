@@ -39,9 +39,12 @@ public class ManufacturerController : ControllerBase
 
         if (manufacturerResult.Errors.Any())
         {
-            ControllerUtils.ResultErrorsToResponse(manufacturerResult.Errors);
+            return ControllerUtils.ResultErrorsToResponse(manufacturerResult.Errors);
         }
 
-        return Created(nameof(CreateManufacturer), manufacturerResult.ReturnResult);
+        return Created(nameof(CreateManufacturer), new
+        {
+            manufacturerId = manufacturerResult.GetValue()
+        });
     }
 }

@@ -15,8 +15,8 @@ public class CategoryEntity
         Name = name;
     }
 
-    [Required(ErrorMessage = "UserId is required!")]
-    public int CategoryId { get; set; } = -1;
+    [Key]
+    public int CategoryId { get; set; }
 
     [Length(2, 50, ErrorMessage = "Category name length must be between 2 and 50 characters long")]
     public string Name { get; set; }

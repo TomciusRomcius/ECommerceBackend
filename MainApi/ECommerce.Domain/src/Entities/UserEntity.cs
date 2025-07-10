@@ -13,6 +13,7 @@ public class UserEntity
         Lastname = lastname;
     }
 
+    [Key]
     [Required(AllowEmptyStrings = false, ErrorMessage = "User id cannot be empty")]
     public string UserId { get; set; }
 
