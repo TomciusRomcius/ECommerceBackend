@@ -12,9 +12,6 @@ dependencies:
   - name: payment-service
     version: 0.1.0
     repository: file://../payment-service
-  - name: postgresql
-    version: 16.7.14
-    repository: https://charts.bitnami.com/bitnami
   - name: kafka
     version: 32.3.1
     repository: https://charts.bitnami.com/bitnami

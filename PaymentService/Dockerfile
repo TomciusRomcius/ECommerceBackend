@@ -20,6 +20,10 @@ RUN dotnet restore "./PaymentService.Presentation/PaymentService.Presentation.cs
 COPY . .
 RUN dotnet build -c $BUILD_CONFIGURATION -o ../app-build/build
 
+FROM build as migrate
+WORKDIR /app
+ENTRYPOINT ["dotnet", "ef", "database" "update", "--no-build", "--project", "PaymentService.Application", "--startup-project", "PaymentService.Presentation"]
+
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "PaymentService.Presentation" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false

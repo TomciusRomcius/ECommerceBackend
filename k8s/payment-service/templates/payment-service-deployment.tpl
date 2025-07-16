@@ -4,6 +4,10 @@ metadata:
   name: payment-service-deployment
   labels:
     app: payment-service
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: umbrella
+    meta.helm.sh/release-namespace: default
 spec:
   selector:
     matchLabels:
@@ -17,21 +21,17 @@ spec:
         - image: payment-service:latest
           name: payment-service
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: payment-service-config
+            - secretRef:
+                name: stripe-secret
           env:
-            - name: ASPNETCORE_URLS
-              value: http://+:8080
-            - name: ASPNETCORE_ENVIRONMENT
-              value: {{ .Values.environment | quote }}
-            - name: Stripe__ApiKey
+            - name: Database__Password
               valueFrom:
                 secretKeyRef:
-                  name: app-secrets
-                  key: Stripe__ApiKey
-            - name: Stripe__WebhookSecret
-              valueFrom:
-                secretKeyRef:
-                  name: app-secrets
-                  key: Stripe__WebhookSecret
+                  name: payment-service-db-secret
+                  key: postgres-password
             - name: Kafka__Servers
               value: {{ .Values.Kafka__Servers }}
           resources: # TODO: configure resources

@@ -1,20 +1,3 @@
-postgresql:
-  auth:
-    existingSecret: app-secrets
-    secretKeys:
-      adminPasswordKey: Database__Password
-  fullnameOverride: postgres
-  primary:
-    persistence:
-      storageClass: standard
-      size: 5Gi
-      accessModes:
-        - ReadWriteOnce
-    initdb:
-      scriptsConfigMap: postgres-init
-  volumePermissions:
-    enabled: true
-
 payment-service:
   Kafka__Servers: umbrella-kafka:9092
 

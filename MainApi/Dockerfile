@@ -30,6 +30,10 @@ RUN dotnet restore
 COPY . .
 RUN dotnet build -c $BUILD_CONFIGURATION
 
+FROM build as migrate
+WORKDIR /app
+ENTRYPOINT ["dotnet", "ef", "database" "update", "--no-build", "--project", "ECommerce.Persistence"]
+
 FROM build AS publish
 WORKDIR /app
 ARG BUILD_CONFIGURATION=Release

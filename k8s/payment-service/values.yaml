@@ -1,2 +1,15 @@
 ASPNETCORE_ENVIRONMENT: production
 Kafka__Servers: kafka
+
+postgresql:
+  auth:
+    existingSecret: payment-service-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: payment-service-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
