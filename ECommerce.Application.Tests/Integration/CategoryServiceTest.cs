@@ -1,35 +1,28 @@
-﻿using ECommerce.Domain.src.Entities;
+﻿using ECommerce.Application.Tests.Utils;
+using ECommerce.Domain.src.Entities;
 using ECommerce.Persistence.src;
 using ECommerce.Presentation.src.Controllers.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.PostgreSql;
-using TestUtils;
 
 namespace ECommerce.Application.Tests.Integration
 {
-    public class CategoryServiceTest : IAsyncDisposable
+    public class CategoryServiceTest : DbContextWithDependencyInjection
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly PostgreSqlContainer _container;
+        public CategoryServiceTest() : base() { }
 
-        public CategoryServiceTest()
+        protected override void PreServiceProviderCreation(IServiceCollection services)
         {
-            var services = new ServiceCollection();
-            services.AddLogging();
             services.AddScoped<ICategoriesService, CategoriesService>();
-            _container = TestDbUtils.CreateDbCtxAndDb(services);
-            _serviceProvider = services.BuildServiceProvider();
-            TestDbUtils.Migrate(_serviceProvider);
         }
 
         [Fact]
         public async Task CreateCategory_ShouldCreateACategory()
         {
             // Arrange
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            ICategoriesService categoryService = _serviceProvider.GetRequiredService<ICategoriesService>();
-            DatabaseContext dbContext = _serviceProvider.GetRequiredService<DatabaseContext>();
+            using IServiceScope scope = ServiceProvider.CreateScope();
+            ICategoriesService categoryService = ServiceProvider.GetRequiredService<ICategoriesService>();
+            DatabaseContext dbContext = ServiceProvider.GetRequiredService<DatabaseContext>();
 
             string categoryName = "New category";
             var categoryEntity = new CategoryEntity(categoryName);
@@ -48,9 +41,9 @@ namespace ECommerce.Application.Tests.Integration
         public async Task GetAllCategories_ShouldGetAllCategories()
         {
             // Arrange
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            ICategoriesService categoryService = _serviceProvider.GetRequiredService<ICategoriesService>();
-            DatabaseContext dbContext = _serviceProvider.GetRequiredService<DatabaseContext>();
+            using IServiceScope scope = ServiceProvider.CreateScope();
+            ICategoriesService categoryService = ServiceProvider.GetRequiredService<ICategoriesService>();
+            DatabaseContext dbContext = ServiceProvider.GetRequiredService<DatabaseContext>();
 
             string[] categories = ["Category1", "Category2", "Category3"];
             await dbContext.Categories.AddRangeAsync(categories.Select(name => new CategoryEntity(name)));
@@ -65,11 +58,6 @@ namespace ECommerce.Application.Tests.Integration
             {
                 Assert.Contains(category.Name, categories);
             }
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await _container.DisposeAsync();
         }
     }
 }

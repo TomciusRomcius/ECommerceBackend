@@ -1,38 +1,27 @@
 ﻿using ECommerce.Application.src.UseCases.Manufacturer.Commands;
 using ECommerce.Application.src.UseCases.Manufacturer.Handlers;
 using ECommerce.Application.src.UseCases.Manufacturer.Queries;
+using ECommerce.Application.Tests.Utils;
 using ECommerce.Domain.src.Entities;
-using ECommerce.Persistence.src;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.PostgreSql;
-using TestUtils;
 
 namespace ECommerce.Application.Tests.Integration
 {
-    public class ManufacturerHandlersTest : IAsyncDisposable
+    public class ManufacturerHandlersTest : DbContextWithDependencyInjection
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly PostgreSqlContainer _container;
+        public ManufacturerHandlersTest() : base() { }
 
-        public ManufacturerHandlersTest()
+        protected override void PreServiceProviderCreation(IServiceCollection services)
         {
-            var services = new ServiceCollection();
-            services.AddLogging();
             services.AddScoped<CreateManufacturerHandler>();
             services.AddScoped<GetAllManufacturersHandler>();
-            _container = TestDbUtils.CreateDbCtxAndDb(services);
-            _serviceProvider = services.BuildServiceProvider();
-            TestDbUtils.Migrate(_serviceProvider);
         }
 
         [Fact]
         public async Task CreateManufacturer_ShouldCreateAManufacturer()
         {
-            // Arrange
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            CreateManufacturerHandler handler = _serviceProvider.GetRequiredService<CreateManufacturerHandler>();
-            DatabaseContext dbContext = _serviceProvider.GetRequiredService<DatabaseContext>();
+            CreateManufacturerHandler handler = ServiceProvider.GetRequiredService<CreateManufacturerHandler>();
 
             string manufacturerName = "New manufacturer";
 
@@ -40,7 +29,7 @@ namespace ECommerce.Application.Tests.Integration
             await handler.Handle(new CreateManufacturerCommand(manufacturerName), CancellationToken.None);
 
             // Assert
-            List<ManufacturerEntity> retrievedManufacturers = await dbContext.Manufacturers.ToListAsync();
+            List<ManufacturerEntity> retrievedManufacturers = await DbContext.Manufacturers.ToListAsync();
 
             Assert.Single(retrievedManufacturers);
             Assert.Equal(manufacturerName, retrievedManufacturers[0].Name);
@@ -51,13 +40,11 @@ namespace ECommerce.Application.Tests.Integration
         public async Task GetAllManufacturers_ShouldGetAllManufacturers()
         {
             // Arrange
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            GetAllManufacturersHandler handler = _serviceProvider.GetRequiredService<GetAllManufacturersHandler>();
-            DatabaseContext dbContext = _serviceProvider.GetRequiredService<DatabaseContext>();
+            GetAllManufacturersHandler handler = ServiceProvider.GetRequiredService<GetAllManufacturersHandler>();
 
             string[] manufacturers = ["Manufacturer1", "Manufacturer2", "Manufacturer3"];
-            await dbContext.Manufacturers.AddRangeAsync(manufacturers.Select(name => new ManufacturerEntity(name)));
-            await dbContext.SaveChangesAsync();
+            await DbContext.Manufacturers.AddRangeAsync(manufacturers.Select(name => new ManufacturerEntity(name)));
+            await DbContext.SaveChangesAsync();
 
             // Act
             List<ManufacturerEntity> retrievedManufacturers = await handler.Handle(
@@ -71,11 +58,6 @@ namespace ECommerce.Application.Tests.Integration
             {
                 Assert.Contains(manufacturer.Name, manufacturers);
             }
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await _container.DisposeAsync();
         }
     }
 }
