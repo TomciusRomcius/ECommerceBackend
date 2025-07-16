@@ -4,6 +4,9 @@
 * Run in the root directory: <br>
   ```docker compose up```
 * Note: if you are on Windows, it is recommended to run this in WSL.
+## K8 local development
+* Run build-images-for-k8.sh(if dotnet installation fails you will have to add dns records to Docker: https://github.com/dotnet/core/issues/8048)
+
 ## Tech stack
 * Backend: ASP.NET Core(.NET 9).
 * Database: PostgreSQL.
