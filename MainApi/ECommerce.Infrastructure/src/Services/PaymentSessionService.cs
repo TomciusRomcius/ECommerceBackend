@@ -25,7 +25,7 @@ namespace ECommerce.Infrastructure.src.Services
         public async Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
         {
             _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
-            _logger.LogDebug("Creating session with options: {}", JsonUtils.Serialize(sessionOptions));
+            _logger.LogDebug("Creating session with options: {@PaymentSessionOptions}", sessionOptions);
 
             var httpContent = new StringContent(JsonUtils.Serialize(sessionOptions), Encoding.UTF8, "application/json");
 
