@@ -15,3 +15,11 @@ dependencies:
   - name: kafka
     version: 32.3.1
     repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    alias: main-api-postgres
+    version: 16.7.14
+    repository: https://charts.bitnami.com/bitnami
+  - name: postgresql
+    alias: payment-service-postgres
+    version: 16.7.14
+    repository: https://charts.bitnami.com/bitnami
