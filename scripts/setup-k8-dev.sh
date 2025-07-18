@@ -11,7 +11,7 @@ docker build -t payment-service-db-migrator:latest --target migrate ./PaymentSer
 
 kubectl create configmap main-api-config \
   --from-env-file=../MainApi/.env
-kubectl create configmap payment-service-db-config \
+kubectl create configmap payment-service-config \
   --from-env-file=../PaymentService/.env
 
 kubectl create secret generic main-api-db-secret --from-literal=postgres-password=POSTGRES_PASSWORD > /dev/null 2>&1
