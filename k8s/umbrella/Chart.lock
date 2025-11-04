@@ -1,18 +1,23 @@
 dependencies:
-- name: main-api
-  repository: file://../main-api
+- name: store-service
+  repository: file://../store-service
   version: 0.1.0
 - name: payment-service
   repository: file://../payment-service
   version: 0.1.0
 - name: kafka
-  repository: https://charts.bitnami.com/bitnami
-  version: 32.4.3
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 30.1.7
 - name: postgresql
+  alias: store-service-postgres
   repository: https://charts.bitnami.com/bitnami
-  version: 16.7.14
+  version: 18.1.2
 - name: postgresql
+  alias: payment-service-postgres
   repository: https://charts.bitnami.com/bitnami
-  version: 16.7.14
-digest: sha256:e74531c3b150afacb127f9a0b5809f0b75a1b792858ba9d5059c4c73f58525fa
-generated: "2025-08-29T10:50:29.745167463+03:00"
+  version: 18.1.2
+- name: nginx-ingress-controller
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.0.7
+digest: sha256:8d7faa2aae43410f95c85b4c223d711532a1252ec74a461b67a95ea9350c63f4
+generated: "2025-10-29T20:45:43.620747678+02:00"

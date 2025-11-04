@@ -1,22 +1,27 @@
 payment-service:
   Kafka__Servers: umbrella-kafka:9092
 
-main-api-postgres:
+store-service-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
   volumePermissions:
       enabled: true
   auth:
-    existingSecret: main-api-db-secret
+    existingSecret: store-service-db-secret
     secretKeys:
       adminPasswordKey: Database__Password
-  fullnameOverride: main-api-postgres
+  fullnameOverride: store-service-postgres
   primary:
     persistence:
+    
       storageClass: standard
       size: 5Gi
       accessModes:
         - ReadWriteOnce
 
 payment-service-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
   volumePermissions:
       enabled: true
   auth:
@@ -26,7 +31,6 @@ payment-service-postgres:
   fullnameOverride: payment-service-postgres
   primary:
     persistence:
-    
       storageClass: standard
       size: 5Gi
       accessModes:
@@ -35,6 +39,8 @@ payment-service-postgres:
 kafka:
   fullnameOverride: kafka
   clusterId: 3f6c7185-aafc-4fc0-9431-e7295b3b1ec0
+  image:
+    repository: bitnamilegacy/kafka 
   broker:
     replicaCount: 2
     resources:
