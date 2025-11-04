@@ -1,5 +1,11 @@
 payment-service:
+  migrationJob:
+    backoffLimit: 15
   Kafka__Servers: umbrella-kafka:9092
+
+store-service:
+  migrationJob:
+    backoffLimit: 15
 
 store-service-postgres:
   image:

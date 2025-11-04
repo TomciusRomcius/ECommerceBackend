@@ -8,7 +8,7 @@ metadata:
     meta.helm.sh/release-name: umbrella
     meta.helm.sh/release-namespace: default
 spec:
-  backoffLimit: 4
+  backoffLimit: {{ default 5 .Values.migrationJob.backoffLimit }}
   template:
     spec:
       restartPolicy: OnFailure
