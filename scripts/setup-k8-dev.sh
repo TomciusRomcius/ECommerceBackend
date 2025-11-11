@@ -57,14 +57,7 @@ echo "Stripe__WebhookSecret=$stripeWebhookSecret" >> .stripe
 
 kubectl create secret generic stripe-secret --from-env-file=.stripe
 
-kubectl create secret generic order-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-kubectl create secret generic payment-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-
 rm .stripe
-
-kubectl create secret generic master-user-secrets \
-  --from-literal=Master__Email=masteruser@gmail.com \
-  --from-literal=Master__Password=Masterpassword.55
 
 cd ./k8s/umbrella
 helm dependency update
