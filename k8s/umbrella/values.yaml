@@ -1,11 +1,40 @@
 payment-service:
+  app:
+    name: payment-service
+    image: ecommercebackend-payment-service:prod
+    configMaps: 
+      - payment-service-config
+    secrets: 
+      - stripe-secret
+      - payment-service-db-secret
   migrationJob:
+    enabled: true
+    name: payment-service-migration-job
+    image: ecommercebackend-payment-service-db-migrator:prod
     backoffLimit: 15
-  Kafka__Servers: umbrella-kafka:9092
+    configMaps: 
+      - payment-service-config
+    secrets:
+      - payment-service-db-secret
+      - stripe-secret # TODO: temp
 
 store-service:
+  app:
+    name: store-service
+    image: ecommercebackend-store-service:prod
+    configMaps: 
+      - store-service-config
+    secrets:
+      - order-service-db-secret
   migrationJob:
+    enabled: true
+    name: store-service-migration-job
+    image: ecommercebackend-store-service-db-migrator:prod
     backoffLimit: 15
+    configMaps: 
+      - store-service-config
+    secrets:
+      - order-service-db-secret
 
 store-service-postgres:
   image:

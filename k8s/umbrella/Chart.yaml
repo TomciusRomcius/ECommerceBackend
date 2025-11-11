@@ -6,12 +6,14 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-  - name: store-service
+  - alias: store-service
+    name: microservice
     version: 0.1.0
-    repository: file://../store-service
-  - name: payment-service
+    repository: file://../microservice
+  - alias: payment-service
+    name: microservice
     version: 0.1.0
-    repository: file://../payment-service
+    repository: file://../microservice
   - name: kafka
     version: 30.1.7
     repository: oci://registry-1.docker.io/bitnamicharts
