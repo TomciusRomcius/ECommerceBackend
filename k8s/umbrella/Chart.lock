@@ -5,6 +5,15 @@ dependencies:
 - name: microservice
   repository: file://../microservice
   version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
 - name: kafka
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 30.1.7
@@ -17,5 +26,5 @@ dependencies:
 - name: nginx-ingress-controller
   repository: https://charts.bitnami.com/bitnami
   version: 12.0.7
-digest: sha256:87b419123984686413b489eb0d589b496b0d8f76b25ea16a95454cb387166db1
-generated: "2025-11-11T19:12:08.394022775+02:00"
+digest: sha256:94af399ad403d0958c2599335804227c716ea85e4919a779ec86ceac38245a5a
+generated: "2025-11-17T17:39:15.097484521+02:00"

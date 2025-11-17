@@ -25,7 +25,7 @@ store-service:
     configMaps: 
       - store-service-config
     secrets:
-      - order-service-db-secret
+      - store-service-db-secret
   migrationJob:
     enabled: true
     name: store-service-migration-job
@@ -34,7 +34,61 @@ store-service:
     configMaps: 
       - store-service-config
     secrets:
+      - store-service-db-secret
+
+order-service:
+  app:
+    name: order-service
+    image: ecommercebackend-order-service:prod
+    configMaps: 
+      - order-service-config
+    secrets:
       - order-service-db-secret
+  migrationJob:
+    enabled: true
+    name: order-service-migration-job
+    image: ecommercebackend-order-service-db-migrator:prod
+    backoffLimit: 15
+    configMaps: 
+      - order-service-config
+    secrets:
+      - order-service-db-secret
+
+user-service:
+  app:
+    name: user-service
+    image: ecommercebackend-user-service:prod
+    configMaps: 
+      - user-service-config
+    secrets:
+      - user-service-db-secret
+  migrationJob:
+    enabled: true
+    name: user-service-migration-job
+    image: ecommercebackend-user-service-db-migrator:prod
+    backoffLimit: 15
+    configMaps: 
+      - user-service-config
+    secrets:
+      - user-service-db-secret
+
+product-service:
+  app:
+    name: product-service
+    image: ecommercebackend-product-service:prod
+    configMaps: 
+      - product-service-config
+    secrets:
+      - product-service-db-secret
+  migrationJob:
+    enabled: true
+    name: product-service-migration-job
+    image: ecommercebackend-product-service-db-migrator:prod
+    backoffLimit: 15
+    configMaps: 
+      - product-service-config
+    secrets:
+      - product-service-db-secret
 
 store-service-postgres:
   image:
