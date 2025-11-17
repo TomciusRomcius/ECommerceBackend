@@ -35,7 +35,7 @@ ENTRYPOINT ["dotnet", "ef", "database", "update", "--no-build"]
 FROM build AS publish
 WORKDIR /app
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "OrderService" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
