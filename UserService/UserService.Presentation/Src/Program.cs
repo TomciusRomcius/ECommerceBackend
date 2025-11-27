@@ -1,13 +1,11 @@
-using System.Data;
 using System.Text;
+using ECommerceBackend.Utils.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UserService.Application;
 using UserService.Application.Persistence;
 using UserService.Application.Services;
-using UserService.Application.Utils;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

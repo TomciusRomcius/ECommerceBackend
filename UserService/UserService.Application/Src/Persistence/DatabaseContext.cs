@@ -1,7 +1,7 @@
+using ECommerceBackend.Utils.Database;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using UserService.Application.Utils;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.Persistence;
