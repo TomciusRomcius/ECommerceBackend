@@ -14,13 +14,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mediatr" Version="13.0.0"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4"/>
+        <PackageReference Include="mediatr" Version="13.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+        <PackageReference Include="Tomas.ECommerceBackend.Utils" Version="1.0.5" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ProductService.Domain\ProductService.Domain.csproj"/>
+        <ProjectReference Include="..\ProductService.Domain\ProductService.Domain.csproj" />
     </ItemGroup>
 
 </Project>

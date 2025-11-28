@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerceBackend.Utils.Database;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ProductService.Domain.Entities;
 
