@@ -39,7 +39,7 @@ CMD [ "dotnet", "test" ]
 
 FROM build as migrate
 WORKDIR /app
-ENTRYPOINT ["dotnet", "ef", "database", "update", "--no-build", "--project", "StoreService.Persistence"]
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--no-build", "--project", "StoreService.Application"]
 
 FROM build AS publish
 WORKDIR /app

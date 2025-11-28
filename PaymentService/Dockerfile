@@ -23,7 +23,7 @@ RUN dotnet build -c $BUILD_CONFIGURATION -o ../app-build/build
 FROM build as migrate
 WORKDIR /app
 # TODO: add back --no-build flag after solving deps.json does not exist error.
-CMD ["dotnet", "ef", "database", "update", "--project", "PaymentService.Application", "--startup-project", "PaymentService.Presentation"]
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--project", "PaymentService.Application"]
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
