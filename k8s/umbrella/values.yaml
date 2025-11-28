@@ -16,7 +16,6 @@ payment-service:
       - payment-service-config
     secrets:
       - payment-service-db-secret
-      - stripe-secret # TODO: temp
 
 store-service:
   app:
@@ -45,14 +44,7 @@ order-service:
     secrets:
       - order-service-db-secret
   migrationJob:
-    enabled: true
-    name: order-service-migration-job
-    image: ecommercebackend-order-service-db-migrator:prod
-    backoffLimit: 15
-    configMaps: 
-      - order-service-config
-    secrets:
-      - order-service-db-secret
+    enabled: false 
 
 user-service:
   app:
@@ -89,20 +81,19 @@ product-service:
       - product-service-config
     secrets:
       - product-service-db-secret
-
 store-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
       enabled: true
   auth:
+    database: postgres
     existingSecret: store-service-db-secret
     secretKeys:
       adminPasswordKey: Database__Password
   fullnameOverride: store-service-postgres
   primary:
     persistence:
-    
       storageClass: standard
       size: 5Gi
       accessModes:
@@ -114,10 +105,66 @@ payment-service-postgres:
   volumePermissions:
       enabled: true
   auth:
+    database: postgres
     existingSecret: payment-service-db-secret
     secretKeys:
       adminPasswordKey: Database__Password
   fullnameOverride: payment-service-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+
+product-service-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
+  volumePermissions:
+      enabled: true
+  auth:
+    database: postgres
+    existingSecret: product-service-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: product-service-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+order-service-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
+  volumePermissions:
+      enabled: true
+  auth:
+    database: postgres
+    existingSecret: order-service-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: order-service-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+user-service-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
+  volumePermissions:
+      enabled: true
+  auth:
+    database: postgres
+    existingSecret: user-service-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: user-service-postgres
   primary:
     persistence:
       storageClass: standard

@@ -14,17 +14,26 @@ dependencies:
 - name: microservice
   repository: file://../microservice
   version: 0.1.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
 - name: kafka
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 30.1.7
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 18.1.2
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 18.1.2
 - name: nginx-ingress-controller
   repository: https://charts.bitnami.com/bitnami
   version: 12.0.7
-digest: sha256:94af399ad403d0958c2599335804227c716ea85e4919a779ec86ceac38245a5a
-generated: "2025-11-17T17:39:15.097484521+02:00"
+digest: sha256:8f57a9bde7bbee8f925d9a34afb0b9a4b87f867784c8f09c9975100c01095c17
+generated: "2025-11-28T21:47:43.465970812+02:00"

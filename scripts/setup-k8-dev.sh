@@ -43,17 +43,17 @@ kubectl create configmap order-service-config \
 kubectl create configmap payment-service-config \
   --from-env-file=./PaymentService/.env
 
-kubectl create secret generic user-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-kubectl create secret generic product-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-kubectl create secret generic store-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-kubectl create secret generic order-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
-kubectl create secret generic payment-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD > /dev/null 2>&1
+kubectl create secret generic user-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+kubectl create secret generic product-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+kubectl create secret generic store-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+kubectl create secret generic order-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+kubectl create secret generic payment-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 
 read -p "Enter Stripe API Key: " stripeApiKey
 read -p "Enter Stripe Webhook Secret: " stripeWebhookSecret
 
-echo "Stripe__ApiKey=$stripeApiKey" > .stripe
-echo "Stripe__WebhookSecret=$stripeWebhookSecret" >> .stripe
+echo "Stripe__ApiKey=$stripeApiKey" >.stripe
+echo "Stripe__WebhookSecret=$stripeWebhookSecret" >>.stripe
 
 kubectl create secret generic stripe-secret --from-env-file=.stripe
 
@@ -63,3 +63,4 @@ cd ./k8s/umbrella
 helm dependency update
 helm install umbrella .
 sleep 100
+

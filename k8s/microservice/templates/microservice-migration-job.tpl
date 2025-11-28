@@ -17,13 +17,19 @@ spec:
         - image: {{ .Values.migrationJob.image }}
           name: {{ .Values.migrationJob.name }}
           imagePullPolicy: IfNotPresent
+          args:
+            - --
+            - --host=$(Database__Host)
+            - --database=$(Database__Database)
+            - --username=$(Database__Username)
+            - --password=$(Database__Password)
           envFrom:
-            {{- range $i, $name := .Values.migrationJob.configMaps}}
+            {{- range $i, $name := .Values.migrationJob.configMaps }}
             - configMapRef:
                 name: {{ $name }}
-            {{- end}}
-            {{- range $i, $name := .Values.migrationJob.secrets}}
+            {{- end }}
+            {{- range $i, $name := .Values.migrationJob.secrets }}
             - secretRef:
                 name: {{ $name }}
-            {{- end}}
-{{- end }}
+            {{- end }}
+{{ end }}
