@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Application.src.Persistence;
-using PaymentService.Application.src.Utils;
 using PaymentService.Domain.src.Entities;
 using PaymentService.Domain.src.Utils;
+using ECommerceBackend.Utils;
 
 namespace PaymentService.Application.src.Services
 {

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerceBackend.Utils.Database;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PaymentService.Application.src.Utils;
 using PaymentService.Domain.src.Entities;
 
 namespace PaymentService.Application.src.Persistence

@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Tomas.ECommerceBackend.Utils" Version="1.0.1" />
+        <PackageReference Include="Tomas.ECommerceBackend.Utils" Version="1.0.5" />
         <PackageReference Include="MediatR" Version="13.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />

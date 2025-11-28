@@ -1,10 +1,10 @@
+using ECommerceBackend.Utils.Database;
 using EventSystemHelper.Kafka.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Application.src.Persistence;
 using PaymentService.Application.src.Services;
-using PaymentService.Application.src.Utils;
 using PaymentService.Domain.src.Enums;
 using PaymentService.Infrastructure.src.Interfaces;
 using PaymentService.Infrastructure.src.Services;
@@ -22,26 +22,6 @@ builder.Services.AddOptions<StripeSettings>()
     .Bind(builder.Configuration.GetSection("Stripe"))
     .ValidateDataAnnotations()
     .ValidateOnStart();
-
-if (builder.Configuration.GetSection("Database") != null)
-{
-    builder.Services.AddOptions<PostgresConfiguration>()
-        .Bind(builder.Configuration.GetSection("Database"));
-}
-else
-{
-    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-    {
-        throw new InvalidDataException("Database is not configured.");
-    }
-    builder.Services.AddSingleton<IOptions<PostgresConfiguration>>(Options.Create<PostgresConfiguration>(new PostgresConfiguration
-    {
-        Host = "",
-        Database = "",
-        Username = "",
-        Password = ""
-    }));
-}
 
 builder.Services.AddDbContext<DatabaseContext>();
 

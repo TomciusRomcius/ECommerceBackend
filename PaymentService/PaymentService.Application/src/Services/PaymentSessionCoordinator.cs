@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using PaymentService.Application.src.Interfaces;
-using PaymentService.Application.src.Utils;
 using PaymentService.Domain.src.Entities;
 using PaymentService.Domain.src.Enums;
 using PaymentService.Domain.src.Models;
