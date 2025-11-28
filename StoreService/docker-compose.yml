@@ -41,15 +41,17 @@ services:
         "update",
         "--project",
         "StoreService.Application",
-        "--startup-project",
-        "StoreService.Presentation",
+        "--",
+        "--host=${Database__Host}",
+        "--database=${Database__Database}",
+        "--username=${Database__Username}",
+        "--password=${Database__Password}"
       ]
     environment:
       Database__Host: store-service-postgres
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
       Database__Password: ${Database__Password}
-      Kafka__Servers: kafka:9092
     volumes:
       - ./StoreService.Presentation/Src:/app/StoreService.Presentation/Src
       - ./StoreService.Infrastructure/Src:/app/StoreService.Infrastructure/Src
