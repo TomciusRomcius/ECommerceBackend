@@ -43,8 +43,11 @@ services:
         "update",
         "--project",
         "ProductService.Application",
-        "--startup-project",
-        "ProductService.Presentation",
+        "--",
+        "--host=${Database__Host}",
+        "--database=${Database__Database}",
+        "--username=${Database__Username}",
+        "--password=${Database__Password}"
       ]
     environment:
       Database__Host: product-service-postgres
