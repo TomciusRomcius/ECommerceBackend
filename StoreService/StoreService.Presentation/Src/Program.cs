@@ -1,8 +1,8 @@
 using System.Data;
+using ECommerceBackend.Utils.Database;
 using Microsoft.Extensions.Options;
 using StoreService.Application;
 using StoreService.Application.Persistence;
-using StoreService.Application.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 

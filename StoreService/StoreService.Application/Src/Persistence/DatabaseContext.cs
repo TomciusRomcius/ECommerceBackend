@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerceBackend.Utils.Database;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using StoreService.Application.Utils;
 using StoreService.Domain.Entities;
 
 namespace StoreService.Application.Persistence;
