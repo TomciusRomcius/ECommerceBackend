@@ -44,8 +44,11 @@ services:
         "update",
         "--project",
         "PaymentService.Application",
-        "--startup-project",
-        "PaymentService.Presentation",
+        "--",
+        "--host=${Database__Host}",
+        "--username=${Database__Username}",
+        "--database=${Database__Database}",
+        "--password=${Database__Database}",
       ]
     environment:
       Database__Host: payment-service-postgres
