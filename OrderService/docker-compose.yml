@@ -31,25 +31,25 @@ services:
     volumes:
       - ./Src:/app/Src
       - ./Properties:/app/Properties
-  order-service-postgres-migrate:
-    build:
-      dockerfile: Dockerfile
-      target: build
-    command:
-      [
-        "dotnet",
-        "ef",
-        "database",
-        "update",
-      ]
-    environment:
-      Database__Host: order-service-postgres
-      Database__Database: ${Database__Database}
-      Database__Username: ${Database__Username}
-      Database__Password: ${Database__Password}
-      Kafka__Servers: kafka:9092
-    volumes:
-      - ./OrderService/Src:/app/OrderService/Src
+  # order-service-postgres-migrate:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     target: build
+  #   command:
+  #     [
+  #       "dotnet",
+  #       "ef",
+  #       "database",
+  #       "update",
+  #     ]
+  #   environment:
+  #     Database__Host: order-service-postgres
+  #     Database__Database: ${Database__Database}
+  #     Database__Username: ${Database__Username}
+  #     Database__Password: ${Database__Password}
+  #   volumes:
+  #     - ./Src:/app/Src
+  #     - ./Properties:/app/Properties
   order-service-postgres:
     image: postgres:17
     environment:
