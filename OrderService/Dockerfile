@@ -13,7 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /app
 
-RUN dotnet tool install --global dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 9.0.11
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 COPY . .
