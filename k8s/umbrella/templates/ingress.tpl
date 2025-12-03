@@ -7,10 +7,12 @@ metadata:
   annotations:
     meta.helm.sh/release-name: umbrella
     meta.helm.sh/release-namespace: default
+    nginx.org/rewrites: "serviceName=user-service rewrite=/;serviceName=product-service rewrite=/;serviceName=store-service rewrite=/;serviceName=order-service rewrite=/;serviceName=payment-service rewrite=/"
 spec:
   ingressClassName: nginx
-  rules:
-  - http:
+  rules:   
+  - host: ecommerce.com
+    http:
       paths:
       - path: /user-service
         pathType: Prefix
