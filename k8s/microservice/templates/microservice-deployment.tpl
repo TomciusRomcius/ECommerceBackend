@@ -3,9 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Values.app.name }}
   labels:
-    app: {{ .Values.app.name }}
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: {{ .Values.app.name }}
   annotations:
     meta.helm.sh/release-name: umbrella
     meta.helm.sh/release-namespace: default
