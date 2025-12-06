@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ECommerceBackend.Utils.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ public class UserAuthService : IUserAuthService
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
         SignInManager<IdentityUser> signInManager,
-        IConfiguration configuration)
+        JwtAuthConfiguration  jwtAuthConfiguration)
     {
         _logger = logger;
         _userManager = userManager;
@@ -32,7 +33,7 @@ public class UserAuthService : IUserAuthService
         _signInManager = signInManager;
 
         // TODO: get signing key during app startup
-        string? jwtSigningKey = configuration.GetSection("Jwt")["SigningKey"];
+        string? jwtSigningKey = jwtAuthConfiguration.SigningKey;
         ArgumentNullException.ThrowIfNull(jwtSigningKey);
         _jwtSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey));
     }
@@ -45,21 +46,6 @@ public class UserAuthService : IUserAuthService
         var user = new IdentityUser(email)
         {
             Email = email
-        };
-
-        IdentityResult? result = await _userManager.CreateAsync(user, password);
-        if (!result.Succeeded)
-        {
-            _logger.LogError("Failed to create user '{Email}'", email);
-            return new Result<string>([
-                new ResultError(ResultErrorType.UNKNOWN_ERROR, "Unknown error!")
-            ]);
-        }
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, "User")
         };
 
         string jwtToken = GenerateJwtToken(user);
@@ -106,7 +92,7 @@ public class UserAuthService : IUserAuthService
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, "User")
         };
-        
+
         var signingCredentials = new SigningCredentials(_jwtSigningKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
