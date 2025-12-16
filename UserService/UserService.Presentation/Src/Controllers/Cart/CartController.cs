@@ -1,5 +1,7 @@
 using System.Net;
 using System.Security.Claims;
+using ECommerceBackend.Utils.Auth;
+using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +18,6 @@ namespace UserService.Presentation.Controllers.Cart;
 [Route("[controller]")]
 public class CartController : ControllerBase
 {
-    
     private readonly ILogger<CartController> _logger;
     private readonly IMediator _mediator;
 
@@ -48,8 +49,10 @@ public class CartController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddItem([FromBody] RequestAddItemDto addItemDto)
     {
-        string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
+        JwtClaims? jwt = JwtUserReader.ReadJwt(HttpContext);
+        if (jwt is not ClientJwtClaims userClaims)
+            return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
+        string userId = userClaims.UserId;
 
         ResultError? error = await _mediator.Send(new AddItemToCartCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
@@ -67,9 +70,11 @@ public class CartController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateItemQuantity([FromBody] RequestAddItemDto addItemDto)
     {
-        string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
-
+        JwtClaims? jwt = JwtUserReader.ReadJwt(HttpContext);
+        if (jwt is not ClientJwtClaims userClaims)
+            return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
+        string userId = userClaims.UserId;
+        
         ResultError? error = await _mediator.Send(new UpdateCartItemQuantityCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
         ));
