@@ -24,8 +24,8 @@ services:
       Database__Username: ${Database__Username}
       Database__Password: ${Database__Password}
       Jwt__SigningKey: ${Jwt__SigningKey}
-      Stripe__ApiKey: ${Stripe__ApiKey}
-      Stripe__WebhookSecret: ${Stripe__WebhookSecret}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__LifetimeMinutes: ${Jwt__LifetimeMinutes}
       Kafka__Servers: kafka:9092
     volumes:
       - ./UserService.Presentation/Src:/app/UserService.Presentation/Src

@@ -57,6 +57,8 @@ echo "Database__Username=postgres" >> ../UserService/.env
 echo "Database__Password=postgres" >> ../UserService/.env 
 echo "Kafka__Servers=kafka" >> ../UserService/.env 
 echo "Jwt__SigningKey=$jwtSigningKey" >> ../UserService/.env
+echo "Jwt__Issuer=ecommerce-auth" >> ../UserService/.env
+echo "Jwt__LifetimeMinutes=120" >> ../UserService/.env
 
 # Order service
 
