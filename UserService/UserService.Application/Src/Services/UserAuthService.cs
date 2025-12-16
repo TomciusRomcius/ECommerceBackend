@@ -3,8 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using ECommerceBackend.Utils.Jwt;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UserService.Domain.Utils;
 
@@ -17,23 +17,23 @@ public class UserAuthService : IUserAuthService
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-
-    private readonly SymmetricSecurityKey _jwtSigningKey;
-    private readonly string _jwtIssuer = "ecommerce-backend";
+    private readonly JwtAuthConfiguration _jwtConfiguration;
+    private readonly SecurityKey _jwtSigningKey;
 
     public UserAuthService(ILogger<UserAuthService> logger,
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
         SignInManager<IdentityUser> signInManager,
-        JwtAuthConfiguration  jwtAuthConfiguration)
+        IOptions<JwtAuthConfiguration> jwtAuthConfiguration)
     {
         _logger = logger;
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
+        _jwtConfiguration = jwtAuthConfiguration.Value;
 
         // TODO: get signing key during app startup
-        string? jwtSigningKey = jwtAuthConfiguration.SigningKey;
+        string? jwtSigningKey = _jwtConfiguration.SigningKey;
         ArgumentNullException.ThrowIfNull(jwtSigningKey);
         _jwtSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey));
     }
@@ -83,22 +83,22 @@ public class UserAuthService : IUserAuthService
     private string GenerateJwtToken(IdentityUser user)
     {
         _logger.LogTrace("Entered {FunctionName}", nameof(GenerateJwtToken));
-
         ArgumentNullException.ThrowIfNull(user.Email);
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, "User")
+            new(JwtRegisteredClaimNames.Iss, _jwtConfiguration.Issuer),
+            new(JwtRegisteredClaimNames.Acr, "client"),
+            new(JwtRegisteredClaimNames.NameId, user.Id),
+            new(JwtRegisteredClaimNames.Email, user.Email)
         };
 
         var signingCredentials = new SigningCredentials(_jwtSigningKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtIssuer,
+            issuer: _jwtConfiguration.Issuer,
             claims: claims,
-            expires: DateTime.Now.AddHours(24),
+            expires: DateTime.Now.AddMinutes(_jwtConfiguration.LifetimeMinutes),
             signingCredentials: signingCredentials
         );
 
