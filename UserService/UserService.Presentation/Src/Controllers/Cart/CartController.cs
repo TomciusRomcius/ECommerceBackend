@@ -39,7 +39,7 @@ public class CartController : ControllerBase
 
         if (result.Errors.Any())
         {
-            ControllerUtils.ResultErrorToResponse(result.Errors.First());
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
         }
 
         return Ok(result.GetValue());
@@ -81,7 +81,7 @@ public class CartController : ControllerBase
 
         if (error != null)
         {
-            ControllerUtils.ResultErrorToResponse(error);
+            return ControllerUtils.ResultErrorToResponse(error);
         }
 
         return Ok();
