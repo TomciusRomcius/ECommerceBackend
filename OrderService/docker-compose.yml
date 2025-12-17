@@ -21,9 +21,13 @@ services:
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
       Database__Password: ${Database__Password}
-      Jwt__SigningKey: ${Jwt__SigningKey}
       Stripe__ApiKey: ${Stripe__ApiKey}
       Stripe__WebhookSecret: ${Stripe__WebhookSecret}
+      Jwt__ClientId: ${Jwt__ClientId}
+      Jwt__SecretClientId: ${Jwt__SecretClientId}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__Authority: ${Jwt__Authority}
+      Jwt__Audience: ${Jwt__Audience}
       MicroserviceNetworkConfig__PaymentServiceUrl: ${MicroserviceNetworkConfig__PaymentServiceUrl}
       MicroserviceNetworkConfig__ProductServiceUrl: ${MicroserviceNetworkConfig__ProductServiceUrl}
       MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}

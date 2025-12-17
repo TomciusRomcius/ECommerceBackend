@@ -1,4 +1,6 @@
-jwtSigningKey="4+3XWNf4H4YeqzYKpwxo9cr3eEoGNRlTivGARi9NSgs"
+read -p "Enter microservice secret client id " microserviceSecretClientId
+
+microserviceClientId="microservice"
 productServiceUrl="http://product-service:8080"
 paymentServiceUrl="http://payment-service:8080"
 userServiceUrl="http://user-service:8080"
@@ -71,4 +73,9 @@ echo "Kafka__Servers=kafka" >> ../OrderService/.env
 echo "MicroserviceNetworkConfig__PaymentServiceUrl=$paymentServiceUrl" >> ../OrderService/.env
 echo "MicroserviceNetworkConfig__ProductServiceUrl=$productServiceUrl" >> ../OrderService/.env
 echo "MicroserviceNetworkConfig__UserServiceUrl=$userServiceUrl" >> ../OrderService/.env
-echo "Jwt__SigningKey=$jwtSigningKey" >> ../OrderService/.env
+
+echo "Jwt__ClientId=$microserviceClientId" >> ../OrderService/.env
+echo "Jwt__SecretClientId=$microserviceSecretClientId" >> ../OrderService/.env
+echo "Jwt__Issuer=http://keycloak:8080/realms/master" >> ../OrderService/.env
+echo "Jwt__Authority=http://keycloak:8080/realms/master" >> ../OrderService/.env
+echo "Jwt__Audience=$microserviceClientId" >> ../OrderService/.env
