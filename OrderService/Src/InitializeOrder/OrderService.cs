@@ -37,7 +37,7 @@ public class OrderService : IOrderService
         _logger.LogDebug("Creating order payment session for user: {UserId}", userId);
 
         // TODO: check if payment session already exists
-        Result<List<CartProductMinimalModel>> userCartItemsResult = await _mediator.Send(new GetProductsFromUserCartQuery(userId, jwtToken));
+        Result<List<CartProductMinimalModel>> userCartItemsResult = await _mediator.Send(new GetProductsFromUserCartQuery(userId));
         if (userCartItemsResult.Errors.Any())
         {
             // TODO: handle

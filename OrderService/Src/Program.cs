@@ -24,21 +24,28 @@ builder.Services.AddOptions<MicroserviceNetworkConfig>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-string? jwtSigningKey = builder.Configuration.GetSection("Jwt")["SigningKey"];
-ArgumentException.ThrowIfNullOrEmpty(jwtSigningKey);
+builder.Services.AddOptions<JwtConfig>()
+    .Bind(builder.Configuration.GetSection("Jwt"))
+    .ValidateDataAnnotations();
+
+builder.Services.AddSingleton<InternalJwtTokenContainer>();
+builder.Services.AddScoped<JwtTokenContainerReader>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey));
-        options.TokenValidationParameters.ValidIssuer = "ecommerce-backend";
-        options.TokenValidationParameters.IssuerSigningKey = key;
-        options.TokenValidationParameters.ValidAlgorithms = [SecurityAlgorithms.HmacSha256];
-        options.TokenValidationParameters.ValidateAudience = false;
-        options.TokenValidationParameters.ValidateIssuer = false;
-        options.TokenValidationParameters.ValidateIssuerSigningKey = false;
-        options.TokenValidationParameters.ValidateLifetime = false;
+        options.Authority = builder.Configuration.GetSection("Jwt")["Authority"];
+        options.RequireHttpsMetadata = false; // TODO: Only for development
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration.GetSection("Jwt")["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration.GetSection("Jwt")["Audience"],
+        };
     });
+
+builder.Services.AddHostedService<JwtTokenRefresher>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
