@@ -3,4 +3,4 @@ using OrderService.Utils;
 
 namespace OrderService.InitializeOrder;
 
-public record GetProductsFromUserCartQuery(Guid UserId, string JwtToken) : IRequest<Result<List<CartProductMinimalModel>>>;
+public record GetProductsFromUserCartQuery(Guid UserId) : IRequest<Result<List<CartProductMinimalModel>>>;

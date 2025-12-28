@@ -25,8 +25,8 @@ builder.Services.AddOptions<MicroserviceNetworkConfig>()
     .ValidateOnStart();
 
 builder.Services.AddOptions<JwtConfig>()
-    .Bind(builder.Configuration.GetSection("Jwt"))
-    .ValidateDataAnnotations();
+    .Bind(builder.Configuration.GetSection("Jwt"));
+// .ValidateDataAnnotations();
 
 builder.Services.AddSingleton<InternalJwtTokenContainer>();
 builder.Services.AddScoped<JwtTokenContainerReader>();
@@ -36,17 +36,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.Authority = builder.Configuration.GetSection("Jwt")["Authority"];
         options.RequireHttpsMetadata = false; // TODO: Only for development
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration.GetSection("Jwt")["Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration.GetSection("Jwt")["Audience"],
-        };
+        options.Audience = builder.Configuration.GetSection("Jwt")["Audience"]; // TODO: Only for development
     });
 
 builder.Services.AddHostedService<JwtTokenRefresher>();
-
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
@@ -59,8 +52,8 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();

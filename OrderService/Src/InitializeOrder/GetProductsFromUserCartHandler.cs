@@ -10,25 +10,28 @@ public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUse
     private readonly ILogger<GetProductsFromUserCartHandler> _logger;
     private readonly HttpClient _httpClient;
     private readonly MicroserviceNetworkConfig _microserviceNetworkConfig;
-    
+    private readonly JwtTokenContainerReader _jwtTokenContainerReader;
+
     public GetProductsFromUserCartHandler(ILogger<GetProductsFromUserCartHandler> logger,
         HttpClient httpClient,
-        IOptions<MicroserviceNetworkConfig> microserviceNetworkConfig)
+        IOptions<MicroserviceNetworkConfig> microserviceNetworkConfig,
+        JwtTokenContainerReader jwtTokenContainerReader)
     {
         _logger = logger;
         _httpClient = httpClient;
         _microserviceNetworkConfig = microserviceNetworkConfig.Value;
+        _jwtTokenContainerReader = jwtTokenContainerReader;
     }
-    
+
     public async Task<Result<List<CartProductMinimalModel>>> Handle(
         GetProductsFromUserCartQuery request,
         CancellationToken cancellationToken)
     {
         // TODO: more descriptive errors on fail
         _logger.LogTrace("Entered Handle");
-        _logger.LogDebug("Getting cart items from user: {UserId}", request.JwtToken);
+        _logger.LogDebug("Getting cart items from user: {UserId}", _jwtTokenContainerReader.AccessToken);
         var message = new HttpRequestMessage(HttpMethod.Get, $"{_microserviceNetworkConfig.UserServiceUrl}/cart");
-        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", request.JwtToken);
+        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenContainerReader.AccessToken);
         HttpResponseMessage response = await _httpClient.SendAsync(message, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {

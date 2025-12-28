@@ -1,9 +1,12 @@
-read -p "Enter microservice secret client id " microserviceSecretClientId
+read -p "Enter keycloak ecommerce-api client secret: " jwtClientSecret
 
-microserviceClientId="microservice"
 productServiceUrl="http://product-service:8080"
 paymentServiceUrl="http://payment-service:8080"
 userServiceUrl="http://user-service:8080"
+
+jwtClientId=ecommerce-api
+jwtAuthority="http://keycloak:8080/realms/ecommerce-api"
+jwtAudience=ecommerce-api
 
 # Main API
 
@@ -58,9 +61,12 @@ echo "Database__Database=postgres" >> ../UserService/.env
 echo "Database__Username=postgres" >> ../UserService/.env 
 echo "Database__Password=postgres" >> ../UserService/.env 
 echo "Kafka__Servers=kafka" >> ../UserService/.env 
-echo "Jwt__SigningKey=$jwtSigningKey" >> ../UserService/.env
-echo "Jwt__Issuer=ecommerce-auth" >> ../UserService/.env
-echo "Jwt__LifetimeMinutes=120" >> ../UserService/.env
+
+echo "Jwt__ClientId=$jwtClientId" >> ../UserService/.env
+echo "Jwt__SecretClientId=$jwtClientSecret" >> ../UserService/.env
+echo "Jwt__Issuer=$jwtIssuer" >> ../UserService/.env
+echo "Jwt__Authority=$jwtAuthority" >> ../UserService/.env
+echo "Jwt__Audience=$jwtAudience" >> ../UserService/.env
 
 # Order service
 
@@ -74,8 +80,8 @@ echo "MicroserviceNetworkConfig__PaymentServiceUrl=$paymentServiceUrl" >> ../Ord
 echo "MicroserviceNetworkConfig__ProductServiceUrl=$productServiceUrl" >> ../OrderService/.env
 echo "MicroserviceNetworkConfig__UserServiceUrl=$userServiceUrl" >> ../OrderService/.env
 
-echo "Jwt__ClientId=$microserviceClientId" >> ../OrderService/.env
-echo "Jwt__SecretClientId=$microserviceSecretClientId" >> ../OrderService/.env
-echo "Jwt__Issuer=http://keycloak:8080/realms/master" >> ../OrderService/.env
-echo "Jwt__Authority=http://keycloak:8080/realms/master" >> ../OrderService/.env
-echo "Jwt__Audience=$microserviceClientId" >> ../OrderService/.env
+echo "Jwt__ClientId=$jwtClientId" >> ../OrderService/.env
+echo "Jwt__SecretClientId=$jwtClientSecret" >> ../OrderService/.env
+echo "Jwt__Issuer=$jwtIssuer" >> ../OrderService/.env
+echo "Jwt__Authority=$jwtAuthority" >> ../OrderService/.env
+echo "Jwt__Audience=$jwtAudience" >> ../OrderService/.env
