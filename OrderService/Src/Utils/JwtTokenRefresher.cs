@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace OrderService.Utils;
 
-public class JwtTokenRefresher : IHostedService
+public class JwtTokenRefresher : BackgroundService
 {
     private readonly ILogger<JwtTokenRefresher> _logger;
     private readonly JwtConfig _jwtConfig;
@@ -21,28 +21,29 @@ public class JwtTokenRefresher : IHostedService
         _jwtTokenContainer = jwtTokenContainer;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogTrace("Entered: {}", nameof(StartAsync));
-        await ReceiveToken(cancellationToken);
-        
-        while (!cancellationToken.IsCancellationRequested)
+        await ReceiveToken(stoppingToken);
+
+        while (!stoppingToken.IsCancellationRequested)
         {
             if (_jwtTokenContainer.ExpirationDate < DateTime.Now)
             {
-                await ReceiveToken(cancellationToken);
+                bool success = await ReceiveToken(stoppingToken);
+                if (!success)
+                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
             else
             {
                 TimeSpan expiresIn = _jwtTokenContainer.ExpirationDate - DateTime.Now;
                 _logger.LogDebug("Waiting for next token fetch for {} seconds", expiresIn.TotalSeconds);
-                await Task.Delay(expiresIn, cancellationToken);
+                await Task.Delay(expiresIn, stoppingToken);
             }
             // Get access token
         }
     }
 
-    private async Task ReceiveToken(CancellationToken cancellationToken)
+    private async Task<bool> ReceiveToken(CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered: {}", nameof(ReceiveToken));
         string url = $"{Path.Combine(_jwtConfig.Authority, "protocol/openid-connect/token")}";
@@ -54,18 +55,28 @@ public class JwtTokenRefresher : IHostedService
             new("grant_type", "client_credentials"),
             new("audience", _jwtConfig.Audience),
         });
-        HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        JsonElement contentJson = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
-        string? accessToken = contentJson.GetProperty("access_token").GetString();
-        int expiresIn = contentJson.GetProperty("expires_in").GetInt32();
-        DateTime expiresAt = DateTime.Now.AddSeconds(expiresIn - 5);
-        _jwtTokenContainer.ExpirationDate = expiresAt;
-        _logger.LogDebug("Received access token for {} seconds", expiresIn);
-    }
-    
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
+
+        try
+        {
+            HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch access token! Status code: {StatusCode}", response.StatusCode);
+                return false;
+            }
+            response.EnsureSuccessStatusCode();
+            JsonElement contentJson = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
+            string? accessToken = contentJson.GetProperty("access_token").GetString();
+            int expiresIn = contentJson.GetProperty("expires_in").GetInt32();
+            DateTime expiresAt = DateTime.Now.AddSeconds(expiresIn - 5);
+            _jwtTokenContainer.ExpirationDate = expiresAt;
+            _logger.LogDebug("Received access token for {} seconds", expiresIn);
+            return true;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError("HttpRequestException {@Exception} in {Location}.", ex, nameof(ReceiveToken));
+        }
+        return false;
     }
 }
