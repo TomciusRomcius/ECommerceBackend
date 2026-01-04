@@ -1,9 +1,6 @@
 using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+using ECommerceBackend.Utils.Auth.Src;
+using ECommerceBackend.Utils.Jwt;
 using OrderService.InitializeOrder;
 using OrderService.Utils;
 
@@ -24,22 +21,8 @@ builder.Services.AddOptions<MicroserviceNetworkConfig>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddOptions<JwtConfig>()
-    .Bind(builder.Configuration.GetSection("Jwt"));
-// .ValidateDataAnnotations();
-
-builder.Services.AddSingleton<InternalJwtTokenContainer>();
-builder.Services.AddScoped<JwtTokenContainerReader>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = builder.Configuration.GetSection("Jwt")["Authority"];
-        options.RequireHttpsMetadata = false; // TODO: Only for development
-        options.Audience = builder.Configuration.GetSection("Jwt")["Audience"]; // TODO: Only for development
-    });
-
-builder.Services.AddHostedService<JwtTokenRefresher>();
+builder.Services.AddApplicationAuth(builder);
+builder.Services.AddBackgroundJwtRefresher();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
@@ -52,8 +35,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-
+app.UseApplicationAuth();
 app.MapControllers();
 app.Run();
