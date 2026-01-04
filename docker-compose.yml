@@ -8,12 +8,12 @@ include:
 
 services:
   init-kafka:
-    image: bitnami/kafka:4.0.0
+    image: bitnamilegacy/kafka:4.0.0
     entrypoint: ["/scripts/kafka-create-topics.sh"]
     volumes:
       - ./scripts/kafka-create-topics.sh:/scripts/kafka-create-topics.sh
   kafka:
-    image: bitnami/kafka:4.0.0
+    image: bitnamilegacy/kafka:4.0.0
     environment:
       KAFKA_KRAFT_MODE: "true"
       KAFKA_CFG_NODE_ID: 1
