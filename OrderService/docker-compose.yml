@@ -17,6 +17,7 @@ services:
       Logging__LogLevel__Default: Trace
       Logging__LogLevel__Microsoft: Warning
       Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Logging__LogLevel__Microsoft.AspNetCore.Authentication: Debug
       Database__Host: order-service-postgres
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
