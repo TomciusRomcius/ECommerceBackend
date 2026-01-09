@@ -37,7 +37,7 @@ services:
       - 8080:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-  keycloak:
+    restart: on-failure
   ecommerce-keycloak:
     image: quay.io/keycloak/keycloak:26.1.0
     command: start-dev --hostname ecommerce-keycloak
