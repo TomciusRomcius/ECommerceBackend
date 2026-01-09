@@ -1,9 +1,8 @@
-using ECommerceBackend.Utils.Auth;
+using ECommerceBackend.Utils.Auth.Src;
 using ECommerceBackend.Utils.Database;
 using Microsoft.AspNetCore.Identity;
 using UserService.Application;
 using UserService.Application.Persistence;
-using UserService.Application.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +11,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddOptions<PostgresConfiguration>()
     .Bind(builder.Configuration.GetSection("Database"))
     .ValidateDataAnnotations();
-
-builder.Services.AddScoped<IUserAuthService, UserAuthService>();
 
 builder.Services.AddDbContext<DatabaseContext>();
 
