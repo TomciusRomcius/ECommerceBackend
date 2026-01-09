@@ -23,9 +23,11 @@ services:
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
       Database__Password: ${Database__Password}
-      Jwt__SigningKey: ${Jwt__SigningKey}
+      Jwt__ClientId: ${Jwt__ClientId}
+      Jwt__SecretClientId: ${Jwt__SecretClientId}
       Jwt__Issuer: ${Jwt__Issuer}
-      Jwt__LifetimeMinutes: ${Jwt__LifetimeMinutes}
+      Jwt__Authority: ${Jwt__Authority}
+      Jwt__Audience: ${Jwt__Audience}
       Kafka__Servers: kafka:9092
     volumes:
       - ./UserService.Presentation/Src:/app/UserService.Presentation/Src
