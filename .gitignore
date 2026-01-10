@@ -129,3 +129,4 @@ charts
 *.tfstate.backup
 *.tfvars
 **/.terraform/
+!dev.tfvars
