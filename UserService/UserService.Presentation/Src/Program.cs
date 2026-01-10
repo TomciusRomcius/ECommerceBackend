@@ -1,4 +1,4 @@
-using ECommerceBackend.Utils.Auth.Src;
+using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
 using Microsoft.AspNetCore.Identity;
 using UserService.Application;
