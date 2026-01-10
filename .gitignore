@@ -122,3 +122,10 @@ src/.vs/config/applicationhost.config
 appsettings*.json
 charts
 *.tgz
+
+# Terraform
+
+*.tfstate
+*.tfstate.backup
+*.tfvars
+**/.terraform/
