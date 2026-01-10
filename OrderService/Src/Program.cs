@@ -1,6 +1,5 @@
 using System.Reflection;
-using ECommerceBackend.Utils.Auth.Src;
-using ECommerceBackend.Utils.Jwt;
+using ECommerceBackend.Utils.Auth;
 using OrderService.InitializeOrder;
 using OrderService.Utils;
 
@@ -32,7 +31,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
 
 app.UseHttpsRedirection();
 app.UseApplicationAuth();
