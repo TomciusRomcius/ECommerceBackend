@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OrderService.Utils;
@@ -10,17 +11,17 @@ public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUse
     private readonly ILogger<GetProductsFromUserCartHandler> _logger;
     private readonly HttpClient _httpClient;
     private readonly MicroserviceNetworkConfig _microserviceNetworkConfig;
-    private readonly JwtTokenContainerReader _jwtTokenContainerReader;
+    private readonly JwtTokenReader _jwtTokenReader;
 
     public GetProductsFromUserCartHandler(ILogger<GetProductsFromUserCartHandler> logger,
         HttpClient httpClient,
         IOptions<MicroserviceNetworkConfig> microserviceNetworkConfig,
-        JwtTokenContainerReader jwtTokenContainerReader)
+        JwtTokenReader jwtTokenReader)
     {
         _logger = logger;
         _httpClient = httpClient;
         _microserviceNetworkConfig = microserviceNetworkConfig.Value;
-        _jwtTokenContainerReader = jwtTokenContainerReader;
+        _jwtTokenReader = jwtTokenReader;
     }
 
     public async Task<Result<List<CartProductMinimalModel>>> Handle(
@@ -29,9 +30,9 @@ public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUse
     {
         // TODO: more descriptive errors on fail
         _logger.LogTrace("Entered Handle");
-        _logger.LogDebug("Getting cart items from user: {UserId}", _jwtTokenContainerReader.AccessToken);
+        _logger.LogDebug("Getting cart items from user: {UserId}", _jwtTokenReader.AccessToken);
         var message = new HttpRequestMessage(HttpMethod.Get, $"{_microserviceNetworkConfig.UserServiceUrl}/cart");
-        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenContainerReader.AccessToken);
+        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenReader.AccessToken);
         HttpResponseMessage response = await _httpClient.SendAsync(message, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
