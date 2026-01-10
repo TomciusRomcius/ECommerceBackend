@@ -1,10 +1,12 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.UseCases.Product.Commands;
 using ProductService.Application.UseCases.Product.Queries;
 using ProductService.Domain.Entities;
 using ProductService.Presentation.Controllers.Product.Dtos;
 using ProductService.Presentation.Utils;
+using ECommerceBackend.Utils.Jwt;
 
 namespace ProductService.Presentation.Controllers.Product;
 
@@ -26,6 +28,7 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
     public async Task<IActionResult> CreateProducts([FromBody] RequestCreateProductDto createProductDto)
     {
