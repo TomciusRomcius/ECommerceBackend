@@ -26,6 +26,11 @@ services:
       Database__Password: ${Database__Password}
       Stripe__ApiKey: ${Stripe__ApiKey}
       Stripe__WebhookSecret: ${Stripe__WebhookSecret}
+      Jwt__ClientId: ${Jwt__ClientId}
+      Jwt__SecretClientId: ${Jwt__SecretClientId}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__Authority: ${Jwt__Authority}
+      Jwt__Audience: ${Jwt__Audience}
       Kafka__Servers: kafka:9092
     volumes:
       - ./PaymentService.Presentation/src:/app/PaymentService.Presentation/src
