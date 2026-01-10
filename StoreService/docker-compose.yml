@@ -52,6 +52,7 @@ services:
         "--username=${Database__Username}",
         "--password=${Database__Password}"
       ]
+    restart: on-failure
     environment:
       Database__Host: store-service-postgres
       Database__Database: ${Database__Database}

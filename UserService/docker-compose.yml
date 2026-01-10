@@ -53,6 +53,7 @@ services:
         "--username=${Database__Username}",
         "--password=${Database__Password}"
       ]
+    restart: on-failure
     environment:
       Database__Host: ${Database__Host}
       Database__Database: ${Database__Database}

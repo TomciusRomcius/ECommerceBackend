@@ -55,6 +55,7 @@ services:
         "--database=${Database__Database}",
         "--password=${Database__Database}",
       ]
+    restart: on-failure
     environment:
       Database__Host: payment-service-postgres
       Database__Database: ${Database__Database}
