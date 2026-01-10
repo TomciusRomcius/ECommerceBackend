@@ -1,3 +1,4 @@
+using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ public class StoreLocation : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
     public async Task<IActionResult> CreateStoreLocation([FromBody] RequestCreateLocationDto createLocationDto)
     {
@@ -36,6 +38,7 @@ public class StoreLocation : ControllerBase
         return Created(nameof(CreateStoreLocation), result);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPatch]
     public async Task<IActionResult> ModifyStoreLocation([FromBody] RequestModifyLocationDto modifyLocationDto)
     {
@@ -47,6 +50,7 @@ public class StoreLocation : ControllerBase
         return Ok();
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpDelete]
     public async Task<IActionResult> RemoveLocation([FromBody] RequestRemoveLocationDto removeLocationDto)
     {

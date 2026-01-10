@@ -1,4 +1,5 @@
 using System.Data;
+using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
 using Microsoft.Extensions.Options;
 using StoreService.Application;
@@ -29,6 +30,7 @@ else
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddControllers();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
+builder.Services.AddApplicationAuth(builder);
 
 var app = builder.Build();
 
@@ -37,5 +39,6 @@ app.MapControllers();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseHttpsRedirection();
+app.UseApplicationAuth();
 
 app.Run();
