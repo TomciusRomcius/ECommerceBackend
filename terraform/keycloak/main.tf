@@ -52,6 +52,30 @@ resource "keycloak_openid_client" "openid_client" {
   service_accounts_enabled = true
 }
 
+resource "keycloak_role" "ecommerce_admin_role" {
+  realm_id    = keycloak_realm.ecommerce_api.id
+  name        = "ecommerce-admin"
+}
+
+resource "keycloak_openid_hardcoded_role_protocol_mapper" "hardcoded_admin_role" {
+  realm_id  = keycloak_realm.ecommerce_api.id
+  client_id = keycloak_openid_client.openid_client.id
+  name      = "hardcoded-admin-role"
+  
+  role_id = keycloak_role.ecommerce_admin_role.id
+}
+
+# Protocol mapper to include realm roles in the token
+resource "keycloak_openid_user_realm_role_protocol_mapper" "realm_roles_mapper" {
+  realm_id  = keycloak_realm.ecommerce_api.id
+  client_id = keycloak_openid_client.openid_client.id
+  name      = "realm-roles-mapper"
+  
+  claim_name       = "roles"
+  multivalued      = true
+  claim_value_type = "String"
+}
+
 resource "keycloak_openid_client_scope" "audience_client_scope" {
   realm_id = keycloak_realm.ecommerce_api.id
   name     = "audience-client-scope"
