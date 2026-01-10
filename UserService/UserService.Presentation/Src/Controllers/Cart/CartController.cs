@@ -1,7 +1,5 @@
-using System.Net;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ECommerceBackend.Utils.Auth;
-using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,10 +47,7 @@ public class CartController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddItem([FromBody] RequestAddItemDto addItemDto)
     {
-        JwtClaims? jwt = JwtUserReader.ReadJwt(HttpContext);
-        if (jwt is not ClientJwtClaims userClaims)
-            return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
-        string userId = userClaims.UserId;
+        string userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)!.Value;
 
         ResultError? error = await _mediator.Send(new AddItemToCartCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
@@ -70,11 +65,7 @@ public class CartController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateItemQuantity([FromBody] RequestAddItemDto addItemDto)
     {
-        JwtClaims? jwt = JwtUserReader.ReadJwt(HttpContext);
-        if (jwt is not ClientJwtClaims userClaims)
-            return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
-        string userId = userClaims.UserId;
-        
+        string userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)!.Value;
         ResultError? error = await _mediator.Send(new UpdateCartItemQuantityCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
         ));
