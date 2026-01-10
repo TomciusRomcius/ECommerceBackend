@@ -1,3 +1,12 @@
+# Takes in service name(eg. OrderService)
+addJwtEnvs() {
+    echo "Jwt__ClientId=$jwtClientId" >> "../$1/.env"
+    echo "Jwt__SecretClientId=$jwtClientSecret" >> "../$1/.env"
+    echo "Jwt__Issuer=$jwtIssuer" >> "../$1/.env"
+    echo "Jwt__Authority=$jwtAuthority" >> "../$1/.env"
+    echo "Jwt__Audience=$jwtAudience" >> "../$1/.env"
+}
+
 read -p "Enter keycloak ecommerce-api client secret: " jwtClientSecret
 
 productServiceUrl="http://product-service:8080"
@@ -8,18 +17,6 @@ jwtClientId=ecommerce-api
 jwtClientSecret=secret
 jwtAuthority="http://keycloak:8080/realms/ecommerce-api"
 jwtAudience=ecommerce-api
-
-# Main API
-
-echo "Database__Host=main-api-postgres" > ../MainApi/.env 
-echo "Database__Port=5432" >> ../MainApi/.env 
-echo "Database__Database=postgres" >> ../MainApi/.env
-echo "Database__Username=postgres" >> ../MainApi/.env 
-echo "Database__Password=postgres" >> ../MainApi/.env 
-echo "Kafka__Servers=kafka" >> ../MainApi/.env 
-
-echo "Master__Email=masteruser@gmail.com" >> ../MainApi/.env
-echo "Master__Password=Masterpassword.55" >> ../MainApi/.env
 
 # Payment service
 
@@ -36,6 +33,8 @@ read -p "Enter Stripe webhook secret(or leave empty): " stripeWebhookSecret
 echo "Stripe__ApiKey=$stripeApiKey" >> ../PaymentService/.env
 echo "Stripe__WebhookSecret=$stripeWebhookSecret" >> ../PaymentService/.env
 
+addJwtEnvs "PaymentService"
+
 # Product service
 
 echo "Database__Host=product-service-postgres" > ../ProductService/.env 
@@ -44,6 +43,8 @@ echo "Database__Database=postgres" >> ../ProductService/.env
 echo "Database__Username=postgres" >> ../ProductService/.env 
 echo "Database__Password=postgres" >> ../ProductService/.env 
 echo "Kafka__Servers=kafka" >> ../ProductService/.env 
+
+addJwtEnvs "ProductService"
 
 # Store service
 
@@ -54,6 +55,8 @@ echo "Database__Username=postgres" >> ../StoreService/.env
 echo "Database__Password=postgres" >> ../StoreService/.env 
 echo "Kafka__Servers=kafka" >> ../StoreService/.env 
 
+addJwtEnvs "StoreService"
+
 # User service
 
 echo "Database__Host=user-service-postgres" > ../UserService/.env 
@@ -63,11 +66,7 @@ echo "Database__Username=postgres" >> ../UserService/.env
 echo "Database__Password=postgres" >> ../UserService/.env 
 echo "Kafka__Servers=kafka" >> ../UserService/.env 
 
-echo "Jwt__ClientId=$jwtClientId" >> ../UserService/.env
-echo "Jwt__SecretClientId=$jwtClientSecret" >> ../UserService/.env
-echo "Jwt__Issuer=$jwtIssuer" >> ../UserService/.env
-echo "Jwt__Authority=$jwtAuthority" >> ../UserService/.env
-echo "Jwt__Audience=$jwtAudience" >> ../UserService/.env
+addJwtEnvs "UserService"
 
 # Order service
 
@@ -81,8 +80,4 @@ echo "MicroserviceNetworkConfig__PaymentServiceUrl=$paymentServiceUrl" >> ../Ord
 echo "MicroserviceNetworkConfig__ProductServiceUrl=$productServiceUrl" >> ../OrderService/.env
 echo "MicroserviceNetworkConfig__UserServiceUrl=$userServiceUrl" >> ../OrderService/.env
 
-echo "Jwt__ClientId=$jwtClientId" >> ../OrderService/.env
-echo "Jwt__SecretClientId=$jwtClientSecret" >> ../OrderService/.env
-echo "Jwt__Issuer=$jwtIssuer" >> ../OrderService/.env
-echo "Jwt__Authority=$jwtAuthority" >> ../OrderService/.env
-echo "Jwt__Audience=$jwtAudience" >> ../OrderService/.env
+addJwtEnvs "OrderService"
