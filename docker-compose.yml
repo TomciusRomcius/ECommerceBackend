@@ -38,9 +38,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     restart: on-failure
-  ecommerce-keycloak:
+  keycloak:
     image: quay.io/keycloak/keycloak:26.1.0
-    command: start-dev --hostname ecommerce-keycloak
+    command: start-dev --hostname http://localhost:8080/auth --proxy-headers xforwarded
     restart: on-failure
     environment:
         KC_DB: postgres
@@ -63,6 +63,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres_data_keycloack:/var/lib/postgresql/data
+      - keycloak-db-data:/var/lib/postgresql/data
+  web-application:
+    build:
+      context: ./webApp
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./webApp:/app
+      - /app/node_modules
 
+volumes:
+  keycloak-db-data:
 
