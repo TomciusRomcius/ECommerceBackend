@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
-        <PackageReference Include="Tomas.ECommerceBackend.Utils.Auth" Version="1.0.6" />
+        <PackageReference Include="Tomas.ECommerceBackend.Utils.Auth" Version="1.0.9" />
     </ItemGroup>
 
     <ItemGroup>
