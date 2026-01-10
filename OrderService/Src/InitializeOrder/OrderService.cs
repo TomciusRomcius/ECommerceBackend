@@ -27,11 +27,11 @@ public class OrderService : IOrderService
         _mediator = mediator;
         _orderPriceCalculator = orderPriceCalculator;
     }
-    
+
     /// <summary>
     /// Fetches user's cart items, their prices and generates a payment session. 
     /// </summary>
-    public async Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, string jwtToken, PaymentProvider paymentProvider)
+    public async Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider)
     {
         _logger.LogTrace("Entered CreateOrderPaymentSession");
         _logger.LogDebug("Creating order payment session for user: {UserId}", userId);
@@ -61,9 +61,9 @@ public class OrderService : IOrderService
 
             return new Result<PaymentSessionModel>(productDetailsResult.Errors);
         }
-        
+
         List<ProductPriceModel> productPriceModels = productDetailsResult.GetValue();
-        
+
         // Assign price values to cart products
         List<CartProductModel> cartProducts = new List<CartProductModel>();
         foreach (var cartPr in userCartItems)

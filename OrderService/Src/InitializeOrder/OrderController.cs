@@ -36,7 +36,7 @@ public class OrderController : ControllerBase
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to add items to cart!");
 
         // TODO: result pattern
-        Result<PaymentSessionModel> result = await _orderService.CreateOrderPaymentSession(new Guid(userId), userJwt, PaymentProvider.STRIPE);
+        Result<PaymentSessionModel> result = await _orderService.CreateOrderPaymentSession(new Guid(userId), PaymentProvider.STRIPE);
         if (result.Errors.Any())
         {
             return ControllerUtils.ResultErrorsToResponse(result.Errors);

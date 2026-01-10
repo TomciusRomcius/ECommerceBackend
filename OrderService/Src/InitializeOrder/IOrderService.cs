@@ -5,5 +5,5 @@ namespace OrderService.InitializeOrder;
 
 public interface IOrderService
 {
-    public Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, string jwtToken, PaymentProvider paymentProvider);
+    public Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider);
 }
