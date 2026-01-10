@@ -40,7 +40,7 @@ services:
     restart: on-failure
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.0
-    command: start-dev --hostname http://localhost:8080/auth --proxy-headers xforwarded
+    command: start-dev --hostname http://localhost:8080/auth --hostname-backchannel-dynamic true --proxy-headers xforwarded
     restart: on-failure
     environment:
         KC_DB: postgres
