@@ -1,3 +1,4 @@
+using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +36,8 @@ public class ProductStoreLocationController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
-    // TODO: add back
-    // [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> AddProductToStore([FromBody] AddProductToStoreDto addProductToStoreDto)
     {
         var model = new ProductStoreLocationEntity(
@@ -50,9 +50,8 @@ public class ProductStoreLocationController : ControllerBase
         return error == null ? Ok() : ControllerUtils.ResultErrorToResponse(error);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpDelete]
-    // TODO: add back
-    // [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> RemoveProductFromStore(
         [FromBody] RemoveProductFromStoreDto removeProductFromStoreDto)
     {
@@ -63,10 +62,8 @@ public class ProductStoreLocationController : ControllerBase
         return Ok();
     }
 
-
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPatch]
-    // TODO: add back
-    // [Authorize(Roles = "ADMINISTRATOR")]
     public async Task<IActionResult> ModifyProductFromStore([FromBody] AddProductToStoreDto addProductToStoreDto)
     {
         var model = new ProductStoreLocationEntity(
