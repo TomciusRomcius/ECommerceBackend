@@ -5,6 +5,7 @@ paymentServiceUrl="http://payment-service:8080"
 userServiceUrl="http://user-service:8080"
 
 jwtClientId=ecommerce-api
+jwtClientSecret=secret
 jwtAuthority="http://keycloak:8080/realms/ecommerce-api"
 jwtAudience=ecommerce-api
 
