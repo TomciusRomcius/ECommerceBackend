@@ -1,3 +1,5 @@
+using ECommerceBackend.Utils.Jwt;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.Services;
 using ProductService.Domain.Entities;
@@ -24,6 +26,7 @@ public class CategoriesController : ControllerBase
         return Ok(categories);
     }
 
+    [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] RequestCreateCategoryDto createCategoryDto)
     {
