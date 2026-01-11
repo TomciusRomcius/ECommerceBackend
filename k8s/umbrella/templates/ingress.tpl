@@ -49,3 +49,10 @@ spec:
             name: payment-service
             port:
               number: 8080
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
