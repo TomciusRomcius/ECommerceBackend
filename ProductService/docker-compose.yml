@@ -10,7 +10,6 @@ services:
         "--project",
         "ProductService.Presentation",
       ]
-    restart: on-failure
     ports:
       - "8082:8080"
     environment:
@@ -55,6 +54,7 @@ services:
         "--username=${Database__Username}",
         "--password=${Database__Password}"
       ]
+    restart: on-failure
     environment:
       Database__Host: product-service-postgres
       Database__Database: ${Database__Database}
