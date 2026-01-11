@@ -30,7 +30,7 @@ public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUse
     {
         // TODO: more descriptive errors on fail
         _logger.LogTrace("Entered Handle");
-        _logger.LogDebug("Getting cart items from user: {UserId}", _jwtTokenReader.AccessToken);
+        _logger.LogDebug("Getting cart items from user: {UserId}", request.UserId);
         var message = new HttpRequestMessage(HttpMethod.Get, $"{_microserviceNetworkConfig.UserServiceUrl}/cart");
         message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenReader.AccessToken);
         HttpResponseMessage response = await _httpClient.SendAsync(message, cancellationToken);
