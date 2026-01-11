@@ -13,12 +13,6 @@ builder.Services.AddOptions<PostgresConfiguration>()
     .ValidateDataAnnotations();
 
 builder.Services.AddDbContext<DatabaseContext>();
-
-builder.Services.AddIdentityCore<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddSignInManager()
-    .AddEntityFrameworkStores<DatabaseContext>();
-
 builder.Services.AddApplicationAuth(builder);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 

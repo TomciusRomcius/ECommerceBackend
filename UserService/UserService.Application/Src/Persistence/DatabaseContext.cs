@@ -1,12 +1,11 @@
 using ECommerceBackend.Utils.Database;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using UserService.Domain.Entities;
 
 namespace UserService.Application.Persistence;
 
-public class DatabaseContext : IdentityDbContext
+public class DatabaseContext : DbContext
 {
     private readonly IOptions<PostgresConfiguration> _postgresConfiguration;
     public DbSet<CartProductEntity> CartProducts { get; set; }

@@ -8,7 +8,6 @@ public class ShippingAddressEntity
 {
     [Key]
     public long ShippingAddressId { get; set; }
-    [ForeignKey(nameof(User))]
     public required string UserId { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Recipient name cannot be empty!")]
     public required string RecipientName { get; set; }
@@ -26,5 +25,4 @@ public class ShippingAddressEntity
     public required string Country { get; set; }
     [Required(AllowEmptyStrings = false, ErrorMessage = "Mobile number cannot be empty!")]
     public required string MobileNumber { get; set; }
-    public IdentityUser? User { get; set; }
 }
