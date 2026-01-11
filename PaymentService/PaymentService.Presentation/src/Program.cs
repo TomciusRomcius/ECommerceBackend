@@ -23,6 +23,12 @@ builder.Services.AddOptions<StripeSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+
+builder.Services.AddOptions<PostgresConfiguration>()
+    .Bind(builder.Configuration.GetSection("Database"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddDbContext<DatabaseContext>();
 
 string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];
