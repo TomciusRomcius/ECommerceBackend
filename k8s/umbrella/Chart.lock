@@ -29,11 +29,17 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 18.1.2
+- name: keycloak
+  repository: https://charts.bitnami.com/bitnami
+  version: 25.2.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.1.2
 - name: kafka
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 30.1.7
 - name: nginx-ingress
   repository: oci://ghcr.io/nginx/charts
   version: 2.3.1
-digest: sha256:00d05b8fbf102e440d48b26c5cab0540509c3be9b308d4b4d121812501427cfa
-generated: "2025-11-30T22:56:35.731466032+02:00"
+digest: sha256:64bfbded3ea4d014b509dd73d131c966b3ca88fe1669457dfdb44aff8ff09a80
+generated: "2026-01-11T00:57:52.867740913+02:00"

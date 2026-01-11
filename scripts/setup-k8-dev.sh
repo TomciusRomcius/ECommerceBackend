@@ -48,6 +48,9 @@ kubectl create secret generic product-service-db-secret --from-literal=Database_
 kubectl create secret generic store-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 kubectl create secret generic order-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 kubectl create secret generic payment-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+kubectl create secret generic keycloak-db-secret \
+  --from-literal=user=user >/dev/null 2>&1 \
+  --from-literal=password=password >/dev/null 2>&1
 
 read -p "Enter Stripe API Key: " stripeApiKey
 read -p "Enter Stripe Webhook Secret: " stripeWebhookSecret

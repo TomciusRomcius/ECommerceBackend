@@ -47,6 +47,15 @@ dependencies:
     name: postgresql
     version: 18.1.2
     repository: https://charts.bitnami.com/bitnami
+
+  - alias: keycloak
+    name: keycloak
+    version: 25.2.0
+    repository: https://charts.bitnami.com/bitnami
+  - alias: keycloak-postgres
+    name: postgresql
+    version: 18.1.2
+    repository: https://charts.bitnami.com/bitnami
  
   - name: kafka
     version: 30.1.7

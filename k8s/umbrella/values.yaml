@@ -172,6 +172,43 @@ user-service-postgres:
       accessModes:
         - ReadWriteOnce
 
+keycloak-postgres:
+  image:
+    repository: bitnamilegacy/postgresql
+  volumePermissions:
+      enabled: true
+  auth:
+    database: postgres
+    existingSecret: keycloak-db-secret
+    secretKeys:
+      adminPasswordKey: Database__Password
+  fullnameOverride: keycloak-postgres
+  primary:
+    persistence:
+      storageClass: standard
+      size: 5Gi
+      accessModes:
+        - ReadWriteOnce
+
+keycloak:
+  image:
+    repository: bitnamilegacy/keycloak
+  auth:
+    existingSecret: keycloak-secret
+    passwordSecretKey: password
+  postgresql.enabled: true
+  externalDatabase:
+    host: "keycloak-postgres"
+    port: 5432
+    user: keycloak
+    database: keycloak
+    existingSecret: keycloak-db-secret
+    existingSecretUserKey: user
+    existingSecretPasswordKey: password
+  ingress:
+    enabled: true
+    hostname: 
+  proxyHeaders: "xforwarded"
 kafka:
   fullnameOverride: kafka
   clusterId: 3f6c7185-aafc-4fc0-9431-e7295b3b1ec0
