@@ -47,7 +47,7 @@ public class CartController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddItem([FromBody] RequestAddItemDto addItemDto)
     {
-        string userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)!.Value;
+        string userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
 
         ResultError? error = await _mediator.Send(new AddItemToCartCommand(
             new CartProductEntity(userId, addItemDto.ProductId, addItemDto.StoreLocationId, addItemDto.Quantity)
