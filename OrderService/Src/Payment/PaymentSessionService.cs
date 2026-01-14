@@ -1,10 +1,9 @@
 ﻿using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using OrderService.Payment;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder
+namespace OrderService.Payment
 {
     public class PaymentSessionService : IPaymentSessionService
     {
@@ -24,12 +23,15 @@ namespace OrderService.InitializeOrder
             _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
             _logger.LogDebug("Creating session with options: {@PaymentSessionOptions}", sessionOptions);
 
-            var httpContent = new StringContent(JsonUtils.Serialize(sessionOptions), Encoding.UTF8, "application/json");
+            var httpContent = new StringContent(
+                JsonUtils.Serialize(sessionOptions), Encoding.UTF8, "application/json"
+            );
+            
             HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/api/paymentsession", httpContent);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(
-                    "Failed to create payment session. HTTP body: {}. HTTP Status code: {}",
+                    "Failed to create payment session. HTTP body: {HttpBody}. HTTP Status code: {StatusCode}",
                     await response.Content.ReadAsStringAsync(),
                     response.StatusCode
                 );
@@ -55,7 +57,7 @@ namespace OrderService.InitializeOrder
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(
-                    "Failed to get user payment session. UserId: {}. Http body: {}. Http status code: {}.",
+                    "Failed to get user payment session. UserId: {UserId}. Http body: {HttpBody}. Http status code: {StatusCode}.",
                     userId,
                     await response.Content.ReadAsStringAsync(),
                     response.StatusCode

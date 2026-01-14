@@ -1,7 +1,6 @@
-using OrderService.Payment;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Payment;
 
 public class GeneratePaymentSessionOptions
 {
