@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace OrderService.RootController;
+namespace OrderService;
 
 [ApiController]
 [Route("/")]
