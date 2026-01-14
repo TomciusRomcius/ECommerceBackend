@@ -10,6 +10,7 @@ using PaymentService.Infrastructure.src.Interfaces;
 using PaymentService.Infrastructure.src.Services;
 using PaymentService.Infrastructure.src.Utils;
 using System.Reflection;
+using PaymentService.Application.Services;
 
 // TODO: separate initialization logic
 var builder = WebApplication.CreateBuilder(args);
@@ -41,16 +42,12 @@ if (String.IsNullOrWhiteSpace(kafkaServers))
 builder.Services.AddSingleton(Options.Create(new KafkaConfiguration(
     kafkaServers
 )));
-builder.Services.AddOptions<KafkaConfiguration>()
-    .Bind(builder.Configuration.GetSection("Kafka"))
-    .ValidateDataAnnotations();
 builder.Services.AddSingleton<WebhookEventStrategyMapContainer>();
 builder.Services.AddTransient<IWebhookCoordinatorService, StripeWebhookCoordinatorService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddTransient<IPaymentSessionFactory, PaymentSessionFactory>();
 builder.Services.AddTransient<IPaymentSessionPersistenceService, PaymentSessionPersistenceService>();
 builder.Services.AddTransient<IPaymentSessionCoordinator, PaymentSessionCoordinator>();
-
 
 // Get all stripe webhook event handling strategies and register them to the DI container
 Assembly? infrastructureAssembly = Assembly.GetAssembly(typeof(IStripeWebhookStrategy));

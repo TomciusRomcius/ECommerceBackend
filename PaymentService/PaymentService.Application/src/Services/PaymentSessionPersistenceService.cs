@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerceBackend.Utils;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Application.src.Persistence;
 using PaymentService.Domain.src.Entities;
 using PaymentService.Domain.src.Utils;
-using ECommerceBackend.Utils;
 
-namespace PaymentService.Application.src.Services
+namespace PaymentService.Application.Services
 {
     public class PaymentSessionPersistenceService : IPaymentSessionPersistenceService
     {
@@ -16,7 +16,6 @@ namespace PaymentService.Application.src.Services
 
         public PaymentSessionPersistenceService(ILogger<PaymentSessionPersistenceService> logger,
             DatabaseContext databaseContext,
-            IPaymentSessionFactory paymentSessionFactory,
             IPaymentSessionFactory paymentSessionServiceFactory)
         {
             _logger = logger;
@@ -27,7 +26,6 @@ namespace PaymentService.Application.src.Services
         public async Task<ResultError?> CreateAsync(PaymentSessionEntity entity)
         {
             _logger.LogTrace("Entered CreateAsync");
-            _logger.LogDebug("Inserting the payment session into the database: {}", JsonUtils.Serialize(entity));
 
             try
             {
