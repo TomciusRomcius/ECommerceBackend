@@ -70,7 +70,7 @@ addJwtEnvs "UserService"
 
 # Order service
 
-echo "Database__Host=user-service-postgres" > ../OrderService/.env 
+echo "Database__Host=order-service-postgres" > ../OrderService/.env 
 echo "Database__Port=5432" >> ../OrderService/.env 
 echo "Database__Database=postgres" >> ../OrderService/.env 
 echo "Database__Username=postgres" >> ../OrderService/.env 
