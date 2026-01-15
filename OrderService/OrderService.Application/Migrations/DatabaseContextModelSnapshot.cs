@@ -22,11 +22,29 @@ namespace OrderService.Application.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("OrderService.Domain.Entities.ActiveOrderEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "OrderId");
+
+                    b.ToTable("ActiveOrders");
+                });
+
             modelBuilder.Entity("OrderService.Domain.Entities.OrderEntity", b =>
                 {
                     b.Property<Guid>("OrderEntityId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -47,10 +65,6 @@ namespace OrderService.Application.Migrations
                     b.Property<Guid?>("OrderEntityId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ProductDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -63,6 +77,17 @@ namespace OrderService.Application.Migrations
                     b.HasIndex("OrderEntityId");
 
                     b.ToTable("OrderProducts");
+                });
+
+            modelBuilder.Entity("OrderService.Domain.Entities.ActiveOrderEntity", b =>
+                {
+                    b.HasOne("OrderService.Domain.Entities.OrderEntity", "Order")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.OrderProductEntity", b =>

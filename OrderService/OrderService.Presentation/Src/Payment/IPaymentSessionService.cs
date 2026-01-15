@@ -12,6 +12,7 @@ public class GeneratePaymentSessionOptions
 public interface IPaymentSessionService
 {
     /// <returns>Payment intent json</returns>
-    public Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions);
+    public Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(Guid orderId,
+        GeneratePaymentSessionOptions sessionOptions);
     public Task<Result<PaymentSessionModel?>> GetPaymentSessionAsync(Guid userId);
 }

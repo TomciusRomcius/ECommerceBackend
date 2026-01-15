@@ -1,7 +1,9 @@
 ﻿using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using OrderService.Utils;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace OrderService.Payment
 {
@@ -18,13 +20,30 @@ namespace OrderService.Payment
             _logger = logger;
         }
 
-        public async Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(GeneratePaymentSessionOptions sessionOptions)
+        public async Task<Result<PaymentSessionModel>> GeneratePaymentSessionAsync(Guid orderId,
+            GeneratePaymentSessionOptions sessionOptions)
         {
             _logger.LogTrace("Entered PaymentSessionService.GeneratePaymentSessionAsync");
             _logger.LogDebug("Creating session with options: {@PaymentSessionOptions}", sessionOptions);
-
-            var httpContent = new StringContent(
-                JsonUtils.Serialize(sessionOptions), Encoding.UTF8, "application/json"
+            // TODO: make this more efficient.   
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+            string messageSerialized = JsonConvert.SerializeObject(sessionOptions, jsonSerializerSettings);
+            Dictionary<string, object>? messageDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(messageSerialized);
+            if (messageDictionary == null)
+            {
+                return new Result<PaymentSessionModel>([
+                    new ResultError(ResultErrorType.UNKNOWN_ERROR, 
+                    "Failed to format the http request for generating a payment session!")
+                ]);
+            }
+            
+            messageDictionary["orderId"] = orderId;
+            string requestString = JsonConvert.SerializeObject(messageDictionary);
+            StringContent httpContent = new(
+                requestString, Encoding.UTF8, "application/json"
             );
             
             HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/api/paymentsession", httpContent);

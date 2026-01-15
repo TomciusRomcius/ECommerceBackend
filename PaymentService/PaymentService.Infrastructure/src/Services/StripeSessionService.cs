@@ -25,7 +25,8 @@ public class StripeSessionService : IProviderPaymentSessionService
             Currency = "usd",
             Metadata = new Dictionary<string, string>
             {
-                { "userId", sessionOptions.UserId.ToString() }
+                { "userId", sessionOptions.UserId.ToString() },
+                { "orderId", sessionOptions.OrderId.ToString() },
             },
             AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
             {

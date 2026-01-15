@@ -5,13 +5,12 @@ namespace PaymentService.Application.src.Interfaces;
 
 public class GeneratePaymentSessionOptions
 {
-    public required Guid UserId { get; set; }
-
+    public required Guid UserId { get; init; }
+    public required Guid OrderId { get; init; }
     /// <summary>
     ///     Price in cents
     /// </summary>
-    public required int Price { get; set; }
-    // TODO: get rid of magic strings
+    public required int Price { get; init; }
 }
 
 public interface IProviderPaymentSessionService

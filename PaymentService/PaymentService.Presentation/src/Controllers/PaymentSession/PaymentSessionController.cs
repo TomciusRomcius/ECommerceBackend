@@ -34,6 +34,7 @@ namespace PaymentService.Presentation.src.Controllers.PaymentSession
             var options = new GeneratePaymentSessionOptions
             {
                 UserId = dto.UserId,
+                OrderId = dto.OrderId,
                 Price = dto.PriceCents,
             };
             Result<PaymentSessionEntity?> result = await _paymentCoordinator.CreatePaymentSessionAsync(dto.PaymentProvider, options);
