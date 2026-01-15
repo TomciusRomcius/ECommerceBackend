@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.UseCases.Manufacturer.Commands;
 using ProductService.Application.UseCases.Manufacturer.Queries;
+using ProductService.Domain.Entities;
+using ProductService.Domain.Utils;
 using ProductService.Presentation.Controllers.Manufacturers.Dtos;
 using ProductService.Presentation.Utils;
 
@@ -21,9 +23,9 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllManufacturers()
+    public async Task<IActionResult> GetManufacturers([FromQuery] int pageNumber)
     {
-        var manufacturers = await _mediator.Send(new GetAllManufacturersQuery());
+        List<ManufacturerEntity> manufacturers = await _mediator.Send(new GetManufacturersQuery(pageNumber));
         return Ok(manufacturers);
     }
 
@@ -31,10 +33,9 @@ public class ManufacturerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateManufacturer([FromBody] RequestCreateManufacturerDto createProductsDto)
     {
-        var manufacturerResult = await _mediator.Send(new CreateManufacturerCommand(
+        Result<int> manufacturerResult = await _mediator.Send(new CreateManufacturerCommand(
             createProductsDto.Name
         ));
-
         if (manufacturerResult.Errors.Any()) return ControllerUtils.ResultErrorsToResponse(manufacturerResult.Errors);
 
         return Created(nameof(CreateManufacturer), new

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.Services;
 using ProductService.Domain.Entities;
+using ProductService.Domain.Utils;
 using ProductService.Presentation.Controllers.Categories.Dtos;
 using ProductService.Presentation.Utils;
 
@@ -20,9 +21,9 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCategories()
+    public async Task<IActionResult> GetCategories([FromQuery] int pageNumber)
     {
-        var categories = await _categoriesService.GetAllCategories();
+        List<CategoryEntity> categories = await _categoriesService.GetCategoriesAsync(pageNumber);
         return Ok(categories);
     }
 
@@ -30,10 +31,10 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] RequestCreateCategoryDto createCategoryDto)
     {
-        var result = await _categoriesService.CreateCategory(new CategoryEntity(createCategoryDto.Name));
+        Result<int> result = await _categoriesService.CreateCategoryAsync(new CategoryEntity(createCategoryDto.Name));
         if (result.Errors.Any()) return ControllerUtils.ResultErrorToResponse(result.Errors.First());
-
-        var categoryId = result.GetValue();
+        int categoryId = result.GetValue();
+        
         return Created(nameof(CreateCategory), new
         {
             categoryId

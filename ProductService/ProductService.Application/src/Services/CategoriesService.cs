@@ -8,8 +8,8 @@ namespace ProductService.Application.Services;
 
 public interface ICategoriesService
 {
-    public Task<List<CategoryEntity>> GetAllCategories();
-    public Task<Result<int>> CreateCategory(CategoryEntity entity);
+    public Task<List<CategoryEntity>> GetCategoriesAsync(int pageNumber);
+    public Task<Result<int>> CreateCategoryAsync(CategoryEntity entity);
 }
 
 public class CategoriesService : ICategoriesService
@@ -23,16 +23,22 @@ public class CategoriesService : ICategoriesService
         _context = context;
     }
 
-    public async Task<List<CategoryEntity>> GetAllCategories()
+    public async Task<List<CategoryEntity>> GetCategoriesAsync(int pageNumber)
     {
-        _logger.LogTrace("Entered GetAllCategories");
-        // TODO: pagination
-        var result = await _context.Categories.ToListAsync();
-        _logger.LogDebug("Retrieved categories: {}", result);
+        _logger.LogTrace("Entered {FunctionName}", nameof(GetCategoriesAsync));
+        _logger.LogDebug(
+            "Fetching categories, page number: {PageNumber} page size: {PageSize}",
+            pageNumber,
+            DatabaseContext.PageSize
+        );
+        List<CategoryEntity> result = await _context.Categories
+            .Skip(pageNumber * DatabaseContext.PageSize)
+            .Take(DatabaseContext.PageSize)
+            .ToListAsync();
         return result;
     }
 
-    public async Task<Result<int>> CreateCategory(CategoryEntity entity)
+    public async Task<Result<int>> CreateCategoryAsync(CategoryEntity entity)
     {
         _logger.LogTrace("Entered CreateCategory");
         _logger.LogDebug("Creating category: {}", entity.Name);
@@ -42,7 +48,7 @@ public class CategoriesService : ICategoriesService
         try
         {
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Succesfully created category: {}", entity);
+            _logger.LogInformation("Successfully created category: {@Category}", entity);
         }
         catch (Exception ex)
         {

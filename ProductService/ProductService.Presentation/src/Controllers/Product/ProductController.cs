@@ -22,9 +22,20 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProducts([FromBody] RequestGetProductsDto dto)
+    public async Task<IActionResult> GetProducts([FromQuery] int? pageNumber, [FromBody] RequestGetProductsDto dto)
     {
-        List<ProductEntity> products = await _mediator.Send(new GetProductsQuery(dto.ProductIds ?? []));
+        List<ProductEntity> products;
+        if (dto.ProductIds != null && dto.ProductIds.Any())
+        {
+            products = await _mediator.Send(new GetProductsByIdQuery(dto.ProductIds ?? []));
+        }
+        
+        else if (pageNumber != null)
+        {
+            products = await _mediator.Send(new GetProductsQuery(pageNumber.Value));
+        }
+        
+        else return BadRequest("Page number or product ids were not provided!");
         return Ok(products);
     }
 

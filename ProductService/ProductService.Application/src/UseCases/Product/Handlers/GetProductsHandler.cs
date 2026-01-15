@@ -10,9 +10,9 @@ namespace ProductService.Application.UseCases.Product.Handlers;
 public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<ProductEntity>>
 {
     private readonly DatabaseContext _context;
-    private readonly ILogger<GetProductsHandler> _logger;
+    private readonly ILogger<GetProductsByIdHandler> _logger;
 
-    public GetProductsHandler(ILogger<GetProductsHandler> logger, DatabaseContext context)
+    public GetProductsHandler(ILogger<GetProductsByIdHandler> logger, DatabaseContext context)
     {
         _logger = logger;
         _context = context;
@@ -20,16 +20,16 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<Product
 
     public async Task<List<ProductEntity>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogTrace("Entered Handle");
-        // TODO: pagination
-        List<ProductEntity> products;
-        if (request.ProductIds.Any())
-        {
-            products = await _context.Products
-                .Where(p => request.ProductIds.Contains(p.ProductId))
-                .ToListAsync();
-        }
-        else products = await _context.Products.ToListAsync(cancellationToken);
+        _logger.LogTrace("Entered {FunctionName}", nameof(GetProductsHandler));
+        _logger.LogDebug(
+            "Fetching products, page number: {PageNumber} page size: {PageSize}",
+            request.PageNumber,
+            DatabaseContext.PageSize
+        );
+        List<ProductEntity> products = await _context.Products
+            .Skip(request.PageNumber * DatabaseContext.PageSize)
+            .Take(DatabaseContext.PageSize)
+            .ToListAsync(cancellationToken: cancellationToken);
         
         _logger.LogDebug("Retrieved products: {@Products}", products);
         return products;

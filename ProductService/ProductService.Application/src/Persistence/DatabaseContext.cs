@@ -12,6 +12,7 @@ public class DatabaseContext : DbContext
         _postgresConfiguration = postgresConfiguration;
     }
 
+    public const int PageSize = 20;
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<ManufacturerEntity> Manufacturers { get; set; }
