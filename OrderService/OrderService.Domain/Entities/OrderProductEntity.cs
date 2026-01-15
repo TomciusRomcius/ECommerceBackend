@@ -11,8 +11,6 @@ public class OrderProductEntity
     [Required]
     public required string ProductName { get; set; }
     [Required]
-    public required string ProductDescription { get; set; }
-    [Required]
     [Range(0, Int32.MaxValue)]
     public required int Quantity { get; set; }
 }
