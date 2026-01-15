@@ -7,16 +7,14 @@ namespace OrderService.Application.Persistence;
 
 public class DatabaseContext : DbContext
 {
+    private readonly IOptions<PostgresConfiguration> _postgresConfiguration;
+
+    public DatabaseContext(IOptions<PostgresConfiguration> postgresConfiguration) =>
+        _postgresConfiguration = postgresConfiguration;
+
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderProductEntity> OrderProducts { get; set; }
     
-    private readonly IOptions<PostgresConfiguration> _postgresConfiguration;
-    
-    public DatabaseContext(IOptions<PostgresConfiguration> postgresConfiguration)
-    {
-        _postgresConfiguration = postgresConfiguration;
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         PostgresConfiguration conf = _postgresConfiguration.Value;
@@ -33,5 +31,9 @@ public class DatabaseContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<OrderProductEntity>()
             .HasKey(x => new { x.OrderId, x.ProductId });
+        
+        modelBuilder.Entity<OrderEntity>()
+            .Property(x => x.CreatedAt)
+            .HasDefaultValueSql("getdate()");
     }
 }
