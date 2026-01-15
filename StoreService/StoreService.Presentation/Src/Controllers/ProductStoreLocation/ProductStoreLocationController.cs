@@ -22,17 +22,9 @@ public class ProductStoreLocationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProductsFromStore([FromBody] GetProductsFromStoreDto getProductsFromStoreDto)
+    public async Task<IActionResult> GetProductsFromStore([FromQuery] int storeLocationId, [FromQuery] int pageNumber)
     {
-        var isDetailed = HttpContext.Request.Query["detailed"].FirstOrDefault() == "1";
-
-        object result;
-        if (isDetailed)
-            result = await _mediator.Send(new GetProductsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
-
-        else
-            result = await _mediator.Send(new GetProductIdsFromStoreQuery(getProductsFromStoreDto.StoreLocationId));
-
+        List<ProductStoreLocationEntity> result = await _mediator.Send(new GetProductsFromStoreQuery(storeLocationId, pageNumber));
         return Ok(result);
     }
 

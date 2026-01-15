@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreService.Application.UseCases.StoreLocation.Commands;
 using StoreService.Application.UseCases.StoreLocation.Queries;
+using StoreService.Domain.Entities;
 using StoreService.Domain.Models;
 using StoreService.Presentation.Controllers.StoreLocation.dtos;
 
@@ -21,9 +22,9 @@ public class StoreLocation : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetLocations()
+    public async Task<IActionResult> GetLocations([FromQuery] int pageNumber)
     {
-        var result = await _mediator.Send(new GetAllLocationsQuery());
+        List<StoreLocationEntity> result = await _mediator.Send(new GetStoreLocationsQuery(pageNumber));
         return Ok(result);
     }
 

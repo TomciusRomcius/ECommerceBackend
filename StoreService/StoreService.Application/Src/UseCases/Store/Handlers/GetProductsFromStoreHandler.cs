@@ -21,16 +21,17 @@ public class GetProductsFromStoreHandler : IRequestHandler<GetProductsFromStoreQ
     public async Task<List<ProductStoreLocationEntity>> Handle(GetProductsFromStoreQuery request,
         CancellationToken cancellationToken)
     {
-        _logger.LogTrace("Entered Handle");
-        IQueryable<ProductStoreLocationEntity> query = from psl in _context.ProductStoreLocations
-            where psl.StoreLocationId == request.StoreLocationId
-            select new ProductStoreLocationEntity(
-                psl.StoreLocationId,
-                psl.ProductId,
-                psl.Stock
-            );
-
-        var result = await query.ToListAsync();
+        _logger.LogTrace("Entered {FunctionName}", nameof(Handle));
+        _logger.LogDebug(
+            "Fetching products in store {StoreLocationId}, page number: {PageNumber} page size: {PageSize}",
+            request.StoreLocationId,
+            request.PageNumber,
+            DatabaseContext.PageSize
+        );
+        List<ProductStoreLocationEntity> result = await _context.ProductStoreLocations
+            .Skip(request.PageNumber * DatabaseContext.PageSize)
+            .Take(DatabaseContext.PageSize)
+            .ToListAsync(cancellationToken: cancellationToken);
 
         _logger.LogDebug(
             "Retrieved products from store location id: {StoreLocationId}: {@Products}",

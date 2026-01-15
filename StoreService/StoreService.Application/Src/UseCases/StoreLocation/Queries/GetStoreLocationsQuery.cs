@@ -3,4 +3,4 @@ using StoreService.Domain.Entities;
 
 namespace StoreService.Application.UseCases.StoreLocation.Queries;
 
-public record GetAllLocationsQuery : IRequest<List<StoreLocationEntity>>;
+public record GetStoreLocationsQuery(int PageNumber) : IRequest<List<StoreLocationEntity>>;

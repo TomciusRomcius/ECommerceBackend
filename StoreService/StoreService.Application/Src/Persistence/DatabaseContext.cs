@@ -7,6 +7,7 @@ namespace StoreService.Application.Persistence;
 
 public class DatabaseContext : DbContext
 {
+    public const int PageSize = 20;
     private IOptions<PostgresConfiguration> _postgresConfiguration;
 
     public DatabaseContext(IOptions<PostgresConfiguration> postgresConfiguration)
