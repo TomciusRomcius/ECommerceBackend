@@ -7,6 +7,8 @@ services:
       [
         "dotnet",
         "watch",
+        "--project",
+        "OrderService.Presentation",
       ]
     ports:
       - "8085:8080"
@@ -36,28 +38,40 @@ services:
     volumes:
       - ./Src:/app/Src
       - ./Properties:/app/Properties
-  # order-service-postgres-migrate:
-  #   build:
-  #     dockerfile: Dockerfile
-  #     target: build
-  #   command:
-  #     [
-  #       "dotnet",
-  #       "ef",
-  #       "database",
-  #       "update",
-  #     ]
-  #   environment:
-  #     Database__Host: order-service-postgres
-  #     Database__Database: ${Database__Database}
-  #     Database__Username: ${Database__Username}
-  #     Database__Password: ${Database__Password}
-  #   volumes:
-  #     - ./Src:/app/Src
-  #     - ./Properties:/app/Properties
   order-service-postgres:
     image: postgres:17
     environment:
       POSTGRES_USER: ${Database__Username}
       POSTGRES_PASSWORD: ${Database__Password}
       POSTGRES_DB: ${Database__Database}
+
+  order-service-postgres-migrate:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "ef",
+        "database",
+        "update",
+        "--project",
+        "OrderService.Application",
+        "--",
+        "--host=${Database__Host}",
+        "--database=${Database__Database}",
+        "--username=${Database__Username}",
+        "--password=${Database__Password}"
+      ]
+    restart: on-failure
+    environment:
+      Database__Host: store-service-postgres
+      Database__Database: ${Database__Database}
+      Database__Username: ${Database__Username}
+      Database__Password: ${Database__Password}
+    volumes:
+      - ./OrderService.Presentation/Src:/app/OrderService.Presentation/Src
+      - ./OrderService.Infrastructure/Src:/app/OrderService.Infrastructure/Src
+      - ./OrderService.Application/Src:/app/OrderService.Application/Src
+      - ./OrderService.Application/Migrations:/app/OrderService.Application/Migrations
+      - ./OrderService.Domain/Src:/app/OrderService.Domain/Src

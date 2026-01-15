@@ -1,5 +1,7 @@
 using System.Reflection;
 using ECommerceBackend.Utils.Auth;
+using ECommerceBackend.Utils.Database;
+using OrderService.Application.Persistence;
 using OrderService.InitializeOrder;
 using OrderService.Payment;
 using OrderService.Utils;
@@ -17,6 +19,11 @@ builder.Services.AddScoped<IOrderService, OrderService.InitializeOrder.OrderServ
 builder.Services.AddScoped<IPaymentSessionService, PaymentSessionService>();
 builder.Services.AddScoped<IOrderPriceCalculator, OrderPriceCalculator>();
 builder.Services.AddScoped<IUserCartService, UserCartService>();
+builder.Services.AddOptions<PostgresConfiguration>()
+    .Bind(builder.Configuration.GetSection("Database"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddDbContext<DatabaseContext>();
 
 builder.Services.AddOptions<MicroserviceNetworkConfig>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))

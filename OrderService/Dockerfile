@@ -16,7 +16,10 @@ WORKDIR /app
 RUN dotnet tool install --global dotnet-ef --version 9.0.11
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-COPY . .
+COPY ["OrderService.sln", "OrderService.sln"]
+COPY ["OrderService.Presentation/OrderService.Presentation.csproj", "OrderService.Presentation/OrderService.Presentation.csproj"]
+COPY ["OrderService.Application/OrderService.Application.csproj", "OrderService.Application/OrderService.Application.csproj"]
+COPY ["OrderService.Domain/OrderService.Domain.csproj", "OrderService.Domain/OrderService.Domain.csproj"]
 
 RUN dotnet restore
 COPY . .
