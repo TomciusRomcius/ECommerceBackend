@@ -8,6 +8,6 @@ public class OrderEntity
     [Required]
     public required Guid UserId { get; set; }
     [Required]
-    public required List<OrderProductEntity> OrderProducts { get; set; }
+    public IEnumerable<OrderProductEntity>? OrderProducts { get; set; }
     public DateTime CreatedAt { get; set; }
 }
