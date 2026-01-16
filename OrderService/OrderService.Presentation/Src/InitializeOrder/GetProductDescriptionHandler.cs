@@ -24,10 +24,13 @@ public class GetProductDescriptionHandler : IRequestHandler<GetProductDescriptio
         CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered Handle");
-        HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, $"{_microserviceNetworkConfig.ProductServiceUrl}/product");
-        var reqBody = new { };
+        HttpRequestMessage message = new HttpRequestMessage(
+            HttpMethod.Get,
+            $"{_microserviceNetworkConfig.ProductServiceUrl}/product"
+        );
+        var reqBody = new { ProductIds = request.ProductIds };
         message.Content = JsonContent.Create(reqBody);
-        HttpResponseMessage res = await _httpClient.SendAsync(message);
+        HttpResponseMessage res = await _httpClient.SendAsync(message, cancellationToken);
         if (!res.IsSuccessStatusCode)
         {
             _logger.LogError(
