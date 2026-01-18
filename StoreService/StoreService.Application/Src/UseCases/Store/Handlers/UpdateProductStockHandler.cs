@@ -6,12 +6,12 @@ using StoreService.Application.UseCases.Store.Commands;
 
 namespace StoreService.Application.UseCases.Store.Handlers;
 
-public class UpdateProductsStockHandler : IRequestHandler<UpdateProductStockCommand>
+public class UpdateProductStockHandler : IRequestHandler<UpdateProductStockCommand>
 {
     private readonly DatabaseContext _context;
-    private readonly ILogger<UpdateProductsStockHandler> _logger;
+    private readonly ILogger<UpdateProductStockHandler> _logger;
 
-    public UpdateProductsStockHandler(ILogger<UpdateProductsStockHandler> logger, DatabaseContext context)
+    public UpdateProductStockHandler(ILogger<UpdateProductStockHandler> logger, DatabaseContext context)
     {
         _context = context;
         _logger = logger;
