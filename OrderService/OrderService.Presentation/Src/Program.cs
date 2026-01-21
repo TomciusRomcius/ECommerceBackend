@@ -15,7 +15,7 @@ builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(
     )
 );
 
-builder.Services.AddScoped<IOrderService, OrderService.InitializeOrder.OrderService>();
+builder.Services.AddScoped<IOrderFlowService, OrderService.InitializeOrder.OrderFlowService>();
 builder.Services.AddScoped<IPaymentSessionService, PaymentSessionService>();
 builder.Services.AddScoped<IOrderPriceCalculator, OrderPriceCalculator>();
 builder.Services.AddScoped<IUserCartService, UserCartService>();
