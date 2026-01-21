@@ -3,7 +3,7 @@ using OrderService.Utils;
 
 namespace OrderService.InitializeOrder;
 
-public interface IOrderService
+public interface IOrderFlowService
 {
     public Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider);
 }

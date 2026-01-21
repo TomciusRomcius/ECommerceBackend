@@ -5,16 +5,16 @@ using OrderService.Utils;
 
 namespace OrderService.InitializeOrder;
 
-public class OrderService : IOrderService
+public class OrderFlowService : IOrderFlowService
 {
     private readonly DatabaseContext _dbContext;
-    private readonly ILogger<OrderService> _logger;
+    private readonly ILogger<OrderFlowService> _logger;
     private readonly IOrderPriceCalculator _orderPriceCalculator;
     private readonly IPaymentSessionService _paymentSessionService;
     private readonly IUserCartService _userCartService;
 
-    public OrderService(
-        ILogger<OrderService> logger,
+    public OrderFlowService(
+        ILogger<OrderFlowService> logger,
         IPaymentSessionService paymentSessionService,
         IOrderPriceCalculator orderPriceCalculator,
         IUserCartService userCartService,
@@ -33,7 +33,7 @@ public class OrderService : IOrderService
     public async Task<Result<PaymentSessionModel>> CreateOrderPaymentSession(Guid userId, PaymentProvider paymentProvider)
     {
         Guid orderId = Guid.NewGuid();
-        
+
         _logger.LogTrace("Entered CreateOrderPaymentSession");
         _logger.LogDebug("Creating order payment session for user: {UserId}", userId);
 
@@ -46,7 +46,7 @@ public class OrderService : IOrderService
         }
 
         IEnumerable<CartProductModel> cartProducts = cartProductsResult.GetValue();
-        
+
         decimal price = _orderPriceCalculator.CalculatePrice(cartProducts);
 
         Result<PaymentSessionModel> intentSession = await _paymentSessionService.GeneratePaymentSessionAsync(
@@ -73,7 +73,10 @@ public class OrderService : IOrderService
 
         IEnumerable<OrderProductEntity> orderProducts = cartProducts.Select(cp => new OrderProductEntity
         {
-            OrderId = orderId, ProductId = cp.ProductId, ProductName = "TODO", Quantity = cp.Quantity
+            OrderId = orderId,
+            ProductId = cp.ProductId,
+            ProductName = "TODO",
+            Quantity = cp.Quantity
         });
 
         OrderEntity order = new() { OrderEntityId = orderId, UserId = userId };

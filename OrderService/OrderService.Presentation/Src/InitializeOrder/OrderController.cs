@@ -10,9 +10,9 @@ namespace OrderService.InitializeOrder;
 [Route("[controller]")]
 public class OrderController : ControllerBase
 {
-    private readonly IOrderService _orderService;
+    private readonly IOrderFlowService _orderService;
 
-    public OrderController(IOrderService orderService)
+    public OrderController(IOrderFlowService orderService)
     {
         _orderService = orderService;
     }
