@@ -75,6 +75,7 @@ public class OrderFlowService : IOrderFlowService
         {
             OrderId = orderId,
             ProductId = cp.ProductId,
+            StoreLocationId = cp.StoreLocationId,
             ProductName = "TODO",
             Quantity = cp.Quantity
         });
