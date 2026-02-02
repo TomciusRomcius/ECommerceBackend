@@ -5,6 +5,7 @@ using OrderService.Application.Persistence;
 using OrderService.InitializeOrder;
 using OrderService.Payment;
 using OrderService.Utils;
+using OrderService.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ builder.Services.AddApplicationAuth(builder);
 builder.Services.AddBackgroundJwtRefresher();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IOrderService, OrderService.Application.Services.OrderService>();
 
 var app = builder.Build();
 

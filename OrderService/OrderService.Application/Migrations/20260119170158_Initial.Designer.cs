@@ -12,7 +12,7 @@ using OrderService.Application.Persistence;
 namespace OrderService.Application.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260115173631_Initial")]
+    [Migration("20260119170158_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -30,6 +30,11 @@ namespace OrderService.Application.Migrations
                     b.Property<Guid>("OrderEntityId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -49,10 +54,6 @@ namespace OrderService.Application.Migrations
 
                     b.Property<Guid?>("OrderEntityId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ProductDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("ProductName")
                         .IsRequired()

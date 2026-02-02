@@ -16,7 +16,8 @@ namespace OrderService.Application.Migrations
                 columns: table => new
                 {
                     OrderEntityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -30,7 +31,6 @@ namespace OrderService.Application.Migrations
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     ProductName = table.Column<string>(type: "text", nullable: false),
-                    ProductDescription = table.Column<string>(type: "text", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     OrderEntityId = table.Column<Guid>(type: "uuid", nullable: true)
                 },

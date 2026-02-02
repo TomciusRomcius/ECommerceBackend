@@ -14,7 +14,7 @@ public class DatabaseContext : DbContext
 
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderProductEntity> OrderProducts { get; set; }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         PostgresConfiguration conf = _postgresConfiguration.Value;
@@ -31,9 +31,9 @@ public class DatabaseContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<OrderProductEntity>()
             .HasKey(x => new { x.OrderId, x.ProductId });
-        
+
         modelBuilder.Entity<OrderEntity>()
             .Property(x => x.CreatedAt)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("now()");
     }
 }
