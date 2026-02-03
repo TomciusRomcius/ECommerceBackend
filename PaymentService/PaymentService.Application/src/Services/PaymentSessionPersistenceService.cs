@@ -36,7 +36,8 @@ namespace PaymentService.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError("Caught an exception when trying to save payment session to the database: {}", ex);
-                return new ResultError(ResultErrorType.UNKNOWN_ERROR, "Unknown error occurred when trying to save payment session to the database");
+                return new ResultError(ResultErrorType.UNKNOWN_ERROR,
+                    "Unknown error occurred when trying to save payment session to the database");
             }
 
             return null;
@@ -53,6 +54,20 @@ namespace PaymentService.Application.Services
 
             _logger.LogDebug("Retrieved payment session: {}", JsonUtils.Serialize(result));
             return result;
+        }
+
+        public async Task<ResultError?> DeleteAsync(Guid userId)
+        {
+            _logger.LogTrace("Entered {MethodName}", nameof(DeleteAsync));
+            _logger.LogInformation("Deleting the payment session of user {UserId}", userId.ToString());
+
+            int rowsAffected = await _databaseContext.PaymentSessions
+                .Where(x => x.UserId == userId)
+                .ExecuteDeleteAsync();
+
+            return rowsAffected != 1
+                ? new ResultError(ResultErrorType.INVALID_OPERATION_ERROR, "User does not exist!")
+                : null;
         }
     }
 }

@@ -11,6 +11,9 @@ using PaymentService.Infrastructure.src.Services;
 using PaymentService.Infrastructure.src.Utils;
 using System.Reflection;
 using PaymentService.Application.Services;
+using PaymentService.Infrastructure.Interfaces;
+using PaymentService.Infrastructure.Services;
+using PaymentService.Presentation.BackgroundServices;
 
 // TODO: separate initialization logic
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +51,8 @@ builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddTransient<IPaymentSessionFactory, PaymentSessionFactory>();
 builder.Services.AddTransient<IPaymentSessionPersistenceService, PaymentSessionPersistenceService>();
 builder.Services.AddTransient<IPaymentSessionCoordinator, PaymentSessionCoordinator>();
+builder.Services.AddScoped<IChargeSucceededConsumer, ChargeSucceededConsumer>();
+builder.Services.AddHostedService<ChargeSucceededBackgroundService>();
 
 // Get all stripe webhook event handling strategies and register them to the DI container
 Assembly? infrastructureAssembly = Assembly.GetAssembly(typeof(IStripeWebhookStrategy));

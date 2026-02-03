@@ -7,5 +7,6 @@ namespace PaymentService.Application.src.Interfaces
     {
         Task<ResultError?> CreateAsync(PaymentSessionEntity entity);
         Task<PaymentSessionEntity?> GetUserSessionAsync(Guid userId);
+        Task<ResultError?> DeleteAsync(Guid userId);
     }
 }
