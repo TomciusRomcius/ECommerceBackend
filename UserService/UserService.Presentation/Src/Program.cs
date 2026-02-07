@@ -1,12 +1,10 @@
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
 using EventSystemHelper.Kafka.Utils;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using UserService.Application;
 using UserService.Application.Persistence;
 using UserService.Application.Services;
-using UserService.Presentation.Background;
 using ChargeSucceededBackgroundService = UserService.Application.Services.ChargeSucceededBackgroundService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -22,7 +20,7 @@ builder.Services.AddOptions<KafkaConfiguration>()
     .ValidateDataAnnotations();
 
 string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];
-if (String.IsNullOrWhiteSpace(kafkaServers))
+if (string.IsNullOrWhiteSpace(kafkaServers))
 {
     throw new InvalidDataException("Kafka__Servers not defined");
 }
