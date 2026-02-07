@@ -1,6 +1,7 @@
 using System.Data;
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
+using EventSystemHelper.Kafka.Utils;
 using Microsoft.Extensions.Options;
 using StoreService.Application;
 using StoreService.Application.Interfaces;
@@ -37,6 +38,11 @@ builder.Services.AddApplicationAuth(builder);
 builder.Services.AddScoped<IOrderDetailsService, OrderDetailsService>();
 builder.Services.AddScoped<IChargeSucceededConsumer, ChargeSucceededConsumer>();
 builder.Services.AddHostedService<BackgroundChargeSucceededConsumer>();
+
+// Init kafka
+string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];
+ArgumentException.ThrowIfNullOrWhiteSpace(kafkaServers);
+builder.Services.AddSingleton<IOptions<KafkaConfiguration>>(Options.Create<KafkaConfiguration>(new KafkaConfiguration(kafkaServers)));
 
 var app = builder.Build();
 
