@@ -1,5 +1,8 @@
 using System.Net;
 using ECommerceBackend.Utils.Database;
+using ECommerceBackend.Utils.Jwt;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using StoreService.Application.Services;
@@ -32,7 +35,6 @@ public class OrderDetailsServiceTest
             "application/json")
         };
 
-
         Mock<HttpMessageHandler> mockHttpMessageHandler = new();
         mockHttpMessageHandler
             .Protected()
@@ -43,17 +45,17 @@ public class OrderDetailsServiceTest
 
         HttpClient httpClient = new(mockHttpMessageHandler.Object);
 
-        OrderDetailsService service = new(httpClient,
-            new MicroserviceHosts
+        OrderDetailsService service = new(new Mock<ILogger<OrderDetailsService>>().Object ,httpClient,
+            Options.Create(new MicroserviceHosts
             {
                 OrderServiceUrl = "http://placeholder",
                 PaymentServiceUrl = "http://placeholder",
                 ProductServiceUrl = "http://placeholder",
                 StoreServiceUrl = "http://placeholder",
                 UserServiceUrl = "http://placeholder"
-            });
+            }), new JwtTokenReader(new InternalJwtTokenContainer()));
 
-        GetOrdersResponseType result = await service.FetchAsync("", "", CancellationToken.None);
+        var result = await service.FetchAsync("", "", CancellationToken.None);
         
         Assert.NotNull(result);
         Assert.Single(result.OrderProducts);

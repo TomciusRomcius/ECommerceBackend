@@ -31,13 +31,20 @@ else if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] != "Production")
 else
     throw new DataException("Configuration Database properties are not defined!");
 
+builder.Services.AddHttpClient();
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddControllers();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(MediatREntryPoint).Assembly));
 builder.Services.AddApplicationAuth(builder);
 builder.Services.AddScoped<IOrderDetailsService, OrderDetailsService>();
 builder.Services.AddScoped<IChargeSucceededConsumer, ChargeSucceededConsumer>();
+builder.Services.AddBackgroundJwtRefresher();
 builder.Services.AddHostedService<BackgroundChargeSucceededConsumer>();
+
+builder.Services.AddOptions<MicroserviceHosts>()
+    .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 // Init kafka
 string? kafkaServers = builder.Configuration.GetSection("Kafka")["Servers"];

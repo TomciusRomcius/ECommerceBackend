@@ -3,30 +3,33 @@ using StoreService.Application.Services;
 
 namespace StoreService.Presentation.Jobs;
 
-public class BackgroundChargeSucceededConsumer : IHostedService
+public class BackgroundChargeSucceededConsumer : BackgroundService
 {
     private readonly ILogger<BackgroundChargeSucceededConsumer> _logger;
-    private readonly IChargeSucceededConsumer _chargeSucceededConsumer;
+    private readonly IServiceProvider _serviceProvider;
 
-    public BackgroundChargeSucceededConsumer(ILogger<BackgroundChargeSucceededConsumer> logger, IChargeSucceededConsumer chargeSucceededConsumer)
+    public BackgroundChargeSucceededConsumer(ILogger<BackgroundChargeSucceededConsumer> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
-        _chargeSucceededConsumer = chargeSucceededConsumer;
+        _serviceProvider = serviceProvider;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         return Task.Run(async () =>
-        {
-            while (!cancellationToken.IsCancellationRequested)
             {
-                await _chargeSucceededConsumer.TryConsumeAndHandle(cancellationToken);
-            }
-        },
-        cancellationToken);
+                using IServiceScope scope = _serviceProvider.CreateScope();
+                IChargeSucceededConsumer chargeSucceededConsumer = scope.ServiceProvider.GetRequiredService<IChargeSucceededConsumer>();
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    await chargeSucceededConsumer.TryConsumeAndHandle(stoppingToken);
+                }
+            },
+            stoppingToken);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public override Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
