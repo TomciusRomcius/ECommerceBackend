@@ -3,7 +3,7 @@ using ECommerceBackend.EventTypes;
 using EventSystemHelper.Kafka.Services;
 using EventSystemHelper.Kafka.Utils;
 using Microsoft.Extensions.Logging;
-using PaymentService.Application.Services;
+using Microsoft.Extensions.Options;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Domain.src.Utils;
 using PaymentService.Infrastructure.Interfaces;
@@ -19,12 +19,12 @@ public class ChargeSucceededConsumer : IChargeSucceededConsumer
 
     public ChargeSucceededConsumer(
         ILogger<ChargeSucceededConsumer> logger,
-        KafkaConfiguration kafkaConfiguration,
-        PaymentSessionPersistenceService paymentSessionPersistenceService
+        IOptions<KafkaConfiguration> kafkaConfiguration,
+        IPaymentSessionPersistenceService paymentSessionPersistenceService
     )
     {
         _logger = logger;
-        _kafkaConfiguration = kafkaConfiguration;
+        _kafkaConfiguration = kafkaConfiguration.Value;
         _paymentSessionPersistenceService = paymentSessionPersistenceService;
     }
 
@@ -32,22 +32,30 @@ public class ChargeSucceededConsumer : IChargeSucceededConsumer
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            KafkaEventConsumer consumer = new(_kafkaConfiguration,
-                AutoOffsetReset.Latest,
-                "payment-service",
-                TopicName);
-
-            ChargeSucceededEvent? ev = consumer.Consume<ChargeSucceededEvent>(cancellationToken);
-            if (ev is null)
+            try
             {
-                _logger.LogError("Failed to parse the charge succeeded event!");
-                continue;
+                KafkaEventConsumer consumer = new(_kafkaConfiguration,
+                    AutoOffsetReset.Latest,
+                    "payment-service",
+                    TopicName);
+                
+                ChargeSucceededEvent? ev = consumer.Consume<ChargeSucceededEvent>(cancellationToken);
+                if (ev is null)
+                {
+                    _logger.LogError("Failed to parse the charge succeeded event!");
+                    continue;
+                }
+
+                ResultError? error = await _paymentSessionPersistenceService.DeleteAsync(new Guid(ev.UserId));
+                if (error is not null)
+                {
+                    _logger.LogError("Failed to delete the payment session of the user. Error: {@Error}", error);
+                }
             }
 
-            ResultError? error = await _paymentSessionPersistenceService.DeleteAsync(new Guid(ev.UserId));
-            if (error is not null)
+            catch (Exception ex)
             {
-                _logger.LogError("Failed to delete the payment session of the user. Error: {@Error}", error);
+                _logger.LogError(ex, "Failed to parse the charge succeeded event! Exception: {@Exception}", ex);
             }
         }
     }

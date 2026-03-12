@@ -2,17 +2,15 @@ using PaymentService.Infrastructure.Interfaces;
 
 namespace PaymentService.Presentation.BackgroundServices;
 
-public class ChargeSucceededBackgroundService : BackgroundService
+public class ChargeSucceededBackgroundService(IServiceProvider serviceProvider) : BackgroundService
 {
-    private readonly IChargeSucceededConsumer _chargeSucceededConsumer;
-
-    public ChargeSucceededBackgroundService(IChargeSucceededConsumer chargeSucceededConsumer)
-    {
-        _chargeSucceededConsumer = chargeSucceededConsumer;
-    }
-
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        return Task.Run(async () => await _chargeSucceededConsumer.StartAsync(stoppingToken), stoppingToken);
+        return Task.Run(async () =>
+        {
+            using var scope = serviceProvider.CreateScope();
+            IChargeSucceededConsumer consumer = scope.ServiceProvider.GetRequiredService<IChargeSucceededConsumer>();
+            await consumer.StartAsync(stoppingToken);
+        }, stoppingToken);
     }
 }
