@@ -1,6 +1,7 @@
 using ECommerceBackend.Utils.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Application.Services;
 using OrderService.Domain.Entities;
 
 namespace OrderService.Presentation.Order;
@@ -9,9 +10,9 @@ namespace OrderService.Presentation.Order;
 [Route("[controller]")]
 public class OrderController : ControllerBase
 {
-    private readonly Application.Services.OrderService _orderService;
+    private readonly IOrderService _orderService;
 
-    public OrderController(Application.Services.OrderService orderService)
+    public OrderController(IOrderService orderService)
     {
         _orderService = orderService;
     }
