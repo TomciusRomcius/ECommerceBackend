@@ -19,7 +19,8 @@ services:
       Logging__LogLevel__Default: Trace
       Logging__LogLevel__Microsoft: Warning
       Logging__LogLevel__Microsoft.AspNetCore: Warning
-      Logging__LogLevel__Microsoft.AspNetCore.Authentication: Debug
+      Logging__LogLevel__Microsoft.AspNetCore.Authentication: Trace
+      Logging__LogLevel__Microsoft.AspNetCore.Authentication.JwtBearer: Trace
       Database__Host: order-service-postgres
       Database__Database: ${Database__Database}
       Database__Username: ${Database__Username}
@@ -36,7 +37,10 @@ services:
       MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}
       Kafka__Servers: kafka:9092
     volumes:
-      - ./Src:/app/Src
+      - ./OrderService.Presentation/Src:/app/OrderService.Presentation/Src
+      - ./OrderService.Infrastructure/Src:/app/OrderService.Infrastructure/Src
+      - ./OrderService.Application/Src:/app/OrderService.Application/Src
+      - ./OrderService.Domain/Src:/app/OrderService.Domain/Src
       - ./Properties:/app/Properties
   order-service-postgres:
     image: postgres:17

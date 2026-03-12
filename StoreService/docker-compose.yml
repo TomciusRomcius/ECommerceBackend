@@ -29,6 +29,11 @@ services:
       Jwt__Authority: ${Jwt__Authority}
       Jwt__Audience: ${Jwt__Audience}
       Kafka__Servers: kafka:9092
+      MicroserviceNetworkConfig__ProductServiceUrl: ${MicroserviceNetworkConfig__ProductServiceUrl}
+      MicroserviceNetworkConfig__StoreServiceUrl: ${MicroserviceNetworkConfig__StoreServiceUrl}
+      MicroserviceNetworkConfig__OrderServiceUrl: ${MicroserviceNetworkConfig__OrderServiceUrl}
+      MicroserviceNetworkConfig__PaymentServiceUrl: ${MicroserviceNetworkConfig__PaymentServiceUrl}
+      MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}
     volumes:
       - ./StoreService.Presentation/Src:/app/StoreService.Presentation/Src
       - ./StoreService.Infrastructure/Src:/app/StoreService.Infrastructure/Src
