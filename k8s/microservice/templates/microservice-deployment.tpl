@@ -19,7 +19,7 @@ spec:
       containers:
         - image : {{ .Values.app.image }}
           name: {{ .Values.app.name }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           envFrom:
             {{- range $i, $name := .Values.app.configMaps}}
             - configMapRef:

@@ -1,0 +1,9 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 4200:4200

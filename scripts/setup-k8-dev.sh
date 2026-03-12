@@ -5,6 +5,8 @@ cd ..
 
 echo "Bulding docker images"
 
+eval $(minikube docker-env)
+
 docker build -t ecommercebackend-user-service:prod ./UserService
 docker build -t ecommercebackend-user-service-db-migrator:prod --target migrate ./UserService
 
@@ -21,19 +23,6 @@ docker build -t ecommercebackend-payment-service:prod ./PaymentService
 docker build -t ecommercebackend-payment-service-db-migrator:prod --target migrate ./PaymentService
 
 docker build -t ecommercebackend-bff:prod ./BFF
-
-kind load docker-image \
-  ecommercebackend-user-service:prod \
-  ecommercebackend-user-service-db-migrator:prod \
-  ecommercebackend-product-service:prod \
-  ecommercebackend-product-service-db-migrator:prod \
-  ecommercebackend-store-service:prod \
-  ecommercebackend-store-service-db-migrator:prod \
-  ecommercebackend-order-service:prod \
-  ecommercebackend-order-service-db-migrator:prod \
-  ecommercebackend-payment-service:prod \
-  ecommercebackend-payment-service-db-migrator:prod \
-  ecommercebackend-bff:prod
 
 kubectl create configmap user-service-config \
   --from-env-file=./UserService/.env
@@ -54,8 +43,11 @@ kubectl create secret generic store-service-db-secret --from-literal=Database__P
 kubectl create secret generic order-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 kubectl create secret generic payment-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 kubectl create secret generic keycloak-db-secret \
-  --from-literal=user=user >/dev/null 2>&1 \
-  --from-literal=password=password >/dev/null 2>&1
+  --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
+
+kubectl create secret generic keycloak-secret \
+  --from-literal=user=admin \
+  --from-literal=password=password >/dev/null
 
 read -p "Enter Stripe API Key: " stripeApiKey
 read -p "Enter Stripe Webhook Secret: " stripeWebhookSecret

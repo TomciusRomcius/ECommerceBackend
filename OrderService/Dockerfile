@@ -43,4 +43,4 @@ RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "OrderService.dll"]
+ENTRYPOINT ["dotnet", "OrderService.Presentation.dll"]

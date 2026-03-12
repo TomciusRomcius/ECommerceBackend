@@ -49,6 +49,13 @@ spec:
             name: payment-service
             port:
               number: 8080
+      - path: /bff
+        pathType: Prefix
+        backend:
+          service:
+            name: bff
+            port:
+              number: 8080
       - path: /auth
         pathType: Prefix
         backend:

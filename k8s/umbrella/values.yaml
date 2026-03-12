@@ -213,12 +213,15 @@ keycloak:
     user: keycloak
     database: keycloak
     existingSecret: keycloak-db-secret
-    existingSecretUserKey: user
-    existingSecretPasswordKey: password
-  ingress:
-    enabled: true
-    hostname: 
-  proxyHeaders: "xforwarded"
+    existingSecretPasswordKey: Database__Password
+  production: false          # enables start-dev mode
+  extraEnvVars:
+    - name: KC_HOSTNAME
+      value: "http://localhost:8080/auth"
+    - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+      value: "true"
+    - name: KC_PROXY_HEADERS
+      value: "xforwarded"
 kafka:
   fullnameOverride: kafka
   clusterId: 3f6c7185-aafc-4fc0-9431-e7295b3b1ec0
