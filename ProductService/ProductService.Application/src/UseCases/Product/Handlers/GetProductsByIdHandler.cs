@@ -25,7 +25,10 @@ public class GetProductsByIdHandler : IRequestHandler<GetProductsByIdQuery, List
         if (request.ProductIds.Any())
         {
             products = await _context.Products
+                .AsNoTracking()
                 .Where(p => request.ProductIds.Contains(p.ProductId))
+                .Include(p => p.Category)
+                .Include(p => p.Manufacturer)
                 .ToListAsync(cancellationToken: cancellationToken);
         }
         else products = await _context.Products.ToListAsync(cancellationToken);

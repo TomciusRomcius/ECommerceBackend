@@ -1,0 +1,30 @@
+services:
+  bff:
+    build:
+      dockerfile: Dockerfile
+      target: build
+    command:
+      [
+        "dotnet",
+        "watch",
+      ]
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Trace
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Jwt__ClientId: ${Jwt__ClientId}
+      Jwt__SecretClientId: ${Jwt__SecretClientId}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__Authority: ${Jwt__Authority}
+      Jwt__Audience: ${Jwt__Audience}
+      Kafka__Servers: kafka:9092
+      MicroserviceNetworkConfig__ProductServiceUrl: ${MicroserviceNetworkConfig__ProductServiceUrl}
+      MicroserviceNetworkConfig__StoreServiceUrl: ${MicroserviceNetworkConfig__StoreServiceUrl}
+      MicroserviceNetworkConfig__OrderServiceUrl: ${MicroserviceNetworkConfig__OrderServiceUrl}
+      MicroserviceNetworkConfig__PaymentServiceUrl: ${MicroserviceNetworkConfig__PaymentServiceUrl}
+      MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}
+    volumes:
+      - ./Src:/app/Src

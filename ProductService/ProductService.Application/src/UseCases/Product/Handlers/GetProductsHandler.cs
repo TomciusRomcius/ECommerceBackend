@@ -27,8 +27,11 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<Product
             DatabaseContext.PageSize
         );
         List<ProductEntity> products = await _context.Products
+            .AsNoTracking()
             .Skip(request.PageNumber * DatabaseContext.PageSize)
             .Take(DatabaseContext.PageSize)
+            .Include(p => p.Category)
+            .Include(p => p.Manufacturer)
             .ToListAsync(cancellationToken: cancellationToken);
         
         _logger.LogDebug("Retrieved products: {@Products}", products);

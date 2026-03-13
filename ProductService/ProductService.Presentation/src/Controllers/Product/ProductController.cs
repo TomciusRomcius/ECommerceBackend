@@ -21,13 +21,15 @@ public class ProductController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <param name="ids">Product ids</param>
+    /// <param name="pageNumber">Page number for pagination</param>
     [HttpGet]
-    public async Task<IActionResult> GetProducts([FromBody] RequestGetProductsDto dto, [FromQuery] int pageNumber = 0)
+    public async Task<IActionResult> GetProducts(List<int>? ids, int pageNumber = 0)
     {
         List<ProductEntity> products;
-        if (dto.ProductIds != null && dto.ProductIds.Any())
+        if (ids != null && ids.Count != 0)
         {
-            products = await _mediator.Send(new GetProductsByIdQuery(dto.ProductIds ?? []));
+            products = await _mediator.Send(new GetProductsByIdQuery(ids));
         }
         else
         {
