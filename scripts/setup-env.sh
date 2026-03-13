@@ -31,7 +31,9 @@ jwtAuthority="http://keycloak:8080/realms/ecommerce-api"
 jwtAudience=ecommerce-api
 
 # BFF
-echo "Kafka__Servers=kafka" > ../BFF/.env 
+echo "ASPNETCORE_URLS=http://+:8080" >> ../BFF/.env
+echo "Kafka__Servers=kafka:9092" >> ../BFF/.env
+addJwtEnvs "BFF"
 addMicroserviceUrls "BFF"
 
 # Payment service

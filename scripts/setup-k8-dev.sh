@@ -20,6 +20,8 @@ docker build -t ecommercebackend-order-service-db-migrator:prod --target migrate
 docker build -t ecommercebackend-payment-service:prod ./PaymentService
 docker build -t ecommercebackend-payment-service-db-migrator:prod --target migrate ./PaymentService
 
+docker build -t ecommercebackend-bff:prod ./BFF
+
 kind load docker-image \
   ecommercebackend-user-service:prod \
   ecommercebackend-user-service-db-migrator:prod \
@@ -30,7 +32,8 @@ kind load docker-image \
   ecommercebackend-order-service:prod \
   ecommercebackend-order-service-db-migrator:prod \
   ecommercebackend-payment-service:prod \
-  ecommercebackend-payment-service-db-migrator:prod
+  ecommercebackend-payment-service-db-migrator:prod \
+  ecommercebackend-bff:prod
 
 kubectl create configmap user-service-config \
   --from-env-file=./UserService/.env
@@ -42,6 +45,8 @@ kubectl create configmap order-service-config \
   --from-env-file=./OrderService/.env
 kubectl create configmap payment-service-config \
   --from-env-file=./PaymentService/.env
+kubectl create configmap bff-config \
+  --from-env-file=./BFF/.env
 
 kubectl create secret generic user-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1
 kubectl create secret generic product-service-db-secret --from-literal=Database__Password=POSTGRES_PASSWORD >/dev/null 2>&1

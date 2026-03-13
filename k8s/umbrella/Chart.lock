@@ -14,6 +14,9 @@ dependencies:
 - name: microservice
   repository: file://../microservice
   version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 18.1.2
@@ -41,5 +44,5 @@ dependencies:
 - name: nginx-ingress
   repository: oci://ghcr.io/nginx/charts
   version: 2.3.1
-digest: sha256:64bfbded3ea4d014b509dd73d131c966b3ca88fe1669457dfdb44aff8ff09a80
-generated: "2026-01-11T00:57:52.867740913+02:00"
+digest: sha256:c12d2a8f625f6a90ebfb75f44c3ae0b10fa8d6a94321dc531a536adbc387a62e
+generated: "2026-03-13T22:06:56.574674042+02:00"

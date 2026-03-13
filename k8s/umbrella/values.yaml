@@ -81,6 +81,16 @@ product-service:
       - product-service-config
     secrets:
       - product-service-db-secret
+
+bff:
+  app:
+    name: bff
+    image: ecommercebackend-bff:prod
+    configMaps:
+      - bff-config
+    secrets: []
+  migrationJob:
+    enabled: false
 store-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
