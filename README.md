@@ -1,5 +1,29 @@
 # E-Commerce Backend.
 
+## Architecture
+![Architecture](./docs/images/architecture.jpg)
+
+## Tech stack
+* Backend: ASP.NET Core(.NET 9).
+* Database: PostgreSQL.
+* Containerization & Orchestration: Docker, Docker Compose, Kubernetes, Helm.
+* Automation: Terraform, Bash.
+* Event streaming: Kafka.
+
+## Features
+* Create, delete, and update store locations.
+* Create, delete, and update products, categories, and manufacturers.
+* User authentication and role-based authorization.
+* User cart + making orders.
+* Payment support using Stripe.
+
+## Design
+* Used microservice architecture mainly to more deeply learn about how enterprise apps work.
+* Containerized the backend using Docker, set up a development environment using Docker Compose and a simple Kubernetes cluster.
+* Implemented auth using the Keycloak identity provider.
+* Followed a code-first approach to database design using EF Core.
+* Created a payment system that currently supports Stripe.
+
 ## Setup
 ### Start the app
 #### Docker compose:
@@ -18,16 +42,13 @@
   cd scripts
   ./setup-env.sh
   ```
-* Execute build-images-for-k8.sh (if dotnet installation fails you will have to add dns records to Docker: https://github.com/dotnet/core/issues/8048): <br>
+* Execute setup-k8-dev.sh (if dotnet installation fails you will have to add dns records to Docker: https://github.com/dotnet/core/issues/8048): <br>
   ```bash
     cd scripts
-    ./build-images-for-k8.sh
+    ./setup-k8-dev.sh
   ```
-* Navigate to /k8s/umbrella and run: <br>
-  ```bash
-    helm dependency update
-    helm install umbrella
-  ```
+* To start and restart deployments manually, do so using Helm from k8s/umbrella directory.
+
 ### Setup keycloak
 ```bash
   cd terraform/keycloak
@@ -55,24 +76,3 @@
 * http://localhost:8080/userservice/openapi/v1.json
 * http://localhost:8080/orderservice/openapi/v1.json
 * http://localhost:8080/paymentservice/openapi/v1.json
-
-## Tech stack
-* Backend: ASP.NET Core(.NET 9).
-* Database: PostgreSQL.
-* Containerization & Orchestration: Docker, Docker Compose, Kubernetes, Helm.
-* Automation: Terraform
-* Event streaming: Kafka.
-
-## Features
-* Create, delete, and update store locations.
-* Create, delete, and update products, categories, and manufacturers.
-* User authentication and role-based authorization.
-* User cart + making orders.
-* Payment support using Stripe.
-
-## Design
-* Used microservice architecture mainly to more deeply learn about how enterprise apps work.
-* Containerized the backend using Docker, set up a development environment using Docker Compose and a simple Kubernetes deployement.
-* Implemented auth using the Keycloak identity provider.
-* Followed a code-first approach to database design using EF Core.
-* Created a payment system that currently supports Stripe.
