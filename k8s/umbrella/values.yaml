@@ -95,7 +95,7 @@ store-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: store-service-db-secret
@@ -113,7 +113,7 @@ payment-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: payment-service-db-secret
@@ -132,7 +132,7 @@ product-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: product-service-db-secret
@@ -150,7 +150,7 @@ order-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: order-service-db-secret
@@ -168,7 +168,7 @@ user-service-postgres:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: user-service-db-secret
@@ -182,11 +182,11 @@ user-service-postgres:
       accessModes:
         - ReadWriteOnce
 
-keycloak-postgres:
+keycloak-db:
   image:
     repository: bitnamilegacy/postgresql
   volumePermissions:
-      enabled: true
+    enabled: true
   auth:
     database: postgres
     existingSecret: keycloak-db-secret
@@ -206,18 +206,17 @@ keycloak:
   auth:
     existingSecret: keycloak-secret
     passwordSecretKey: password
-  postgresql.enabled: true
+  postgresql:
+    enabled: false
   externalDatabase:
     host: "keycloak-postgres"
     port: 5432
     user: keycloak
-    database: keycloak
+    database: keycloak-db
     existingSecret: keycloak-db-secret
     existingSecretPasswordKey: Database__Password
   production: false          # enables start-dev mode
   extraEnvVars:
-    - name: KC_HOSTNAME
-      value: "http://localhost:8080/auth"
     - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
       value: "true"
     - name: KC_PROXY_HEADERS
@@ -236,4 +235,3 @@ kafka:
       limits:
         cpu: "2"
         memory: "6Gi"
-      
