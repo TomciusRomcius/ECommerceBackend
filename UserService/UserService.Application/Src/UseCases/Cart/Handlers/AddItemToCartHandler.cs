@@ -30,13 +30,13 @@ public class AddItemToCartHandler : IRequestHandler<AddItemToCartCommand, Result
 
         try
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         catch (Exception ex)
         {
             _logger.LogError(ex, "An exception was thrown while persisting cart item to the database.");
-            return new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to create manufacturer");
+            return new ResultError(ResultErrorType.UNKNOWN_ERROR, "Failed to add the item to the cart.");
         }
 
         _logger.LogInformation(
