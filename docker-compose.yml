@@ -63,9 +63,12 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
-    volumes:
-      - keycloak-db-data:/var/lib/postgresql/data
 
-volumes:
-  keycloak-db-data:
+  keycloak-config:
+    build:
+      context: ./terraform/keycloak
+      dockerfile: Dockerfile
+    volumes:
+      - ./terraform/keycloak:/workspace
+    restart: on-failure
 
