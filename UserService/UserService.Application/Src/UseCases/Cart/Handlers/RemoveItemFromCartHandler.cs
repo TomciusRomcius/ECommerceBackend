@@ -1,0 +1,49 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using UserService.Application.Persistence;
+using UserService.Application.UseCases.Cart.Commands;
+using UserService.Domain.Utils;
+
+namespace UserService.Application.UseCases.Cart.Handlers;
+
+public class RemoveItemFromCartHandler : IRequestHandler<RemoveItemFromCartCommand, ResultError?>
+{
+    private readonly DatabaseContext _context;
+    private readonly ILogger<RemoveItemFromCartHandler> _logger;
+
+    public RemoveItemFromCartHandler(ILogger<RemoveItemFromCartHandler> logger, DatabaseContext context)
+    {
+        _logger = logger;
+        _context = context;
+    }
+
+    public async Task<ResultError?> Handle(RemoveItemFromCartCommand request, CancellationToken cancellationToken)
+    {
+        _logger.LogTrace("Entered Handle");
+        _logger.LogDebug(
+            "Removing product {ProductId} from cart for user {UserId} at store {StoreLocationId}",
+            request.ProductId,
+            request.UserId,
+            request.StoreLocationId);
+
+        int rowsAffected = await _context.CartProducts
+            .Where(cp =>
+                cp.UserId == request.UserId &&
+                cp.ProductId == request.ProductId &&
+                cp.StoreLocationId == request.StoreLocationId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if (rowsAffected == 0)
+        {
+            _logger.LogWarning(
+                "Cart item not found for user {UserId}, product {ProductId}, store {StoreLocationId}",
+                request.UserId,
+                request.ProductId,
+                request.StoreLocationId);
+            return new ResultError(ResultErrorType.INVALID_OPERATION_ERROR, "Item not found in cart.");
+        }
+
+        return null;
+    }
+}

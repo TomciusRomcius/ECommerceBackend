@@ -1,5 +1,6 @@
 using BFF.Auth;
-using ECommerceBackend.Utils.Database;
+using BFF.Cart;
+using ECommerceBackend.Utils.Microservices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddOptions<KeycloakAuthOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 builder.Services.AddHttpClient<IKeycloakTokenService, KeycloakTokenService>();
+builder.Services.AddHttpClient<ICartService, CartService>();
 builder.Services.AddOptions<MicroserviceHosts>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
     .ValidateDataAnnotations()

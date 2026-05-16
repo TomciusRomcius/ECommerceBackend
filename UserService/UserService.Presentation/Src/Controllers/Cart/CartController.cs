@@ -77,4 +77,21 @@ public class CartController : ControllerBase
 
         return Ok();
     }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> RemoveItem([FromQuery] int productId, [FromQuery] int storeLocationId)
+    {
+        string? userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId is null) return new UnauthorizedObjectResult("You must be logged in to remove items!");
+
+        ResultError? error = await _mediator.Send(new RemoveItemFromCartCommand(userId, productId, storeLocationId));
+
+        if (error != null)
+        {
+            return ControllerUtils.ResultErrorToResponse(error);
+        }
+
+        return Ok();
+    }
 }
