@@ -4,10 +4,11 @@ using Microsoft.Extensions.Logging;
 using ProductService.Application.Persistence;
 using ProductService.Application.UseCases.Product.Queries;
 using ProductService.Domain.Entities;
+using ProductService.Domain.Utils;
 
 namespace ProductService.Application.UseCases.Product.Handlers;
 
-public class GetProductsByIdHandler : IRequestHandler<GetProductsByIdQuery, List<ProductEntity>>
+public class GetProductsByIdHandler : IRequestHandler<GetProductsByIdQuery, Result<List<ProductEntity>>>
 {
     private readonly DatabaseContext _context;
     private readonly ILogger<GetProductsByIdHandler> _logger;
@@ -18,22 +19,27 @@ public class GetProductsByIdHandler : IRequestHandler<GetProductsByIdQuery, List
         _context = context;
     }
 
-    public async Task<List<ProductEntity>> Handle(GetProductsByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<ProductEntity>>> Handle(
+        GetProductsByIdQuery request,
+        CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered Handle");
-        List<ProductEntity> products;
-        if (request.ProductIds.Any())
+
+        if (request.ProductIds.Count == 0)
         {
-            products = await _context.Products
-                .AsNoTracking()
-                .Where(p => request.ProductIds.Contains(p.ProductId))
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .ToListAsync(cancellationToken: cancellationToken);
+            return new Result<List<ProductEntity>>([
+                new ResultError(ResultErrorType.VALIDATION_ERROR, "At least one product id is required."),
+            ]);
         }
-        else products = await _context.Products.ToListAsync(cancellationToken);
-        
+
+        List<ProductEntity> products = await _context.Products
+            .AsNoTracking()
+            .Where(p => request.ProductIds.Contains(p.ProductId))
+            .Include(p => p.Category)
+            .Include(p => p.Manufacturer)
+            .ToListAsync(cancellationToken);
+
         _logger.LogDebug("Retrieved products: {@Products}", products);
-        return products;
+        return new Result<List<ProductEntity>>(products);
     }
 }

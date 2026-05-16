@@ -24,18 +24,25 @@ public class GetProductDescriptionHandler : IRequestHandler<GetProductDescriptio
         CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered Handle");
-        HttpRequestMessage message = new HttpRequestMessage(
-            HttpMethod.Get,
-            $"{_microserviceNetworkConfig.ProductServiceUrl}/product"
-        );
-        var reqBody = new { ProductIds = request.ProductIds };
-        message.Content = JsonContent.Create(reqBody);
-        HttpResponseMessage res = await _httpClient.SendAsync(message, cancellationToken);
+
+        if (request.ProductIds.Count == 0)
+        {
+            return new Result<List<ProductPriceModel>>(new List<ProductPriceModel>());
+        }
+
+        var query = new QueryString();
+        foreach (int productId in request.ProductIds)
+        {
+            query = query.Add("ids", productId.ToString());
+        }
+
+        string productUrl = $"{_microserviceNetworkConfig.ProductServiceUrl}/product/by-ids{query}";
+        HttpResponseMessage res = await _httpClient.GetAsync(productUrl, cancellationToken);
         if (!res.IsSuccessStatusCode)
         {
             _logger.LogError(
-                "Failed to get product description. Request: {@Request} Response: {@Response} ProductIds: {@ProductIds}",
-                message,
+                "Failed to get product description. Url: {Url} Response: {@Response} ProductIds: {@ProductIds}",
+                productUrl,
                 res,
                 request.ProductIds
             );

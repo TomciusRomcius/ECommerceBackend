@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.UseCases.Product.Commands;
 using ProductService.Application.UseCases.Product.Queries;
 using ProductService.Domain.Entities;
+using ProductService.Domain.Utils;
 using ProductService.Presentation.Controllers.Product.Dtos;
 using ProductService.Presentation.Utils;
 using ECommerceBackend.Utils.Jwt;
@@ -21,22 +22,24 @@ public class ProductController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <param name="ids">Product ids</param>
     /// <param name="pageNumber">Page number for pagination</param>
     [HttpGet]
-    public async Task<IActionResult> GetProducts(List<int>? ids, int pageNumber = 0)
+    public async Task<IActionResult> GetProducts(int pageNumber = 0)
     {
-        List<ProductEntity> products;
-        if (ids != null && ids.Count != 0)
-        {
-            products = await _mediator.Send(new GetProductsByIdQuery(ids));
-        }
-        else
-        {
-            products = await _mediator.Send(new GetProductsQuery(pageNumber));
-        }
-        
+        List<ProductEntity> products = await _mediator.Send(new GetProductsQuery(pageNumber));
         return Ok(products);
+    }
+
+    /// <param name="ids">Product ids</param>
+    [HttpGet("by-ids")]
+    public async Task<IActionResult> GetProductsByIds([FromQuery] List<int> ids)
+    {
+        Result<List<ProductEntity>> result = await _mediator.Send(new GetProductsByIdQuery(ids));
+
+        if (result.Errors.Any()) 
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
+
+        return Ok(result.GetValue());
     }
 
     [Authorize(Roles = RoleTypes.Admin)]
@@ -51,7 +54,8 @@ public class ProductController : ControllerBase
             createProductDto.CategoryId
         ));
 
-        if (result.Errors.Any()) return ControllerUtils.ResultErrorToResponse(result.Errors.First());
+        if (result.Errors.Any()) 
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
 
         return Created(nameof(CreateProducts), result.GetValue());
     }
