@@ -27,20 +27,17 @@ public class StoreProductsController(ILogger<StoreProductsController> logger, Ht
         logger.LogDebug("Retrieved producat ids: {@Products}", psls);
         
         // Fetch product details
-        var productDetailsUrlBuilder = new StringBuilder();
-        productDetailsUrlBuilder.Append($"{hosts.Value.ProductServiceUrl}/product/");
-
-        for (int i = 0; i < psls.Count(); i++)
+        var baseUrl = $"{hosts.Value.ProductServiceUrl}/product";
+        var query = new QueryString();
+        if (psls != null)
         {
-            if (i == 0)
+            foreach (var psl in psls)
             {
-                productDetailsUrlBuilder.Append($"?ids={psls[i].ProductId}");
-            }
-            else
-            {
-                productDetailsUrlBuilder.Append($"&ids={psls[i].ProductId}");
+                query = query.Add("ids", psl.ProductId.ToString());
             }
         }
+        var productDetailsUrl = baseUrl + query.ToUriComponent();
+   
 
         HttpResponseMessage productDetails = await httpClient.GetAsync(productDetailsUrlBuilder.ToString());
         return Ok(new { data = productDetails.Content.ReadFromJsonAsync<object>().Result });
