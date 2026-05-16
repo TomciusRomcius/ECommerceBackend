@@ -32,6 +32,12 @@
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
+            },
+            "security": {
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1"
+              ]
             }
           },
           "configurations": {
@@ -60,6 +66,17 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "docker-compose": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.docker-compose.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -72,6 +89,9 @@
             },
             "development": {
               "buildTarget": "ecommerce:build:development"
+            },
+            "docker-compose": {
+              "buildTarget": "ecommerce:build:docker-compose"
             }
           },
           "defaultConfiguration": "development"

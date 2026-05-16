@@ -5,4 +5,4 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 RUN npm ci
 COPY . .
-CMD [ "ng", "serve" ]
+CMD [ "ng", "serve", "--host", "0.0.0.0", "--configuration", "docker-compose" ]
