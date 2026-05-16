@@ -1,3 +1,4 @@
+using BFF.Auth;
 using ECommerceBackend.Utils.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,11 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddHttpClient();
+builder.Services.AddOptions<KeycloakAuthOptions>()
+    .Bind(builder.Configuration.GetSection(KeycloakAuthOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddHttpClient<IKeycloakTokenService, KeycloakTokenService>();
 builder.Services.AddOptions<MicroserviceHosts>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
     .ValidateDataAnnotations()

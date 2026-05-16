@@ -65,9 +65,10 @@ provider "keycloak" {
 }
 
 resource "keycloak_realm" "ecommerce_api" {
-  realm             = "ecommerce-api"
-  enabled           = true
-  display_name      = "Ecommerce API"
+  realm                = "ecommerce-api"
+  enabled              = true
+  display_name         = "Ecommerce API"
+  registration_allowed = true
 }
 
 resource "keycloak_openid_client" "ecommerce-api" {

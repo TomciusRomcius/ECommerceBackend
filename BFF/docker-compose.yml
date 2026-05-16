@@ -26,5 +26,8 @@ services:
       MicroserviceNetworkConfig__OrderServiceUrl: ${MicroserviceNetworkConfig__OrderServiceUrl}
       MicroserviceNetworkConfig__PaymentServiceUrl: ${MicroserviceNetworkConfig__PaymentServiceUrl}
       MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}
+      KeycloakAuth__TokenEndpoint: http://keycloak:8080/realms/ecommerce-api/protocol/openid-connect/token
+      KeycloakAuth__ClientId: frontend
+      KeycloakAuth__RedirectUri: http://localhost:4200/auth/callback
     volumes:
       - ./Src:/app/Src

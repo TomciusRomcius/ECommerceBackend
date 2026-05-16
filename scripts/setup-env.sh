@@ -35,6 +35,9 @@ echo "ASPNETCORE_URLS=http://+:8080" >> ../BFF/.env
 echo "Kafka__Servers=kafka:9092" >> ../BFF/.env
 addJwtEnvs "BFF"
 addMicroserviceUrls "BFF"
+echo "KeycloakAuth__TokenEndpoint=http://keycloak:8080/auth/realms/ecommerce-api/protocol/openid-connect/token" >> ../BFF/.env
+echo "KeycloakAuth__ClientId=frontend" >> ../BFF/.env
+echo "KeycloakAuth__RedirectUri=http://localhost:4200/auth/callback" >> ../BFF/.env
 
 # Payment service
 echo "Database__Host=payment-service-postgres" > ../PaymentService/.env 
