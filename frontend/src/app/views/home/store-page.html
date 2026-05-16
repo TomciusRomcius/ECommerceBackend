@@ -14,9 +14,17 @@
           <mat-card-subtitle>{{ product.manufacturer.name }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content class="flex flex-1 flex-col gap-2">
-          <p class="text-sm text-gray-600">{{ product.description }}</p>
+          <p class="text-sm text-gray-600 line-clamp-2">{{ product.description }}</p>
           <p class="text-xs text-gray-500">{{ product.category.name }}</p>
-          <p class="mt-auto font-semibold">{{ product.price | currency }}</p>
+          <p class="font-semibold">{{ product.price | currency }}</p>
+          <a
+            mat-flat-button
+            color="primary"
+            class="mt-auto"
+            [routerLink]="['/product', product.productId]"
+          >
+            View product
+          </a>
         </mat-card-content>
       </mat-card>
     }

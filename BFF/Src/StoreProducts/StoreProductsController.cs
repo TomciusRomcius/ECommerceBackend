@@ -26,4 +26,25 @@ public class StoreProductsController(
 
         return Ok(new { data = await productResponse.Content.ReadFromJsonAsync<object>() });
     }
+
+    [HttpGet("{productId:int}")]
+    public async Task<IActionResult> GetProduct(int productId)
+    {
+        var query = new QueryString().Add("ids", productId.ToString());
+        string productUrl = $"{hosts.Value.ProductServiceUrl}/product/by-ids{query}";
+        logger.LogDebug("Fetching product {ProductId} from {Url}", productId, productUrl);
+
+        HttpResponseMessage productResponse = await httpClient.GetAsync(productUrl);
+        productResponse.EnsureSuccessStatusCode();
+
+        List<object>? products = await productResponse.Content.ReadFromJsonAsync<List<object>>();
+        object? product = products?.FirstOrDefault();
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new { data = product });
+    }
 }

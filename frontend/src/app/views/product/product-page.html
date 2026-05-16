@@ -1,0 +1,21 @@
+<app-page-padder>
+  @if (product(); as product) {
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div
+        class="flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-gray-100"
+        aria-hidden="true"
+      >
+        <span class="text-sm text-gray-400">No image</span>
+      </div>
+      <div class="flex flex-col gap-4">
+        <h1 class="text-2xl font-semibold">{{ product.name }}</h1>
+        <p class="text-sm text-gray-500">
+          {{ product.manufacturer.name }} · {{ product.category.name }}
+        </p>
+        <p class="text-gray-700">{{ product.description }}</p>
+        <p class="text-xl font-semibold">{{ product.price | currency }}</p>
+        <button mat-flat-button color="primary" type="button">Add to cart</button>
+      </div>
+    </div>
+  }
+</app-page-padder>
