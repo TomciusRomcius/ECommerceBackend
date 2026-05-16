@@ -4,42 +4,26 @@ using Microsoft.Extensions.Options;
 
 namespace BFF.StoreProducts;
 
-public class ProductStoreLocation
-{
-    public int StoreLocationId { get; set; }
-
-    public int ProductId { get; set; }
-
-    public int Stock { get; set; }
-}
-
 [ApiController]
 [Route("[controller]")]
-public class StoreProductsController(ILogger<StoreProductsController> logger, HttpClient httpClient, IOptions<MicroserviceHosts> hosts) : ControllerBase
+public class StoreProductsController(
+    ILogger<StoreProductsController> logger,
+    HttpClient httpClient,
+    IOptions<MicroserviceHosts> hosts) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetProductsFromStore(int storeId, int page)
+    public async Task<IActionResult> GetProductsFromStore(int pageNumber = 0, int pageSize = 20)
     {
-        HttpResponseMessage productIds = await httpClient.GetAsync($"{hosts.Value.StoreServiceUrl}/productstorelocation");
-        productIds.EnsureSuccessStatusCode();
-        List<ProductStoreLocation>? psls = await productIds.Content.ReadFromJsonAsync<List<ProductStoreLocation>>();
-        logger.LogDebug("Retrieved producat ids: {@Products}", psls);
+        var query = new QueryString()
+            .Add("pageNumber", pageNumber.ToString())
+            .Add("pageSize", pageSize.ToString());
 
-        if (psls is null || psls.Count == 0)
-        {
-            return Ok(new { data = Array.Empty<object>() });
-        }
+        string productUrl = $"{hosts.Value.ProductServiceUrl}/product{query}";
+        logger.LogDebug("Fetching products from {Url}", productUrl);
 
-        var query = new QueryString();
-        foreach (ProductStoreLocation psl in psls)
-        {
-            query = query.Add("ids", psl.ProductId.ToString());
-        }
+        HttpResponseMessage productResponse = await httpClient.GetAsync(productUrl);
+        productResponse.EnsureSuccessStatusCode();
 
-        string productDetailsUrl = $"{hosts.Value.ProductServiceUrl}/product/by-ids{query}";
-        HttpResponseMessage productDetails = await httpClient.GetAsync(productDetailsUrl);
-        productDetails.EnsureSuccessStatusCode();
-
-        return Ok(new { data = await productDetails.Content.ReadFromJsonAsync<object>() });
+        return Ok(new { data = await productResponse.Content.ReadFromJsonAsync<object>() });
     }
 }

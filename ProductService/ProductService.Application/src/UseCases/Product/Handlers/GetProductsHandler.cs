@@ -1,3 +1,4 @@
+using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -7,34 +8,33 @@ using ProductService.Domain.Entities;
 
 namespace ProductService.Application.UseCases.Product.Handlers;
 
-public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<ProductEntity>>
+public class GetProductsHandler : IRequestHandler<GetProductsQuery, Page<ProductEntity>>
 {
     private readonly DatabaseContext _context;
-    private readonly ILogger<GetProductsByIdHandler> _logger;
+    private readonly ILogger<GetProductsHandler> _logger;
 
-    public GetProductsHandler(ILogger<GetProductsByIdHandler> logger, DatabaseContext context)
+    public GetProductsHandler(ILogger<GetProductsHandler> logger, DatabaseContext context)
     {
         _logger = logger;
         _context = context;
     }
 
-    public async Task<List<ProductEntity>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<Page<ProductEntity>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered {FunctionName}", nameof(GetProductsHandler));
         _logger.LogDebug(
             "Fetching products, page number: {PageNumber} page size: {PageSize}",
             request.PageNumber,
-            DatabaseContext.PageSize
+            request.PageSize
         );
-        List<ProductEntity> products = await _context.Products
+
+        Page<ProductEntity> page = await _context.Products
             .AsNoTracking()
-            .Skip(request.PageNumber * DatabaseContext.PageSize)
-            .Take(DatabaseContext.PageSize)
             .Include(p => p.Category)
             .Include(p => p.Manufacturer)
-            .ToListAsync(cancellationToken: cancellationToken);
-        
-        _logger.LogDebug("Retrieved products: {@Products}", products);
-        return products;
+            .ToPageAsync(request.PageNumber, request.PageSize);
+
+        _logger.LogDebug("Retrieved products page: {@Page}", page);
+        return page;
     }
 }

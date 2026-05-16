@@ -1,3 +1,4 @@
+using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,11 +24,12 @@ public class ProductController : ControllerBase
     }
 
     /// <param name="pageNumber">Page number for pagination</param>
+    /// <param name="pageSize">Number of products per page</param>
     [HttpGet]
-    public async Task<IActionResult> GetProducts(int pageNumber = 0)
+    public async Task<IActionResult> GetProducts(int pageNumber = 0, int pageSize = 20)
     {
-        List<ProductEntity> products = await _mediator.Send(new GetProductsQuery(pageNumber));
-        return Ok(products);
+        Page<ProductEntity> page = await _mediator.Send(new GetProductsQuery(pageNumber, pageSize));
+        return Ok(page);
     }
 
     /// <param name="ids">Product ids</param>
