@@ -1,3 +1,3 @@
 export const environment = {
-  backendApi: 'http://reverse-proxy/bff',
+  backendApi: 'http://localhost:8080/bff',
 };

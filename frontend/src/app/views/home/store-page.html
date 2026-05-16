@@ -1,21 +1,24 @@
 <app-page-padder>
-  <div class="flex gap-2">
-    <mat-card>
-      <mat-card-header>
-        Product
-      </mat-card-header>
-          <mat-card-content>
-        description
-      </mat-card-content>
-    </mat-card>
-        <mat-card>
-      <mat-card-header>
-        Product
-      </mat-card-header>
-          <mat-card-content>
-        description
-      </mat-card-content>
-    </mat-card>
+  <div class="grid grid-cols-3 gap-4">
+    @for (product of products(); track product.productId) {
+      <mat-card class="flex h-full flex-col">
+        <div
+          class="flex aspect-4/3 items-center justify-center overflow-hidden bg-gray-100"
+          aria-hidden="true"
+        >
+          <!-- Image URL will be wired here later -->
+          <span class="text-sm text-gray-400">No image</span>
+        </div>
+        <mat-card-header>
+          <mat-card-title>{{ product.name }}</mat-card-title>
+          <mat-card-subtitle>{{ product.manufacturer.name }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="flex flex-1 flex-col gap-2">
+          <p class="text-sm text-gray-600">{{ product.description }}</p>
+          <p class="text-xs text-gray-500">{{ product.category.name }}</p>
+          <p class="mt-auto font-semibold">{{ product.price | currency }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
   </div>
-
 </app-page-padder>

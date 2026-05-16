@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { PagePadder } from "../../components/page-padder/page-padder";
@@ -6,7 +7,7 @@ import ProductModel from '../../models/product-model';
 
 @Component({
   selector: 'app-home',
-  imports: [MatCardModule, PagePadder],
+  imports: [CurrencyPipe, MatCardModule, PagePadder],
   templateUrl: './store-page.html',
 })
 export class StorePage {
@@ -15,6 +16,7 @@ export class StorePage {
 
   constructor() {
     this.activedRoute.data.subscribe(({products}) => {
+      console.log(products)
       this.products.set(products);
     })
   }
