@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
 import { StorePage } from './views/home/storePage';
-import { ProductResolver } from './views/home/productResolver';
+import { productResolver } from './views/home/productResolver';
 
 export const routes: Routes = [
   {
     path: 'home',
     component: StorePage,
-    resolve: { products: ProductResolver }
+    resolve: { products: productResolver }
   },
   {
-    path: '*',
-    redirectTo: '/store/:id'
+    path: '**',
+    redirectTo: '/home'
   }
 ];
