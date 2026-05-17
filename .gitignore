@@ -130,3 +130,4 @@ charts
 *.tfvars
 **/.terraform/
 !dev.tfvars
+*.pyc
