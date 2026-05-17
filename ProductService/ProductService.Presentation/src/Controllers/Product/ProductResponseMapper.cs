@@ -6,6 +6,26 @@ namespace ProductService.Presentation.Controllers.Product;
 
 internal static class ProductResponseMapper
 {
+    public static ProductDto ToDto(ProductEntity product)
+    {
+        return new ProductDto
+        {
+            ProductId = product.ProductId,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            ManufacturerId = product.ManufacturerId,
+            CategoryId = product.CategoryId,
+            Manufacturer = product.Manufacturer,
+            Category = product.Category,
+        };
+    }
+
+    public static List<ProductDto> ToDtoList(IEnumerable<ProductEntity> products)
+    {
+        return products.Select(ToDto).ToList();
+    }
+
     public static ProductWithStoreDto ToDto(
         ProductEntity product,
         IReadOnlyDictionary<int, ProductStoreDetails> storeDetailsByProductId)

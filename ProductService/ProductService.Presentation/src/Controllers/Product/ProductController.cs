@@ -3,7 +3,6 @@ using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductService.Application.Services;
 using ProductService.Application.UseCases.Product.Commands;
 using ProductService.Application.UseCases.Product.Queries;
 using ProductService.Domain.Entities;
@@ -18,12 +17,10 @@ namespace ProductService.Presentation.Controllers.Product;
 public class ProductController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IStoreDetailsService _storeDetailsService;
 
-    public ProductController(IMediator mediator, IStoreDetailsService storeDetailsService)
+    public ProductController(IMediator mediator)
     {
         _mediator = mediator;
-        _storeDetailsService = storeDetailsService;
     }
 
     /// <param name="pageNumber">Page number for pagination</param>
@@ -32,12 +29,10 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetProducts(int pageNumber = 0, int pageSize = 20, CancellationToken cancellationToken = default)
     {
         Page<ProductEntity> page = await _mediator.Send(new GetProductsQuery(pageNumber, pageSize), cancellationToken);
-        IReadOnlyDictionary<int, ProductStoreDetails> storeDetails =
-            await _storeDetailsService.GetStoreDetailsByProductIdsAsync(page.Data.Select(p => p.ProductId), cancellationToken);
 
-        Page<ProductWithStoreDto> response = new()
+        Page<ProductDto> response = new()
         {
-            Data = ProductResponseMapper.ToDtoList(page.Data, storeDetails),
+            Data = ProductResponseMapper.ToDtoList(page.Data),
             TotalCount = page.TotalCount,
             HasNextPage = page.HasNextPage,
             HasPrevPage = page.HasPrevPage,
@@ -60,10 +55,7 @@ public class ProductController : ControllerBase
         }
 
         List<ProductEntity> products = result.GetValue();
-        IReadOnlyDictionary<int, ProductStoreDetails> storeDetails =
-            await _storeDetailsService.GetStoreDetailsByProductIdsAsync(products.Select(p => p.ProductId), cancellationToken);
-
-        return Ok(ProductResponseMapper.ToDtoList(products, storeDetails));
+        return Ok(ProductResponseMapper.ToDtoList(products));
     }
 
     [Authorize(Roles = RoleTypes.Admin)]
