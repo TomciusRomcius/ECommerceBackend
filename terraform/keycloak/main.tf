@@ -104,13 +104,17 @@ resource "keycloak_openid_client" "frontend" {
   valid_post_logout_redirect_uris = var.frontend_valid_post_logout_redirect_uris
 }
 
+// TODO: use audience: frontend
 resource "keycloak_openid_client_default_scopes" "frontend_client_default_scopes" {
   realm_id  = keycloak_realm.ecommerce_api.id
   client_id = keycloak_openid_client.frontend.id
 
   default_scopes = [
+    "openid",
     "profile",
     "email",
+    "basic",
+    keycloak_openid_client_scope.audience_client_scope.name,
   ]
 }
 
@@ -155,8 +159,6 @@ resource "keycloak_openid_client_default_scopes" "ecommerce_api_client_default_s
   client_id = keycloak_openid_client.ecommerce-api.id
 
   default_scopes = [
-    "profile",
-    "email",
     keycloak_openid_client_scope.audience_client_scope.name,
   ]
 }
