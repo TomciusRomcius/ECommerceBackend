@@ -23,7 +23,7 @@ public class TokenController(IKeycloakTokenService keycloakTokenService, ILogger
                 request.Code,
                 request.CodeVerifier,
                 cancellationToken);
-
+            
             return Ok(new { data = accessToken });
         }
         catch (HttpRequestException ex)

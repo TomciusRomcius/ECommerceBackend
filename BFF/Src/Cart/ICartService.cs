@@ -13,7 +13,6 @@ public interface ICartService
 
     Task<HttpResponseMessage> RemoveItemAsync(
         int productId,
-        int storeLocationId,
         string? authorizationHeader,
         CancellationToken cancellationToken = default);
 }

@@ -1,0 +1,56 @@
+<app-page-padder>
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-semibold">Cart</h1>
+    <a mat-button routerLink="/home">Continue shopping</a>
+  </div>
+
+  @if (loading()) {
+    <p class="text-gray-600">Loading cart...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else if (items().length === 0) {
+    <p class="text-gray-600">Your cart is empty.</p>
+  } @else {
+    <div class="flex flex-col gap-4">
+      @for (item of items(); track item.productId) {
+        <mat-card class="flex flex-col gap-4 p-4 md:flex-row md:items-center">
+          <div
+            class="flex h-24 w-full shrink-0 items-center justify-center rounded-lg bg-gray-100 md:w-32"
+            aria-hidden="true"
+          >
+            <span class="text-sm text-gray-400">No image</span>
+          </div>
+          <div class="flex flex-1 flex-col gap-1">
+            @if (item.product; as product) {
+              <a class="text-lg font-semibold hover:underline" [routerLink]="['/product', product.productId]">
+                {{ product.name }}
+              </a>
+              <p class="text-sm text-gray-500">
+                {{ product.manufacturer.name }} · {{ product.category.name }}
+              </p>
+              @if (product.store) {
+                <p class="text-sm text-gray-500">
+                  {{ product.store.displayName }} · {{ product.store.address }}
+                </p>
+              }
+              <p class="text-sm text-gray-600">{{ product.description }}</p>
+              <p class="font-semibold">{{ product.price | currency }}</p>
+            } @else {
+              <p class="text-lg font-semibold">Product #{{ item.productId }}</p>
+            }
+            <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
+          </div>
+          <button
+            mat-stroked-button
+            color="warn"
+            type="button"
+            [disabled]="removingProductId() === item.productId"
+            (click)="removeItem(item)"
+          >
+            Remove
+          </button>
+        </mat-card>
+      }
+    </div>
+  }
+</app-page-padder>

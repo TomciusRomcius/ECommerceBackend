@@ -28,6 +28,14 @@ public class ProductStoreLocationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("by-product-ids")]
+    public async Task<IActionResult> GetByProductIds([FromQuery] List<int> ids)
+    {
+        List<ProductStoreLocationDetails> result =
+            await _mediator.Send(new GetProductStoreLocationsByProductIdsQuery(ids));
+        return Ok(result);
+    }
+
     [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
     public async Task<IActionResult> AddProductToStore([FromBody] AddProductToStoreDto addProductToStoreDto)

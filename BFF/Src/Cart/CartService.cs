@@ -6,7 +6,8 @@ using Microsoft.Extensions.Options;
 
 namespace BFF.Cart;
 
-public class CartService(HttpClient httpClient, IOptions<MicroserviceHosts> hosts) : ICartService
+public class CartService(HttpClient httpClient, IOptions<MicroserviceHosts> hosts, ILogger<CartService> logger)
+    : ICartService
 {
     public async Task<IReadOnlyList<CartItemWithProductDto>> GetItemsWithProductsAsync(
         string? authorizationHeader,
@@ -47,7 +48,6 @@ public class CartService(HttpClient httpClient, IOptions<MicroserviceHosts> host
             {
                 UserId = item.UserId,
                 ProductId = item.ProductId,
-                StoreLocationId = item.StoreLocationId,
                 Quantity = item.Quantity,
                 Product = productsById.TryGetValue(item.ProductId, out JsonElement product) ? product : null,
             })
@@ -59,18 +59,27 @@ public class CartService(HttpClient httpClient, IOptions<MicroserviceHosts> host
         string? authorizationHeader,
         CancellationToken cancellationToken = default)
     {
+        int storeLocationId = await ResolveStoreLocationIdAsync(request.ProductId, cancellationToken);
+
         string cartUrl = $"{hosts.Value.UserServiceUrl}/cart";
         using HttpRequestMessage cartRequest = CreateAuthorizedRequest(HttpMethod.Post, cartUrl, authorizationHeader);
-        cartRequest.Content = JsonContent.Create(request);
+        cartRequest.Content = JsonContent.Create(new
+        {
+            request.ProductId,
+            storeLocationId,
+            request.Quantity,
+        });
+
         return await httpClient.SendAsync(cartRequest, cancellationToken);
     }
 
     public async Task<HttpResponseMessage> RemoveItemAsync(
         int productId,
-        int storeLocationId,
         string? authorizationHeader,
         CancellationToken cancellationToken = default)
     {
+        int storeLocationId = await ResolveStoreLocationIdAsync(productId, cancellationToken);
+
         var query = new QueryString()
             .Add("productId", productId.ToString())
             .Add("storeLocationId", storeLocationId.ToString());
@@ -78,6 +87,31 @@ public class CartService(HttpClient httpClient, IOptions<MicroserviceHosts> host
         string cartUrl = $"{hosts.Value.UserServiceUrl}/cart{query}";
         using HttpRequestMessage cartRequest = CreateAuthorizedRequest(HttpMethod.Delete, cartUrl, authorizationHeader);
         return await httpClient.SendAsync(cartRequest, cancellationToken);
+    }
+
+    private async Task<int> ResolveStoreLocationIdAsync(int productId, CancellationToken cancellationToken)
+    {
+        var query = new QueryString().Add("ids", productId.ToString());
+        string productUrl = $"{hosts.Value.ProductServiceUrl}/product/by-ids{query}";
+
+        using HttpResponseMessage productResponse = await httpClient.GetAsync(productUrl, cancellationToken);
+        productResponse.EnsureSuccessStatusCode();
+
+        List<JsonElement>? products =
+            await productResponse.Content.ReadFromJsonAsync<List<JsonElement>>(cancellationToken);
+
+        JsonElement product = products?.FirstOrDefault()
+            ?? throw new InvalidOperationException($"Product {productId} was not found.");
+
+        if (!product.TryGetProperty("store", out JsonElement store) ||
+            !store.TryGetProperty("storeLocationId", out JsonElement storeLocationIdElement))
+        {
+            throw new InvalidOperationException($"Product {productId} does not have store details.");
+        }
+
+        int storeLocationId = storeLocationIdElement.GetInt32();
+        logger.LogDebug("Resolved store location {StoreLocationId} for product {ProductId}", storeLocationId, productId);
+        return storeLocationId;
     }
 
     private static HttpRequestMessage CreateAuthorizedRequest(

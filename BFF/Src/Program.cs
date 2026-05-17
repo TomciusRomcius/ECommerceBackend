@@ -1,5 +1,6 @@
 using BFF.Auth;
 using BFF.Cart;
+using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Microservices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,7 @@ builder.Services.AddOptions<MicroserviceHosts>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+builder.Services.AddApplicationAuth(builder);
 
 
 var app = builder.Build();

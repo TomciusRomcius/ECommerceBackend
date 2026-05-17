@@ -28,7 +28,7 @@ public class KeycloakTokenService(
             authOptions.TokenEndpoint,
             content,
             cancellationToken);
-
+        logger.LogInformation("AA {@a}", await response.Content.ReadAsStringAsync(cancellationToken));
         if (!response.IsSuccessStatusCode)
         {
             string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);

@@ -12,9 +12,34 @@
         <p class="text-sm text-gray-500">
           {{ product.manufacturer.name }} · {{ product.category.name }}
         </p>
+        @if (product.store) {
+          <p class="text-sm text-gray-500">
+            {{ product.store.displayName }} · {{ product.store.address }}
+          </p>
+        }
         <p class="text-gray-700">{{ product.description }}</p>
         <p class="text-xl font-semibold">{{ product.price | currency }}</p>
-        <button mat-flat-button color="primary" type="button">Add to cart</button>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            [disabled]="addingToCart()"
+            (click)="addToCart()"
+          >
+            {{ addingToCart() ? 'Adding...' : 'Add to cart' }}
+          </button>
+          <a mat-button routerLink="/cart">View cart</a>
+        </div>
+        @if (cartMessage()) {
+          <p
+            class="text-sm"
+            [class.text-green-600]="cartMessage() === 'Added to cart'"
+            [class.text-red-600]="cartMessage() === 'Failed to add to cart'"
+          >
+            {{ cartMessage() }}
+          </p>
+        }
       </div>
     </div>
   }

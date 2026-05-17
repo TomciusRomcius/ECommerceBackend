@@ -31,6 +31,13 @@ services:
       Stripe__ApiKey: ${Stripe__ApiKey}
       Stripe__WebhookSecret: ${Stripe__WebhookSecret}
       Kafka__Servers: kafka:9092
+      MicroserviceNetworkConfig__ProductServiceUrl: ${MicroserviceNetworkConfig__ProductServiceUrl}
+      MicroserviceNetworkConfig__StoreServiceUrl: ${MicroserviceNetworkConfig__StoreServiceUrl}
+      MicroserviceNetworkConfig__OrderServiceUrl: ${MicroserviceNetworkConfig__OrderServiceUrl}
+      MicroserviceNetworkConfig__PaymentServiceUrl: ${MicroserviceNetworkConfig__PaymentServiceUrl}
+      MicroserviceNetworkConfig__UserServiceUrl: ${MicroserviceNetworkConfig__UserServiceUrl}
+    env_file:
+      - .env
     volumes:
       - ./ProductService.Presentation/src:/app/ProductService.Presentation/src
       - ./ProductService.Infrastructure/src:/app/ProductService.Infrastructure/src

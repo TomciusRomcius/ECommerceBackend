@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BFF.Cart;
@@ -9,7 +10,7 @@ public class CartController(ICartService cartService, ILogger<CartController> lo
     [HttpGet]
     public async Task<IActionResult> GetItems(CancellationToken cancellationToken)
     {
-        string? authorizationHeader = Request.Headers.Authorization.ToString();
+        string authorizationHeader = Request.Headers.Authorization.ToString();
 
         try
         {
@@ -25,46 +26,60 @@ public class CartController(ICartService cartService, ILogger<CartController> lo
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> AddItem(
         [FromBody] AddCartItemRequest request,
         CancellationToken cancellationToken)
     {
-        string? authorizationHeader = Request.Headers.Authorization.ToString();
+        string authorizationHeader = Request.Headers.Authorization.ToString();
 
-        using HttpResponseMessage response =
-            await cartService.AddItemAsync(request, authorizationHeader, cancellationToken);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return StatusCode((int)response.StatusCode);
-        }
+            using HttpResponseMessage response =
+                await cartService.AddItemAsync(request, authorizationHeader, cancellationToken);
 
-        string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        logger.LogWarning("Add to cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
-        return StatusCode((int)response.StatusCode, errorBody);
+            if (response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            logger.LogWarning("Add to cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
+            return StatusCode((int)response.StatusCode, errorBody);
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Failed to resolve store for product {ProductId}.", request.ProductId);
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpDelete]
+    [Authorize]
     public async Task<IActionResult> RemoveItem(
         [FromQuery] int productId,
-        [FromQuery] int storeLocationId,
         CancellationToken cancellationToken)
     {
-        string? authorizationHeader = Request.Headers.Authorization.ToString();
+        string authorizationHeader = Request.Headers.Authorization.ToString();
 
-        using HttpResponseMessage response = await cartService.RemoveItemAsync(
-            productId,
-            storeLocationId,
-            authorizationHeader,
-            cancellationToken);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return Ok();
-        }
+            using HttpResponseMessage response =
+                await cartService.RemoveItemAsync(productId, authorizationHeader, cancellationToken);
 
-        string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        logger.LogWarning("Remove from cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
-        return StatusCode((int)response.StatusCode, errorBody);
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+
+            string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            logger.LogWarning("Remove from cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
+            return StatusCode((int)response.StatusCode, errorBody);
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Failed to resolve store for product {ProductId}.", productId);
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }
