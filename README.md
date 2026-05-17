@@ -4,6 +4,7 @@
 ![Architecture](./docs/images/architecture.jpg)
 
 ## Tech stack
+* Frontend: Angular.
 * Backend: ASP.NET Core(.NET 9).
 * Database: PostgreSQL.
 * Containerization & Orchestration: Docker, Docker Compose, Kubernetes, Helm.
@@ -35,8 +36,9 @@
   ```bash
   docker compose up
   ```
+* Note: it takes 1-2 minutes to start all services.
 * Note: if you are on Windows, it is recommended to run this in WSL.
-#### K8 local development
+#### K8 setup (very experimental, not fully implemented)
 * Generate .env files:
   ```bash
   cd scripts
@@ -58,7 +60,7 @@
 
 ### Setup the stripe webhook listener:
 ```bash
-  stripe listen --forward-to=http://localhost:8080/paymentservice/webhook/service
+  stripe listen --forward-to=http://localhost:8080/paymentservice/webhook/stripe
 ```
 
 ### Get the admin access token:
