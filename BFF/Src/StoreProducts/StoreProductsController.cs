@@ -1,50 +1,54 @@
-using ECommerceBackend.Utils.Microservices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace BFF.StoreProducts;
 
 [ApiController]
 [Route("[controller]")]
 public class StoreProductsController(
-    ILogger<StoreProductsController> logger,
-    HttpClient httpClient,
-    IOptions<MicroserviceHosts> hosts) : ControllerBase
+    IStoreProductsService storeProductsService,
+    ILogger<StoreProductsController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetProductsFromStore(int pageNumber = 0, int pageSize = 20)
+    public async Task<IActionResult> GetProducts(
+        [FromQuery] int? storeLocationId,
+        [FromQuery] int pageNumber = 0,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        var query = new QueryString()
-            .Add("pageNumber", pageNumber.ToString())
-            .Add("pageSize", pageSize.ToString());
-
-        string productUrl = $"{hosts.Value.ProductServiceUrl}/product{query}";
-        logger.LogDebug("Fetching products from {Url}", productUrl);
-
-        HttpResponseMessage productResponse = await httpClient.GetAsync(productUrl);
-        productResponse.EnsureSuccessStatusCode();
-
-        return Ok(new { data = await productResponse.Content.ReadFromJsonAsync<object>() });
+        try
+        {
+            var page = await storeProductsService.GetProductsAsync(
+                storeLocationId,
+                pageNumber,
+                pageSize,
+                cancellationToken);
+            return Ok(new { data = page });
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogWarning(ex, "Failed to fetch products (storeLocationId={StoreLocationId}).", storeLocationId);
+            return StatusCode(StatusCodes.Status502BadGateway, new { error = "Failed to fetch products." });
+        }
     }
 
-    [HttpGet("{productId:int}")]
-    public async Task<IActionResult> GetProduct(int productId)
+    [HttpGet("{productId}")]
+    public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellationToken = default)
     {
-        var query = new QueryString().Add("ids", productId.ToString());
-        string productUrl = $"{hosts.Value.ProductServiceUrl}/product/by-ids{query}";
-        logger.LogDebug("Fetching product {ProductId} from {Url}", productId, productUrl);
-
-        HttpResponseMessage productResponse = await httpClient.GetAsync(productUrl);
-        productResponse.EnsureSuccessStatusCode();
-
-        List<object>? products = await productResponse.Content.ReadFromJsonAsync<List<object>>();
-        object? product = products?.FirstOrDefault();
-
-        if (product is null)
+        try
         {
-            return NotFound();
-        }
+            StoreProductDto? product = await storeProductsService.GetProductByIdAsync(productId, cancellationToken);
 
-        return Ok(new { data = product });
+            if (product is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { data = product });
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogWarning(ex, "Failed to fetch product {ProductId}.", productId);
+            return StatusCode(StatusCodes.Status502BadGateway, new { error = "Failed to fetch product." });
+        }
     }
 }

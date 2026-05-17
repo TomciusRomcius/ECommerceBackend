@@ -1,4 +1,17 @@
 <app-page-padder>
+  <header class="mb-6">
+    @if (isStoreFiltered()) {
+      <a routerLink="/home" class="text-sm text-gray-600 hover:underline">← All products</a>
+      <h1 class="mt-2 text-2xl font-semibold">{{ storeHeading() }}</h1>
+      @if (storeAddress()) {
+        <p class="mt-1 text-sm text-gray-500">{{ storeAddress() }}</p>
+      }
+    } @else {
+      <h1 class="text-2xl font-semibold">All products</h1>
+      <p class="mt-1 text-sm text-gray-500">Products available across all stores</p>
+    }
+  </header>
+
   <div class="grid grid-cols-3 gap-4">
     @for (product of products(); track product.productId) {
       <mat-card class="flex h-full flex-col">
@@ -6,7 +19,6 @@
           class="flex aspect-4/3 items-center justify-center overflow-hidden bg-gray-100"
           aria-hidden="true"
         >
-          <!-- Image URL will be wired here later -->
           <span class="text-sm text-gray-400">No image</span>
         </div>
         <mat-card-header>
@@ -16,6 +28,14 @@
         <mat-card-content class="flex flex-1 flex-col gap-2">
           <p class="text-sm text-gray-600 line-clamp-2">{{ product.description }}</p>
           <p class="text-xs text-gray-500">{{ product.category.name }}</p>
+          @if (!isStoreFiltered() && product.store) {
+            <p class="text-xs text-gray-500">
+              {{ product.store.displayName }} · {{ product.store.stock }} in stock
+            </p>
+          }
+          @if (isStoreFiltered() && product.store) {
+            <p class="text-xs text-gray-500">{{ product.store.stock }} in stock</p>
+          }
           <p class="font-semibold">{{ product.price | currency }}</p>
           <a
             mat-flat-button
@@ -27,6 +47,8 @@
           </a>
         </mat-card-content>
       </mat-card>
+    } @empty {
+      <p class="col-span-3 text-sm text-gray-500">No products found.</p>
     }
   </div>
 </app-page-padder>

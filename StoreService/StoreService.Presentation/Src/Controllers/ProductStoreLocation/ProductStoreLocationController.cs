@@ -1,4 +1,5 @@
 using ECommerceBackend.Utils.Jwt;
+using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,15 @@ public class ProductStoreLocationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProductsFromStore([FromQuery] int storeLocationId, [FromQuery] int pageNumber)
+    public async Task<IActionResult> GetProductsFromStore(
+        [FromQuery] int storeLocationId,
+        [FromQuery] int pageNumber = 0,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        List<ProductStoreLocationEntity> result = await _mediator.Send(new GetProductsFromStoreQuery(storeLocationId, pageNumber));
+        Page<ProductStoreLocationDetails> result = await _mediator.Send(
+            new GetProductsFromStoreQuery(storeLocationId, pageNumber, pageSize),
+            cancellationToken);
         return Ok(result);
     }
 

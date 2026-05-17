@@ -1,6 +1,7 @@
 using System.Data;
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
+using ECommerceBackend.Utils.Microservices;
 using EventSystemHelper.Kafka.Utils;
 using Microsoft.Extensions.Options;
 using StoreService.Application;

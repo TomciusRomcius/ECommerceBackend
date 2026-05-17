@@ -1,7 +1,11 @@
 <app-page-padder>
   <div class="grid grid-cols-3 gap-4">
     @for (store of storeLocations(); track store.storeLocationId) {
-      <mat-card class="flex h-full flex-col">
+      <mat-card
+        class="flex h-full cursor-pointer flex-col"
+        [routerLink]="['/home']"
+        [queryParams]="{ storeLocationId: store.storeLocationId }"
+      >
         <div
           class="flex aspect-4/3 items-center justify-center overflow-hidden bg-gray-100"
           aria-hidden="true"

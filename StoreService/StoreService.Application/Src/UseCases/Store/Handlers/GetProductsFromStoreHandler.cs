@@ -1,13 +1,14 @@
+using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StoreService.Application.Persistence;
 using StoreService.Application.UseCases.Store.Queries;
-using StoreService.Domain.Entities;
 
 namespace StoreService.Application.UseCases.Store.Handlers;
 
-public class GetProductsFromStoreHandler : IRequestHandler<GetProductsFromStoreQuery, List<ProductStoreLocationEntity>>
+public class GetProductsFromStoreHandler
+    : IRequestHandler<GetProductsFromStoreQuery, Page<ProductStoreLocationDetails>>
 {
     private readonly DatabaseContext _context;
     private readonly ILogger<GetProductsFromStoreHandler> _logger;
@@ -18,7 +19,8 @@ public class GetProductsFromStoreHandler : IRequestHandler<GetProductsFromStoreQ
         _context = context;
     }
 
-    public async Task<List<ProductStoreLocationEntity>> Handle(GetProductsFromStoreQuery request,
+    public async Task<Page<ProductStoreLocationDetails>> Handle(
+        GetProductsFromStoreQuery request,
         CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered {FunctionName}", nameof(Handle));
@@ -26,19 +28,32 @@ public class GetProductsFromStoreHandler : IRequestHandler<GetProductsFromStoreQ
             "Fetching products in store {StoreLocationId}, page number: {PageNumber} page size: {PageSize}",
             request.StoreLocationId,
             request.PageNumber,
-            DatabaseContext.PageSize
+            request.PageSize
         );
-        List<ProductStoreLocationEntity> result = await _context.ProductStoreLocations
-            .Skip(request.PageNumber * DatabaseContext.PageSize)
-            .Take(DatabaseContext.PageSize)
-            .ToListAsync(cancellationToken: cancellationToken);
+
+        Page<ProductStoreLocationDetails> page = await _context.ProductStoreLocations
+            .AsNoTracking()
+            .Where(psl => psl.StoreLocationId == request.StoreLocationId)
+            .Join(
+                _context.StoreLocations.AsNoTracking(),
+                psl => psl.StoreLocationId,
+                store => store.StoreLocationId,
+                (psl, store) => new ProductStoreLocationDetails
+                {
+                    ProductId = psl.ProductId,
+                    StoreLocationId = psl.StoreLocationId,
+                    Stock = psl.Stock,
+                    DisplayName = store.DisplayName,
+                    Address = store.Address,
+                })
+            .ToPageAsync(request.PageNumber, request.PageSize);
 
         _logger.LogDebug(
-            "Retrieved products from store location id: {StoreLocationId}: {@Products}",
+            "Retrieved products from store location id: {StoreLocationId}: {@Page}",
             request.StoreLocationId,
-            result
+            page
         );
 
-        return result;
+        return page;
     }
 }

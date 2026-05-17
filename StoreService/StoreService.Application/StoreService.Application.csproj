@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -16,7 +16,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Tomas.ECommerceBackend.EventTypes" Version="1.0.1" />
-        <PackageReference Include="Tomas.ECommerceBackend.Utils" Version="1.0.5" />
+        <PackageReference Include="Tomas.ECommerceBackend.Utils" Version="1.0.6" />
         <PackageReference Include="Tomas.ECommerceBackend.Utils.Jwt" Version="1.0.6" />
         <PackageReference Include="Tomas.EventSystemHelper.Kafka" Version="1.0.2" />
     </ItemGroup>

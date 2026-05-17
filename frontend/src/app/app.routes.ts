@@ -13,7 +13,8 @@ export const routes: Routes = [
   {
     path: 'home',
     component: StorePage,
-    resolve: { products: productResolver }
+    resolve: { products: productResolver },
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
   },
   {
     path: 'stores',
