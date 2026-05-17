@@ -6,7 +6,7 @@ namespace BFF.StoreLocations;
 
 public class StoreLocationDto
 {
-    public int Id { get; set; }
+    public int StoreLocationId { get; set; }
     public string DisplayName { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
 }
@@ -25,7 +25,7 @@ public class StoreLocationsController(ILogger<StoreLocationsController> logger, 
         response.EnsureSuccessStatusCode();
 
         var locations = await response.Content.ReadFromJsonAsync<List<StoreLocationDto>>();
-        return Ok(locations);
+        return Ok(new { data = locations });
     }
 }
 
