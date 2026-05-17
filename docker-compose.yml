@@ -73,3 +73,21 @@ services:
       - ./terraform/keycloak:/workspace
     restart: on-failure
 
+  data-seeder:
+    build:
+      context: ./DataSeeder
+    restart: on-failure
+    environment:
+      API_BASE_URL: http://reverse-proxy
+      KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/ecommerce-api/protocol/openid-connect/token
+      KEYCLOAK_CLIENT_ID: ecommerce-api
+      KEYCLOAK_CLIENT_SECRET: secret
+    volumes:
+      - ./DataSeeder:/app
+    depends_on:
+      - reverse-proxy
+      - keycloak
+      - keycloak-config
+      - product-service
+      - store-service
+
