@@ -19,21 +19,21 @@ def _index_by_name(items: list[dict], id_field: str, name_key: str = "name") -> 
         if item.get(name_key) and item.get(id_field) is not None
     }
 
-
+# returns dict(name, id)
 def _load_categories(client: ApiClient) -> dict[str, int]:
     data = client.get_json("/productservice/categories", params={"pageNumber": 0})
     if isinstance(data, list):
         return _index_by_name(data, "categoryId")
     return {}
 
-
+# returns dict(name, id)
 def _load_manufacturers(client: ApiClient) -> dict[str, int]:
     data = client.get_json("/productservice/manufacturer", params={"pageNumber": 0})
     if isinstance(data, list):
         return _index_by_name(data, "manufacturerId")
     return {}
 
-
+# returns dict(name, id)
 def _load_products(client: ApiClient) -> dict[str, int]:
     data = client.get_json(
         "/productservice/product",
@@ -43,7 +43,7 @@ def _load_products(client: ApiClient) -> dict[str, int]:
         return _index_by_name(data["data"], "productId")
     return {}
 
-
+# returns dict(name, id)
 def _load_store_locations(client: ApiClient) -> dict[str, int]:
     data = client.get_json("/storeservice/storelocation", params={"pageNumber": 0})
     if not isinstance(data, list):
@@ -54,7 +54,7 @@ def _load_store_locations(client: ApiClient) -> dict[str, int]:
         if loc.get("displayName") and loc.get("storeLocationId") is not None
     }
 
-
+# returns set(productId)
 def _load_product_links(client: ApiClient, store_location_id: int) -> set[int]:
     data = client.get_json(
         "/storeservice/productstorelocation",
@@ -68,7 +68,7 @@ def _load_product_links(client: ApiClient, store_location_id: int) -> set[int]:
         if link.get("productId") is not None
     }
 
-
+# Returns (id, error)
 def find_or_create_category(
     client: ApiClient, existing: dict[str, int], name: str
 ) -> tuple[int | None, bool]:
@@ -86,7 +86,7 @@ def find_or_create_category(
     logger.error("Failed to create category %s", name)
     return None, True
 
-
+# Returns (id, error)
 def find_or_create_manufacturer(
     client: ApiClient, existing: dict[str, int], name: str
 ) -> tuple[int | None, bool]:
@@ -104,7 +104,7 @@ def find_or_create_manufacturer(
     logger.error("Failed to create manufacturer %s", name)
     return None, True
 
-
+# Returns (id, error)
 def find_or_create_product(
     client: ApiClient,
     existing: dict[str, int],
@@ -137,7 +137,7 @@ def find_or_create_product(
     logger.error("Failed to create product %s", name)
     return None, True
 
-
+# Returns (id, error)
 def find_or_create_store_location(
     client: ApiClient, existing: dict[str, int], display_name: str, address: str
 ) -> tuple[int | None, bool]:
@@ -164,7 +164,7 @@ def find_or_create_store_location(
     logger.error("Failed to create store location %s", display_name)
     return None, True
 
-
+# Returns true if succeeds
 def link_product_to_store(
     client: ApiClient,
     existing_links: set[int],
@@ -201,7 +201,7 @@ def link_product_to_store(
     )
     return True
 
-
+# returns (list(id), isError)
 def seed_categories(client: ApiClient) -> tuple[list[int], bool]:
     existing = _load_categories(client)
     ids: list[int] = []
@@ -214,7 +214,7 @@ def seed_categories(client: ApiClient) -> tuple[list[int], bool]:
             ids.append(category_id)
     return ids, failed
 
-
+# returns (list(id), isError)
 def seed_manufacturers(client: ApiClient) -> tuple[list[int], bool]:
     existing = _load_manufacturers(client)
     ids: list[int] = []
@@ -229,7 +229,7 @@ def seed_manufacturers(client: ApiClient) -> tuple[list[int], bool]:
             ids.append(manufacturer_id)
     return ids, failed
 
-
+# returns (list(id), isError)
 def seed_products(
     client: ApiClient,
     category_ids: list[int],
@@ -268,7 +268,7 @@ def seed_products(
 
     return products_by_store, failed
 
-
+# returns (list(id), isError)
 def seed_store_locations(client: ApiClient) -> tuple[list[int], bool]:
     existing = _load_store_locations(client)
     ids: list[int] = []
@@ -285,7 +285,7 @@ def seed_store_locations(client: ApiClient) -> tuple[list[int], bool]:
             ids.append(store_location_id)
     return ids, failed
 
-
+# returns isError bool
 def link_products_to_stores(
     client: ApiClient,
     store_location_ids: list[int],
@@ -315,18 +315,15 @@ def main() -> int:
     failed = False
 
     category_ids, cat_failed = seed_categories(client)
-    failed |= cat_failed
 
     manufacturer_ids, mfr_failed = seed_manufacturers(client)
-    failed |= mfr_failed
 
     products_by_store, prod_failed = seed_products(
         client, category_ids, manufacturer_ids
     )
-    failed |= prod_failed
 
     store_location_ids, store_failed = seed_store_locations(client)
-    failed |= store_failed
+    failed |= cat_failed | mfr_failed | prod_failed | store_failed
 
     if link_products_to_stores(client, store_location_ids, products_by_store):
         failed = True
