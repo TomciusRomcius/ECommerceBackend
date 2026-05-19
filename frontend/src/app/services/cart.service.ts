@@ -21,9 +21,9 @@ export class CartService {
     return this.http.post<void>(`${environment.backendApi}/cart`, request);
   }
 
-  removeItem(productId: number): Observable<void> {
+  removeItem(productId: number, storeLocationId: number): Observable<void> {
     return this.http.delete<void>(`${environment.backendApi}/cart`, {
-      params: { productId },
+      params: { productId, storeLocationId },
     });
   }
 }

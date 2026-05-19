@@ -43,9 +43,11 @@ export class CartPage implements OnInit {
   removeItem(item: CartItemModel): void {
     this.removingProductId.set(item.productId);
 
-    this.cartService.removeItem(item.productId).subscribe({
+    this.cartService.removeItem(item.productId, item.storeLocationId).subscribe({
       next: () => {
-        this.items.update((items) => items.filter((i) => i.productId !== item.productId));
+        this.items.update((items) =>
+          items.filter((i) => !(i.productId === item.productId && i.storeLocationId === item.storeLocationId)),
+        );
         this.removingProductId.set(null);
       },
       error: () => {
