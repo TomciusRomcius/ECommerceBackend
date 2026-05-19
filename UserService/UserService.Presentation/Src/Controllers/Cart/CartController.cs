@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ECommerceBackend.Utils.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,20 @@ public class CartController : ControllerBase
         if (userId is null) return new UnauthorizedObjectResult("You must be logged in to get items!");
 
         Result<List<CartProductEntity>> result = await _mediator.Send(new GetUserCartItemsQuery(new Guid(userId)));
+
+        if (result.Errors.Any())
+        {
+            return ControllerUtils.ResultErrorToResponse(result.Errors.First());
+        }
+
+        return Ok(result.GetValue());
+    }
+
+    [HttpGet("admin")]
+    [Authorize(Roles = RoleTypes.Admin)]
+    public async Task<IActionResult> GetItemsForUser([FromQuery] Guid userId)
+    {
+        Result<List<CartProductEntity>> result = await _mediator.Send(new GetUserCartItemsQuery(userId));
 
         if (result.Errors.Any())
         {

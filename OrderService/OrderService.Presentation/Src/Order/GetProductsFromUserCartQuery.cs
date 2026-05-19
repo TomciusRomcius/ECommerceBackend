@@ -1,6 +1,6 @@
 using MediatR;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 public record GetProductsFromUserCartQuery(Guid UserId) : IRequest<Result<List<CartProductMinimalModel>>>;

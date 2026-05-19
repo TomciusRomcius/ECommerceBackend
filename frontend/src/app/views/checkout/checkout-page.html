@@ -1,0 +1,19 @@
+<app-page-padder>
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-semibold">Checkout</h1>
+    <a mat-button routerLink="/cart">Back to cart</a>
+  </div>
+
+  @if (paymentStatus() === 'success') {
+    <p class="text-green-700">Payment successful. Your order is being processed.</p>
+    <a mat-button routerLink="/home">Continue shopping</a>
+  } @else if (paymentStatus() === 'cancelled') {
+    <p class="text-gray-600">Checkout was cancelled.</p>
+    <button mat-stroked-button type="button" (click)="retryCheckout()">Try again</button>
+  } @else if (loading()) {
+    <p class="text-gray-600">Redirecting to secure checkout...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+    <button mat-stroked-button type="button" (click)="retryCheckout()">Try again</button>
+  }
+</app-page-padder>

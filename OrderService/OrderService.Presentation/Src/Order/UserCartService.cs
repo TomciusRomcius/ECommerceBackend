@@ -1,7 +1,7 @@
 using MediatR;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 public class UserCartService : IUserCartService
 {
@@ -27,7 +27,7 @@ public class UserCartService : IUserCartService
         
         // Get cart products
         List<CartProductMinimalModel> userCartItems = userCartItemsResult.GetValue();
-        
+        _logger.LogInformation("Minimal: {@minimal}", userCartItems);
         Result<List<ProductPriceModel>> productDetailsResult = await
             _mediator.Send(new GetProductDescriptionQuery(userCartItems.Select(i => i.ProductId).ToList()));
 
@@ -43,6 +43,7 @@ public class UserCartService : IUserCartService
         }
 
         List<ProductPriceModel> productPriceModels = productDetailsResult.GetValue();
+        _logger.LogInformation("productPriceModels: {@productPriceModels}", productPriceModels);
 
         // Assign price values to cart products
         List<CartProductModel> cartProducts = [];
@@ -73,6 +74,7 @@ public class UserCartService : IUserCartService
 
             cartProducts.Add(cartProduct);
         }
+        _logger.LogInformation("final: {@final}", cartProducts);
 
         return new Result<IEnumerable<CartProductModel>>(cartProducts);
     }

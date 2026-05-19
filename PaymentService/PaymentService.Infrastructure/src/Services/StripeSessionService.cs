@@ -4,6 +4,7 @@ using PaymentService.Domain.src.Models;
 using PaymentService.Domain.src.Utils;
 using PaymentService.Infrastructure.src.Utils;
 using Stripe;
+using Stripe.Checkout;
 
 namespace PaymentService.Infrastructure.src.Services;
 
@@ -19,31 +20,46 @@ public class StripeSessionService : IProviderPaymentSessionService
 
     public async Task<PaymentProviderSession> GeneratePaymentSession(GeneratePaymentSessionOptions sessionOptions)
     {
-        var options = new PaymentIntentCreateOptions
+        var options = new SessionCreateOptions
         {
-            Amount = sessionOptions.Price,
-            Currency = "usd",
-            Metadata = new Dictionary<string, string>
+            Mode = "payment",
+            SuccessUrl = $"{_stripeSettings.CheckoutSuccessUrl}&session_id={{CHECKOUT_SESSION_ID}}",
+            CancelUrl = _stripeSettings.CheckoutCancelUrl,
+            LineItems =
+            [
+                new SessionLineItemOptions
+                {
+                    Quantity = 1,
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "usd",
+                        UnitAmount = sessionOptions.Price,
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Order",
+                        },
+                    },
+                },
+            ],
+            PaymentIntentData = new SessionPaymentIntentDataOptions
             {
-                { "userId", sessionOptions.UserId.ToString() },
-                { "orderId", sessionOptions.OrderId.ToString() },
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userid", sessionOptions.UserId.ToString() },
+                    { "orderId", sessionOptions.OrderId.ToString() },
+                },
             },
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-            {
-                Enabled = true,
-                AllowRedirects = "never"
-            }
         };
 
-        var service = new PaymentIntentService();
-        PaymentIntent? result = await service.CreateAsync(options);
+        Session session = await new SessionService().CreateAsync(options);
+
         return new PaymentProviderSession
         {
             Provider = PaymentProvider.STRIPE,
             UserId = sessionOptions.UserId.ToString(),
-            ClientSecret = result.ClientSecret,
-            SessionId = result.Id,
-            Currency = "usd"
+            SessionId = session.Id,
+            CheckoutUrl = session.Url!,
+            Currency = "usd",
         };
     }
 
@@ -55,8 +71,7 @@ public class StripeSessionService : IProviderPaymentSessionService
                 new ResultError(ResultErrorType.INVALID_OPERATION_ERROR, "T must be IHasObject")
             ]));
         }
-        // TODO: throwOnApiVersionMismatch = true on production
-        // Construct webhook event + verify the signature
+
         Event ev = EventUtility.ConstructEvent(json, signature, _stripeSettings.WebhookSecret,
             throwOnApiVersionMismatch: false);
         return Task.FromResult(new Result<T>((T)(object)ev));

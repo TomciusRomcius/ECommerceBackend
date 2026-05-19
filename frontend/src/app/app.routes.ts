@@ -6,6 +6,7 @@ import { AuthCallback } from './views/auth/auth-callback';
 import { ProductPage } from './views/product/product-page';
 import { productDetailResolver } from './views/product/product-detail.resolver';
 import { CartPage } from './views/cart/cartPage';
+import { CheckoutPage } from './views/checkout/checkout-page';
 import { StoresPage } from './views/stores/stores-page';
 import { storeLocationsResolver } from './views/stores/store-locations.resolver';
 
@@ -29,6 +30,10 @@ export const routes: Routes = [
   {
     path: 'cart',
     component: CartPage,
+  },
+  {
+    path: 'checkout',
+    component: CheckoutPage,
   },
   {
     path: 'auth/callback',

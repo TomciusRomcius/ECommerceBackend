@@ -2,8 +2,8 @@ using System.Reflection;
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Database;
 using OrderService.Application.Persistence;
-using OrderService.InitializeOrder;
 using OrderService.Payment;
+using OrderService.Presentation.Order;
 using OrderService.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(
     )
 );
 
-builder.Services.AddScoped<IOrderFlowService, OrderService.InitializeOrder.OrderFlowService>();
+builder.Services.AddScoped<IOrderFlowService, OrderFlowService>();
 builder.Services.AddScoped<IPaymentSessionService, PaymentSessionService>();
 builder.Services.AddScoped<IOrderPriceCalculator, OrderPriceCalculator>();
 builder.Services.AddScoped<IUserCartService, UserCartService>();

@@ -6,7 +6,7 @@ using PaymentService.Domain.src.Utils;
 
 namespace PaymentService.Presentation.src.Controllers.PaymentSession
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PaymentSessionController : ControllerBase
     {

@@ -46,7 +46,7 @@ namespace OrderService.Payment
                 requestString, Encoding.UTF8, "application/json"
             );
             
-            HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/api/paymentsession", httpContent);
+            HttpResponseMessage? response = await _httpClient.PostAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession", httpContent);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(
@@ -72,7 +72,7 @@ namespace OrderService.Payment
         public async Task<Result<PaymentSessionModel?>> GetPaymentSessionAsync(Guid userId)
         {
             _logger.LogTrace("Entered PaymentSessionService.GetPaymentSessionAsync");
-            HttpResponseMessage? response = await _httpClient.GetAsync($"{_networkConfig.PaymentServiceUrl}/api/paymentsession?userId={userId.ToString()}");
+            HttpResponseMessage? response = await _httpClient.GetAsync($"{_networkConfig.PaymentServiceUrl}/paymentsession?userId={userId.ToString()}");
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(

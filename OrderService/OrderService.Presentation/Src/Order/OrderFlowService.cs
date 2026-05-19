@@ -3,7 +3,7 @@ using OrderService.Domain.Entities;
 using OrderService.Payment;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 public class OrderFlowService : IOrderFlowService
 {

@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 public class GetProductDescriptionHandler : IRequestHandler<GetProductDescriptionQuery, Result<List<ProductPriceModel>>>
 {

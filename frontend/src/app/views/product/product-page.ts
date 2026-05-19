@@ -38,12 +38,19 @@ export class ProductPage {
       return;
     }
 
+    const storeLocationId = product.store?.storeLocationId;
+    if (storeLocationId == null) {
+      this.cartMessage.set('This product is not available at a store.');
+      return;
+    }
+
     this.addingToCart.set(true);
     this.cartMessage.set(null);
 
     this.cartService
       .addItem({
         productId: product.productId,
+        storeLocationId,
         quantity: 1,
       })
       .subscribe({

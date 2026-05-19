@@ -47,11 +47,13 @@ echo "Database__Username=postgres" >> ../PaymentService/.env
 echo "Database__Password=postgres" >> ../PaymentService/.env 
 echo "Kafka__Servers=kafka" >> ../PaymentService/.env 
 
-read -p "Enter Stripe API key(or leave empty): " stripeApiKey
+read -p "Enter Stripe secret API key(or leave empty): " stripeApiKey
 read -p "Enter Stripe webhook secret(or leave empty): " stripeWebhookSecret
 
 echo "Stripe__ApiKey=$stripeApiKey" >> ../PaymentService/.env
 echo "Stripe__WebhookSecret=$stripeWebhookSecret" >> ../PaymentService/.env
+echo "Stripe__CheckoutSuccessUrl=http://localhost:4200/checkout?payment=success" >> ../PaymentService/.env
+echo "Stripe__CheckoutCancelUrl=http://localhost:4200/checkout?payment=cancelled" >> ../PaymentService/.env
 
 addJwtEnvs "PaymentService"
 addMicroserviceUrls "PaymentService"
@@ -99,3 +101,8 @@ echo "Kafka__Servers=kafka" >> ../OrderService/.env
 
 addJwtEnvs "OrderService"
 addMicroserviceUrls "OrderService"
+
+# Frontend (written to .env but the service reads from system environment variables)
+
+read -p "Enter Stripe publishable API key(or leave empty): " stripePubKey
+echo "STRIPE_PUB_KEY=$stripePubKey" > ../frontend/.env

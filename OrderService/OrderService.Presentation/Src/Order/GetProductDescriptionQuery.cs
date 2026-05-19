@@ -1,7 +1,7 @@
 using MediatR;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 /// <returns>A sorted list that is sorted on ProductId and value being price</returns>
 /// <param name="ProductIds"></param>

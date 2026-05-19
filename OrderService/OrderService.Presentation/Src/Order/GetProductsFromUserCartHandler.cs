@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using OrderService.Utils;
 
-namespace OrderService.InitializeOrder;
+namespace OrderService.Presentation.Order;
 
 public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUserCartQuery, Result<List<CartProductMinimalModel>>>
 {
@@ -31,7 +31,9 @@ public class GetProductsFromUserCartHandler : IRequestHandler<GetProductsFromUse
         // TODO: more descriptive errors on fail
         _logger.LogTrace("Entered Handle");
         _logger.LogDebug("Getting cart items from user: {UserId}", request.UserId);
-        var message = new HttpRequestMessage(HttpMethod.Get, $"{_microserviceNetworkConfig.UserServiceUrl}/cart");
+        string cartUrl =
+            $"{_microserviceNetworkConfig.UserServiceUrl}/cart/admin?userId={request.UserId}";
+        var message = new HttpRequestMessage(HttpMethod.Get, cartUrl);
         message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _jwtTokenReader.AccessToken);
         HttpResponseMessage response = await _httpClient.SendAsync(message, cancellationToken);
         if (!response.IsSuccessStatusCode)

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using PaymentService.Application.src.Interfaces;
 using PaymentService.Domain.src.Entities;
 using PaymentService.Domain.src.Enums;
@@ -51,7 +51,7 @@ namespace PaymentService.Application.src.Services
             {
                 UserId = options.UserId,
                 PaymentSessionId = session.SessionId,
-                ClientSecret = session.ClientSecret,
+                CheckoutUrl = session.CheckoutUrl,
                 PaymentSessionProvider = paymentProvider
             };
 
