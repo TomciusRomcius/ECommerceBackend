@@ -12,6 +12,7 @@ import { storeLocationsResolver } from './views/stores/store-locations.resolver'
 import { AdminPage } from './views/admin/admin-page';
 import { CreateManufacturerPage } from './views/create-manufacturer/create-manufacturer-page';
 import { CreateCategoryPage } from './views/create-category/create-category-page';
+import { CreateProductPage } from './views/create-product/create-product-page';
 
 export const routes: Routes = [
   {
@@ -45,6 +46,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'manufacturers', pathMatch: 'full' },
       { path: 'manufacturers', component: CreateManufacturerPage },
       { path: 'categories', component: CreateCategoryPage },
+      { path: 'products', component: CreateProductPage },
     ],
   },
   {
