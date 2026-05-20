@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,9 +8,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
-import { PagePadder } from '../../components/page-padder/page-padder';
-import { ACCESS_TOKEN_KEY } from '../../constants/auth';
 import { CategoryService } from '../../services/category.service';
 
 @Component({
@@ -20,13 +17,10 @@ import { CategoryService } from '../../services/category.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    PagePadder,
-    RouterLink,
   ],
   templateUrl: './create-category-page.html',
 })
-export class CreateCategoryPage implements OnInit {
-  private readonly router = inject(Router);
+export class CreateCategoryPage {
   private readonly categoryService = inject(CategoryService);
 
   loading = signal(false);
@@ -43,12 +37,6 @@ export class CreateCategoryPage implements OnInit {
       ],
     }),
   });
-
-  ngOnInit(): void {
-    if (!sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
-      void this.router.navigate(['/login']);
-    }
-  }
 
   submit(): void {
     if (this.form.invalid) {

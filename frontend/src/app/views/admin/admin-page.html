@@ -1,0 +1,27 @@
+<app-page-padder>
+  <div class="mx-auto flex max-w-7xl gap-8">
+    <aside class="w-48 shrink-0 border-r border-gray-200 pr-6">
+      <h1 class="mb-4 text-lg font-semibold text-gray-900">Admin</h1>
+      <nav class="flex flex-col gap-1" aria-label="Admin navigation">
+        <a
+          routerLink="/admin/manufacturers"
+          routerLinkActive="bg-gray-100 font-medium text-gray-900"
+          class="rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        >
+          Manufacturers
+        </a>
+        <a
+          routerLink="/admin/categories"
+          routerLinkActive="bg-gray-100 font-medium text-gray-900"
+          class="rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        >
+          Categories
+        </a>
+      </nav>
+    </aside>
+
+    <section class="min-w-0 flex-1">
+      <router-outlet />
+    </section>
+  </div>
+</app-page-padder>

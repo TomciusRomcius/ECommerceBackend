@@ -1,36 +1,31 @@
-<app-page-padder>
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-2xl font-semibold">Create manufacturer</h1>
-    <a mat-button routerLink="/home">Back to home</a>
-  </div>
+<h2 class="mb-6 text-2xl font-semibold">Create manufacturer</h2>
 
-  <form class="flex max-w-md flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
-    <mat-form-field appearance="outline">
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" autocomplete="organization" />
-      @if (form.controls.name.hasError('required') && form.controls.name.touched) {
-        <mat-error>Name is required</mat-error>
-      }
-      @if (form.controls.name.hasError('minlength') && form.controls.name.touched) {
-        <mat-error>Name must be at least 3 characters</mat-error>
-      }
-      @if (form.controls.name.hasError('maxlength') && form.controls.name.touched) {
-        <mat-error>Name must be at most 20 characters</mat-error>
-      }
-    </mat-form-field>
+<form class="flex max-w-md flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" autocomplete="organization" />
+    @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+      <mat-error>Name is required</mat-error>
+    }
+    @if (form.controls.name.hasError('minlength') && form.controls.name.touched) {
+      <mat-error>Name must be at least 3 characters</mat-error>
+    }
+    @if (form.controls.name.hasError('maxlength') && form.controls.name.touched) {
+      <mat-error>Name must be at most 20 characters</mat-error>
+    }
+  </mat-form-field>
 
-    <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
-      Create manufacturer
-    </button>
-  </form>
+  <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+    Create manufacturer
+  </button>
+</form>
 
-  @if (loading()) {
-    <p class="mt-4 text-gray-600">Creating manufacturer...</p>
-  }
-  @if (error()) {
-    <p class="mt-4 text-red-600">{{ error() }}</p>
-  }
-  @if (successMessage()) {
-    <p class="mt-4 text-green-700">{{ successMessage() }}</p>
-  }
-</app-page-padder>
+@if (loading()) {
+  <p class="mt-4 text-gray-600">Creating manufacturer...</p>
+}
+@if (error()) {
+  <p class="mt-4 text-red-600">{{ error() }}</p>
+}
+@if (successMessage()) {
+  <p class="mt-4 text-green-700">{{ successMessage() }}</p>
+}
