@@ -22,8 +22,10 @@ addMicroserviceUrls() {
   echo "MicroserviceNetworkConfig__StoreServiceUrl=$storeServiceUrl" >> ../$1/.env
 }
 
+read -p "Enter localstack auth token (or leave empty for no S3 support): " localstackToken
+echo "LOCALSTACK_AUTH_TOKEN=$localstackToken" > ../.env
+echo "LOCALSTACK_VOLUME_DIR=./localstack_data" >> ../.env
 read -p "Enter keycloak ecommerce-api client secret: " jwtClientSecret
-
 
 jwtClientId=ecommerce-api
 jwtClientSecret=secret

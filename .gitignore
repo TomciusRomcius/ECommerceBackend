@@ -131,3 +131,5 @@ charts
 **/.terraform/
 !dev.tfvars
 *.pyc
+
+localstack_data
