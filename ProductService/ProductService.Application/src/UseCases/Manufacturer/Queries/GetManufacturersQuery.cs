@@ -3,4 +3,4 @@ using ProductService.Domain.Entities;
 
 namespace ProductService.Application.UseCases.Manufacturer.Queries;
 
-public record GetManufacturersQuery(int PageNumber) : IRequest<List<ManufacturerEntity>>;
+public record GetManufacturersQuery : IRequest<List<ManufacturerEntity>>;

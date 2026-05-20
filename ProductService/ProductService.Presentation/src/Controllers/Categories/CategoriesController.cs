@@ -21,9 +21,9 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCategories([FromQuery] int pageNumber)
+    public async Task<IActionResult> GetCategories()
     {
-        List<CategoryEntity> categories = await _categoriesService.GetCategoriesAsync(pageNumber);
+        List<CategoryEntity> categories = await _categoriesService.GetCategoriesAsync();
         return Ok(categories);
     }
 

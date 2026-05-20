@@ -23,9 +23,9 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetManufacturers([FromQuery] int pageNumber)
+    public async Task<IActionResult> GetManufacturers()
     {
-        List<ManufacturerEntity> manufacturers = await _mediator.Send(new GetManufacturersQuery(pageNumber));
+        List<ManufacturerEntity> manufacturers = await _mediator.Send(new GetManufacturersQuery());
         return Ok(manufacturers);
     }
 

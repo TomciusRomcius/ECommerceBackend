@@ -22,14 +22,8 @@ public class GetManufacturersHandler : IRequestHandler<GetManufacturersQuery, Li
         CancellationToken cancellationToken)
     {
         _logger.LogTrace("Entered Handle");
-        _logger.LogDebug(
-            "Fetching manufacturers, page number: {PageNumber} page size: {PageSize}",
-            request.PageNumber,
-            DatabaseContext.PageSize
-        );
+        _logger.LogDebug("Fetching all manufacturers");
         List<ManufacturerEntity> result = await _context.Manufacturers
-            .Skip(request.PageNumber * DatabaseContext.PageSize)
-            .Take(DatabaseContext.PageSize)
             .ToListAsync(cancellationToken: cancellationToken);
         _logger.LogDebug("Retrieved manufacturers: {@Manufacturers}", result);
         return result;

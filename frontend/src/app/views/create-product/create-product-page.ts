@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,6 +8,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { forkJoin } from 'rxjs';
+import CategoryModel from '../../models/category-model';
+import ManufacturerModel from '../../models/manufacturer-model';
+import { CategoryService } from '../../services/category.service';
+import { ManufacturerService } from '../../services/manufacturer.service';
 import { ProductAdminService } from '../../services/product-admin.service';
 
 @Component({
@@ -17,15 +23,21 @@ import { ProductAdminService } from '../../services/product-admin.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './create-product-page.html',
 })
-export class CreateProductPage {
+export class CreateProductPage implements OnInit {
   private readonly productAdminService = inject(ProductAdminService);
+  private readonly manufacturerService = inject(ManufacturerService);
+  private readonly categoryService = inject(CategoryService);
 
   loading = signal(false);
+  optionsLoading = signal(true);
   error = signal('');
   successMessage = signal<string | null>(null);
+  manufacturers = signal<ManufacturerModel[]>([]);
+  categories = signal<CategoryModel[]>([]);
 
   form = new FormGroup({
     name: new FormControl('', {
@@ -40,15 +52,26 @@ export class CreateProductPage {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0.1)],
     }),
-    manufacturerId: new FormControl(0, {
-      nonNullable: true,
-      validators: [Validators.required, Validators.min(1)],
-    }),
-    categoryId: new FormControl(0, {
-      nonNullable: true,
-      validators: [Validators.required, Validators.min(1)],
-    }),
+    manufacturerId: new FormControl<number | null>(null, Validators.required),
+    categoryId: new FormControl<number | null>(null, Validators.required),
   });
+
+  ngOnInit(): void {
+    forkJoin({
+      manufacturers: this.manufacturerService.getManufacturers(),
+      categories: this.categoryService.getCategories(),
+    }).subscribe({
+      next: ({ manufacturers, categories }) => {
+        this.manufacturers.set(manufacturers);
+        this.categories.set(categories);
+        this.optionsLoading.set(false);
+      },
+      error: () => {
+        this.optionsLoading.set(false);
+        this.error.set('Failed to load manufacturers or categories.');
+      },
+    });
+  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -56,11 +79,18 @@ export class CreateProductPage {
       return;
     }
 
+    const manufacturerId = this.form.controls.manufacturerId.value;
+    const categoryId = this.form.controls.categoryId.value;
+
+    if (manufacturerId === null || categoryId === null) {
+      return;
+    }
+
     this.loading.set(true);
     this.error.set('');
     this.successMessage.set(null);
 
-    const { name, description, price, manufacturerId, categoryId } = this.form.getRawValue();
+    const { name, description, price } = this.form.getRawValue();
 
     this.productAdminService
       .createProduct({ name, description, price, manufacturerId, categoryId })
@@ -72,8 +102,8 @@ export class CreateProductPage {
             name: '',
             description: '',
             price: 0,
-            manufacturerId: 0,
-            categoryId: 0,
+            manufacturerId: null,
+            categoryId: null,
           });
         },
         error: () => {

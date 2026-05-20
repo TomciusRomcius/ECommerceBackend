@@ -15,6 +15,30 @@ public class ManufacturerController(
     IOptions<MicroserviceHosts> hosts,
     ILogger<ManufacturerController> logger) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetManufacturers(CancellationToken cancellationToken = default)
+    {
+        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Manufacturer";
+        logger.LogDebug("Fetching manufacturers from {Url}", upstreamUrl);
+
+        using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            string body = await response.Content.ReadAsStringAsync(cancellationToken);
+            logger.LogWarning(
+                "Get manufacturers failed with status {StatusCode}: {Body}",
+                response.StatusCode,
+                body);
+            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+        }
+
+        List<ManufacturerListDto>? manufacturers =
+            await response.Content.ReadFromJsonAsync<List<ManufacturerListDto>>(cancellationToken);
+
+        return Ok(new { data = manufacturers });
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateManufacturer(

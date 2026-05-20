@@ -8,7 +8,7 @@ namespace ProductService.Application.Services;
 
 public interface ICategoriesService
 {
-    public Task<List<CategoryEntity>> GetCategoriesAsync(int pageNumber);
+    public Task<List<CategoryEntity>> GetCategoriesAsync();
     public Task<Result<int>> CreateCategoryAsync(CategoryEntity entity);
 }
 
@@ -23,18 +23,11 @@ public class CategoriesService : ICategoriesService
         _context = context;
     }
 
-    public async Task<List<CategoryEntity>> GetCategoriesAsync(int pageNumber)
+    public async Task<List<CategoryEntity>> GetCategoriesAsync()
     {
         _logger.LogTrace("Entered {FunctionName}", nameof(GetCategoriesAsync));
-        _logger.LogDebug(
-            "Fetching categories, page number: {PageNumber} page size: {PageSize}",
-            pageNumber,
-            DatabaseContext.PageSize
-        );
-        List<CategoryEntity> result = await _context.Categories
-            .Skip(pageNumber * DatabaseContext.PageSize)
-            .Take(DatabaseContext.PageSize)
-            .ToListAsync();
+        _logger.LogDebug("Fetching all categories");
+        List<CategoryEntity> result = await _context.Categories.ToListAsync();
         return result;
     }
 
