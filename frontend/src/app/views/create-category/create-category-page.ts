@@ -24,7 +24,7 @@ export class CreateCategoryPage {
   private readonly categoryService = inject(CategoryService);
 
   loading = signal(false);
-  error = signal<string | null>(null);
+  error = signal('');
   successMessage = signal<string | null>(null);
 
   form = new FormGroup({
@@ -45,7 +45,7 @@ export class CreateCategoryPage {
     }
 
     this.loading.set(true);
-    this.error.set(null);
+    this.error.set('');
     this.successMessage.set(null);
 
     this.categoryService.createCategory({ name: this.form.controls.name.value }).subscribe({

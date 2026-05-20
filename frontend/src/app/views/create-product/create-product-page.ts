@@ -24,7 +24,7 @@ export class CreateProductPage {
   private readonly productAdminService = inject(ProductAdminService);
 
   loading = signal(false);
-  error = signal<string | null>(null);
+  error = signal('');
   successMessage = signal<string | null>(null);
 
   form = new FormGroup({
@@ -57,7 +57,7 @@ export class CreateProductPage {
     }
 
     this.loading.set(true);
-    this.error.set(null);
+    this.error.set('');
     this.successMessage.set(null);
 
     const { name, description, price, manufacturerId, categoryId } = this.form.getRawValue();

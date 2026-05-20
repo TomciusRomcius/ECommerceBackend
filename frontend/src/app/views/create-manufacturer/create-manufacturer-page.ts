@@ -24,7 +24,7 @@ export class CreateManufacturerPage {
   private readonly manufacturerService = inject(ManufacturerService);
 
   loading = signal(false);
-  error = signal<string | null>(null);
+  error = signal('');
   successMessage = signal<string | null>(null);
 
   form = new FormGroup({
@@ -45,7 +45,7 @@ export class CreateManufacturerPage {
     }
 
     this.loading.set(true);
-    this.error.set(null);
+    this.error.set('');
     this.successMessage.set(null);
 
     this.manufacturerService.createManufacturer({ name: this.form.controls.name.value }).subscribe({
