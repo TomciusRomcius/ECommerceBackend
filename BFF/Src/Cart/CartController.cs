@@ -1,3 +1,4 @@
+using BFF.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,14 +37,14 @@ public class CartController(ICartService cartService, ILogger<CartController> lo
         using HttpResponseMessage response =
             await cartService.AddItemAsync(request, authorizationHeader, cancellationToken);
 
-        if (response.IsSuccessStatusCode)
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
         {
-            return StatusCode((int)response.StatusCode);
+            logger.LogWarning("Add to cart failed with status {StatusCode}: {Body}", response.StatusCode, body);
         }
 
-        string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        logger.LogWarning("Add to cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
-        return StatusCode((int)response.StatusCode, errorBody);
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 
     [HttpDelete]
@@ -58,13 +59,13 @@ public class CartController(ICartService cartService, ILogger<CartController> lo
         using HttpResponseMessage response =
             await cartService.RemoveItemAsync(productId, storeLocationId, authorizationHeader, cancellationToken);
 
-        if (response.IsSuccessStatusCode)
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
         {
-            return Ok();
+            logger.LogWarning("Remove from cart failed with status {StatusCode}: {Body}", response.StatusCode, body);
         }
 
-        string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        logger.LogWarning("Remove from cart failed with status {StatusCode}: {Body}", response.StatusCode, errorBody);
-        return StatusCode((int)response.StatusCode, errorBody);
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 }

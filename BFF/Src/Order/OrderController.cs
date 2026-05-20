@@ -1,3 +1,4 @@
+using BFF.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,17 +23,16 @@ public class OrderController(IOrderPaymentSessionService orderPaymentSessionServ
                 authorizationHeader,
                 cancellationToken);
 
-        if (response.IsSuccessStatusCode)
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
         {
-            string body = await response.Content.ReadAsStringAsync(cancellationToken);
-            return Content(body, "application/json");
+            logger.LogWarning(
+                "Create order payment session failed with status {StatusCode}: {Body}",
+                response.StatusCode,
+                body);
         }
 
-        string errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        logger.LogWarning(
-            "Create order payment session failed with status {StatusCode}: {Body}",
-            response.StatusCode,
-            errorBody);
-        return StatusCode((int)response.StatusCode, errorBody);
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 }

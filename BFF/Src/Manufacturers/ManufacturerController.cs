@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,20 +36,14 @@ public class ManufacturerController(
         using HttpResponseMessage response = await httpClient.SendAsync(upstreamRequest, cancellationToken);
         string body = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            return new ContentResult
-            {
-                StatusCode = (int)response.StatusCode,
-                Content = body,
-                ContentType = "application/json",
-            };
+            logger.LogWarning(
+                "Create manufacturer failed with status {StatusCode}: {Body}",
+                response.StatusCode,
+                body);
         }
 
-        logger.LogWarning(
-            "Create manufacturer failed with status {StatusCode}: {Body}",
-            response.StatusCode,
-            body);
-        return StatusCode((int)response.StatusCode, body);
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 }

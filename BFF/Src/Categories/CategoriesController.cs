@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,11 +44,6 @@ public class CategoriesController(
                 body);
         }
 
-        return new ContentResult
-        {
-            StatusCode = (int)response.StatusCode,
-            Content = body,
-            ContentType = "application/json",
-        };
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 }
