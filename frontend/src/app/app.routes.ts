@@ -10,6 +10,7 @@ import { CheckoutPage } from './views/checkout/checkout-page';
 import { StoresPage } from './views/stores/stores-page';
 import { storeLocationsResolver } from './views/stores/store-locations.resolver';
 import { CreateManufacturerPage } from './views/create-manufacturer/create-manufacturer-page';
+import { CreateCategoryPage } from './views/create-category/create-category-page';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,10 @@ export const routes: Routes = [
   {
     path: 'manufacturers/create',
     component: CreateManufacturerPage,
+  },
+  {
+    path: 'categories/create',
+    component: CreateCategoryPage,
   },
   {
     path: 'auth/callback',
