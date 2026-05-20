@@ -115,12 +115,34 @@ resource "keycloak_openid_client_default_scopes" "frontend_client_default_scopes
     "email",
     "basic",
     keycloak_openid_client_scope.audience_client_scope.name,
+    keycloak_openid_client_scope.realm_roles_client_scope.name,
   ]
 }
 
 resource "keycloak_role" "ecommerce_admin_role" {
   realm_id    = keycloak_realm.ecommerce_api.id
   name        = "ecommerce-admin"
+}
+
+resource "keycloak_user" "admin_user" {
+  realm_id       = keycloak_realm.ecommerce_api.id
+  username       = "adminuser"
+  email          = "adminuser@example.com"
+  first_name     = "Admin"
+  last_name      = "User"
+  email_verified = true
+  enabled        = true
+
+  initial_password {
+    value     = "adminuser"
+    temporary = false
+  }
+}
+
+resource "keycloak_user_roles" "admin_user_roles" {
+  realm_id = keycloak_realm.ecommerce_api.id
+  user_id  = keycloak_user.admin_user.id
+  role_ids = [keycloak_role.ecommerce_admin_role.id]
 }
 
 resource "keycloak_openid_hardcoded_role_protocol_mapper" "hardcoded_admin_role" {
@@ -145,6 +167,21 @@ resource "keycloak_openid_user_realm_role_protocol_mapper" "realm_roles_mapper" 
 resource "keycloak_openid_client_scope" "audience_client_scope" {
   realm_id = keycloak_realm.ecommerce_api.id
   name     = "audience-client-scope"
+}
+
+resource "keycloak_openid_client_scope" "realm_roles_client_scope" {
+  realm_id = keycloak_realm.ecommerce_api.id
+  name     = "realm-roles-client-scope"
+}
+
+resource "keycloak_openid_user_realm_role_protocol_mapper" "realm_roles_scope_mapper" {
+  realm_id        = keycloak_realm.ecommerce_api.id
+  client_scope_id = keycloak_openid_client_scope.realm_roles_client_scope.id
+  name            = "realm-roles-mapper"
+
+  claim_name       = "roles"
+  multivalued      = true
+  claim_value_type = "String"
 }
 
 resource "keycloak_openid_audience_protocol_mapper" "audience_mapper" {
