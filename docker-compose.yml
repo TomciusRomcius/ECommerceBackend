@@ -100,6 +100,19 @@ services:
       LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN}
       DEBUG: ${DEBUG:-0}
       PERSISTENCE: ${PERSISTENCE:-0}
+      SERVICES: sts, iam, s3
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - '/var/run/docker.sock:/var/run/docker.sock'
+  localstack-infra-init:
+    build:
+      context: terraform/aws
+    restart: on-failure
+    depends_on:
+      - localstack
+    environment:
+      AWS_ENDPOINT_URL: http://localstack:4566
+      S3_HOSTNAME: localstack      
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
