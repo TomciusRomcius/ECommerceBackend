@@ -1,6 +1,6 @@
 import { Component, input, signal, WritableSignal } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
-import { MatAnchor } from "@angular/material/button";
+import { MatAnchor, MatButton } from "@angular/material/button";
 
 function generateImageId(images: ImageData[]) {
   if (images.length === 0)
@@ -18,7 +18,7 @@ const MAX_IMAGES = 6;
 
 @Component({
   selector: 'app-upload-images',
-  imports: [MatIcon],
+  imports: [MatButton, MatIcon],
   templateUrl: './upload-images.html',
   styleUrl: './upload-images.css',
 })
