@@ -1,5 +1,4 @@
-import { Component, computed, input, signal, WritableSignal } from '@angular/core';
-import { MatError } from "@angular/material/form-field";
+import { Component, input, signal, WritableSignal } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 import { MatAnchor } from "@angular/material/button";
 
@@ -15,9 +14,11 @@ interface ImageData {
   id: number;
 };
 
+const MAX_IMAGES = 6;
+
 @Component({
   selector: 'app-upload-images',
-  imports: [MatError, MatIcon, MatAnchor],
+  imports: [MatIcon],
   templateUrl: './upload-images.html',
   styleUrl: './upload-images.css',
 })
@@ -26,6 +27,7 @@ export class UploadImages {
   imagesRequired = input.required<boolean>();
 
   imagesData = signal<ImageData[]>([]);
+  error = signal('');
 
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -33,8 +35,16 @@ export class UploadImages {
     for (const file of input.files ?? []) {
       files.push(file);
     }
+
+    if (this.imagesData().length + files.length > MAX_IMAGES) {
+      this.error.set(`You can upload a maximum of ${MAX_IMAGES} images.`);
+      input.value = '';
+      return;
+    }
+
+    this.error.set('');
     const urls = await Promise.all(files.map((file) => this.readFileData(file)));
-    this.imagesSignal().set(files);
+    this.imagesSignal().update((existing) => [...existing, ...files]);
     const imagesData = this.imagesData();
     // Reset ids
     for (let i = 0; i < imagesData.length; i++) {
@@ -49,10 +59,14 @@ export class UploadImages {
     }
 
     this.imagesData.set(imagesData);
+    input.value = '';
   }
 
   deleteImage(id: number) {
     const newImages = this.imagesData().filter((img) => img.id !== id);
+    if (newImages.length <= 6) {
+      this.error.set('');
+    }
     this.imagesData.set(newImages);
   }
 

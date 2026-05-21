@@ -2,8 +2,11 @@
 <button mat-button type="button" (click)="fileInput.click()">
   Upload
 </button>
-@if (imagesRequired() && !imagesSignal()()) {
-  <mat-error>Images required</mat-error>
+@if (imagesRequired() && imagesSignal()().length === 0) {
+  <p class="text-sm text-red-600">Images required</p>
+}
+@if (error()) {
+  <p class="text-sm text-red-600" role="alert">{{ error() }}</p>
 }
 
 <div class="flex gap-2 overflow-x-auto rounded-md overflow-hidden">
