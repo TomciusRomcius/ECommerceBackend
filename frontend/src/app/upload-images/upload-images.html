@@ -1,0 +1,13 @@
+<input (change)="onFileSelected($event)" placeholder="Upload images" type="file" multiple/>
+@if (imagesRequired() && !imagesSignal()()) {
+  <mat-error>Images required</mat-error>
+}
+
+@for (image of imagesData(); track $index) {
+  <div class="relative">
+    <button (click)="deleteImage(image.id)">
+      <mat-icon class="absolute top-0 right-0.5">delete</mat-icon>
+    </button>
+    <img [src]="image.data64" />
+  </div>
+}

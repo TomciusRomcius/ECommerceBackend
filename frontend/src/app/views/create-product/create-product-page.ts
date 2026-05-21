@@ -15,6 +15,7 @@ import ManufacturerModel from '../../models/manufacturer-model';
 import { CategoryService } from '../../services/category.service';
 import { ManufacturerService } from '../../services/manufacturer.service';
 import { ProductAdminService } from '../../services/product-admin.service';
+import { UploadImages } from "../../upload-images/upload-images";
 
 @Component({
   selector: 'app-create-product-page',
@@ -24,7 +25,8 @@ import { ProductAdminService } from '../../services/product-admin.service';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-  ],
+    UploadImages
+],
   templateUrl: './create-product-page.html',
 })
 export class CreateProductPage implements OnInit {
@@ -55,6 +57,8 @@ export class CreateProductPage implements OnInit {
     manufacturerId: new FormControl<number | null>(null, Validators.required),
     categoryId: new FormControl<number | null>(null, Validators.required),
   });
+
+  images = signal<File[]>([]);
 
   ngOnInit(): void {
     forkJoin({
