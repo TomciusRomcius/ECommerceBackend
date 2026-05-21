@@ -45,18 +45,7 @@ export class UploadImages {
     this.error.set('');
     const urls = await Promise.all(files.map((file) => this.readFileData(file)));
     this.imagesSignal().update((existing) => [...existing, ...files]);
-    const imagesData = this.imagesData();
-    // Reset ids
-    for (let i = 0; i < imagesData.length; i++) {
-      imagesData[i].id = i;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      imagesData.push({
-        data64: urls[i],
-        id: i + imagesData.length
-      });
-    }
+    const imagesData = this.getImagesData(files, urls);
 
     this.imagesData.set(imagesData);
     input.value = '';
@@ -70,8 +59,24 @@ export class UploadImages {
     this.imagesData.set(newImages);
   }
 
+  private getImagesData(files: File[], urls: string[]) {
+    const imagesData = this.imagesData();
+    // Reset ids
+    for (let i = 0; i < imagesData.length; i++) {
+      imagesData[i].id = i;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      imagesData.push({
+        data64: urls[i],
+        id: i + imagesData.length
+      });
+    }
+    return imagesData;
+  }
+
   // Returns file data as base64 encoded
-  readFileData(file: File): Promise<string> {
+  private readFileData(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(file);
