@@ -1,13 +1,21 @@
-<input (change)="onFileSelected($event)" placeholder="Upload images" type="file" multiple/>
+<input #fileInput (change)="onFileSelected($event)" type="file" accept="image/*" id="file-upload" class="hidden" multiple/>
+<button mat-button type="button" (click)="fileInput.click()">
+  Upload
+</button>
 @if (imagesRequired() && !imagesSignal()()) {
   <mat-error>Images required</mat-error>
 }
 
-@for (image of imagesData(); track $index) {
-  <div class="relative">
-    <button (click)="deleteImage(image.id)">
-      <mat-icon class="absolute top-0 right-0.5">delete</mat-icon>
-    </button>
-    <img [src]="image.data64" />
-  </div>
-}
+<div class="flex gap-2 overflow-x-auto rounded-md overflow-hidden">
+  @for (image of imagesData(); track $index) {
+    <div class="relative shrink-0 w-64 h-64">
+      <button (click)="deleteImage(image.id)" class="absolute top-0 right-0.5 z-10">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <div class="relative w-full h-full">
+        <div class="absolute w-full h-full top-0 bg-transparent hover:bg-black/10 transition-all"></div>
+        <img [src]="image.data64" class="w-full h-full object-cover" />
+      </div>
+    </div>
+  }
+</div>

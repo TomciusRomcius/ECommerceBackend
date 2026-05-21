@@ -1,6 +1,7 @@
 import { Component, computed, input, signal, WritableSignal } from '@angular/core';
 import { MatError } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
+import { MatAnchor } from "@angular/material/button";
 
 function generateImageId(images: ImageData[]) {
   if (images.length === 0)
@@ -16,7 +17,7 @@ interface ImageData {
 
 @Component({
   selector: 'app-upload-images',
-  imports: [MatError, MatIcon],
+  imports: [MatError, MatIcon, MatAnchor],
   templateUrl: './upload-images.html',
   styleUrl: './upload-images.css',
 })

@@ -1,6 +1,6 @@
 <h2 class="mb-6 text-2xl font-semibold">Create category</h2>
 
-<form class="flex max-w-md flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+<form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
     <input matInput formControlName="name" autocomplete="off" />

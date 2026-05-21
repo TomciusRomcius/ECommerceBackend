@@ -4,7 +4,7 @@
   <p class="mb-4 text-gray-600">Loading manufacturers and categories...</p>
 }
 
-<form class="flex max-w-md flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+<form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
     <input matInput formControlName="name" autocomplete="off" />
