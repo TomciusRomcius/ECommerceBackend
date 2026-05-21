@@ -15,7 +15,7 @@ import ManufacturerModel from '../../models/manufacturer-model';
 import { CategoryService } from '../../services/category.service';
 import { ManufacturerService } from '../../services/manufacturer.service';
 import { ProductAdminService } from '../../services/product-admin.service';
-import { UploadImages } from "../../upload-images/upload-images";
+import { UploadImages } from "../../components/upload-images/upload-images";
 
 @Component({
   selector: 'app-create-product-page',
