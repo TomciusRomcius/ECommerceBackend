@@ -119,23 +119,14 @@ public class ProductsController(
             upstreamRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
         }
 
-        List<string> keys = [];
-        foreach (IFormFile file in request.Files)
-        {
-            using var fileStream = new MemoryStream();
-            await file.CopyToAsync(fileStream, cancellationToken);
-            // TODO: use productId with prefix instead of guid
-            string key = Guid.NewGuid().ToString();
-            keys.Add(key);
-            var req = new TransferUtilityUploadRequest()
-            {
-                BucketName = s3Configuration.Value.BucketName,
-                Key = key,
-                InputStream = fileStream
-            };
-            var fileTransferUtility = new TransferUtility(s3Client);
-            await fileTransferUtility.UploadAsync(req, cancellationToken);
-        }
+        string bucketName = s3Configuration.Value.BucketName;
+        var transferUtility = new TransferUtility(s3Client);
+
+        string[] keys = await Task.WhenAll(request.Files.Select(file => UploadImageAsync(
+            file,
+            bucketName,
+            transferUtility,
+            cancellationToken)));
 
         upstreamRequest.Content = JsonContent.Create(new
         {
@@ -159,5 +150,27 @@ public class ProductsController(
         }
 
         return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+    }
+
+    private static async Task<string> UploadImageAsync(
+        IFormFile file,
+        string bucketName,
+        TransferUtility transferUtility,
+        CancellationToken cancellationToken)
+    {
+        using var fileStream = new MemoryStream();
+        await file.CopyToAsync(fileStream, cancellationToken);
+        fileStream.Position = 0;
+
+        // TODO: use productId with prefix instead of guid
+        string key = Guid.NewGuid().ToString();
+        var uploadRequest = new TransferUtilityUploadRequest
+        {
+            BucketName = bucketName,
+            Key = key,
+            InputStream = fileStream,
+        };
+        await transferUtility.UploadAsync(uploadRequest, cancellationToken);
+        return key;
     }
 }
