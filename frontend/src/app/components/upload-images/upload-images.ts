@@ -1,4 +1,4 @@
-import { Component, input, signal, WritableSignal } from '@angular/core';
+import { Component, effect, input, signal, WritableSignal } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 import { MatAnchor, MatButton } from "@angular/material/button";
 
@@ -29,6 +29,14 @@ export class UploadImages {
   imagesData = signal<ImageData[]>([]);
   error = signal('');
 
+  constructor() {
+    effect(() => {
+      if (this.imagesSignal()().length === 0) {
+        this.imagesData.set([]);
+      }
+    });
+  }
+
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const files: File[] = [];
@@ -52,11 +60,17 @@ export class UploadImages {
   }
 
   deleteImage(id: number) {
+    const index = this.imagesData().findIndex((img) => img.id === id);
+    if (index === -1) {
+      return;
+    }
+
     const newImages = this.imagesData().filter((img) => img.id !== id);
     if (newImages.length <= 6) {
       this.error.set('');
     }
     this.imagesData.set(newImages);
+    this.imagesSignal().update((files) => files.filter((_, fileIndex) => fileIndex !== index));
   }
 
   private getImagesData(files: File[], urls: string[]) {
