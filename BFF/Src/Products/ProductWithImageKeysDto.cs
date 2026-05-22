@@ -23,7 +23,7 @@ internal sealed class ProductWithImageKeysDto
     public List<string> ImageKeys { get; set; } = [];
 }
 
-internal sealed class ProductWithImageUrlsDto
+public sealed class ProductWithImageUrlsDto
 {
     public int ProductId { get; set; }
 

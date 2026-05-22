@@ -1,107 +1,44 @@
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
-using Amazon.S3;
-using Amazon.S3.Transfer;
-using BFF.Configuration;
 using BFF.Utils;
-using ECommerceBackend.Utils.Microservices;
 using ECommerceBackend.Utils.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace BFF.Products;
 
 [ApiController]
 [Route("[controller]")]
-public class ProductsController(
-    HttpClient httpClient,
-    IOptions<MicroserviceHosts> hosts,
-    IOptions<S3Configuration> s3Configuration,
-    IAmazonS3 s3Client,
-    IS3ImageUrlBuilder s3ImageUrlBuilder,
-    ILogger<ProductsController> logger) : ControllerBase
+public class ProductsController(IProductService productService) : ControllerBase
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
-
     [HttpGet]
     public async Task<IActionResult> GetProducts(
         [FromQuery] int pageNumber = 0,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var query = new QueryString()
-            .Add("pageNumber", pageNumber.ToString())
-            .Add("pageSize", pageSize.ToString());
-        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product{query}";
+        Result<Page<ProductWithImageUrlsDto>> result =
+            await productService.GetProductsAsync(pageNumber, pageSize, cancellationToken);
 
-        using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
-        string body = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
+        if (result.Errors.Any())
         {
-            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+            return ControllerUtils.ResultErrorsToResponse(result.Errors);
         }
 
-        Page<ProductWithImageKeysDto>? page =
-            JsonSerializer.Deserialize<Page<ProductWithImageKeysDto>>(body, JsonOptions);
-
-        if (page is null)
-        {
-            return StatusCode(StatusCodes.Status502BadGateway);
-        }
-
-        Page<ProductWithImageUrlsDto> mapped = new()
-        {
-            Data = page.Data.Select(ToProductWithImageUrls).ToList(),
-            TotalCount = page.TotalCount,
-            HasNextPage = page.HasNextPage,
-            HasPrevPage = page.HasPrevPage,
-        };
-
-        return Ok(mapped);
+        return Ok(result.GetValue());
     }
 
     [HttpGet("{productId:int}")]
     public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellationToken = default)
     {
-        var query = new QueryString().Add("ids", productId.ToString());
-        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product/by-ids{query}";
+        Result<ProductWithImageUrlsDto> result =
+            await productService.GetProductAsync(productId, cancellationToken);
 
-        using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
-        string body = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
+        if (result.Errors.Any())
         {
-            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+            return ControllerUtils.ResultErrorsToResponse(result.Errors);
         }
 
-        List<ProductWithImageKeysDto>? products =
-            JsonSerializer.Deserialize<List<ProductWithImageKeysDto>>(body, JsonOptions);
-
-        ProductWithImageKeysDto? product = products?.FirstOrDefault();
-        if (product is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(ToProductWithImageUrls(product));
+        return Ok(result.GetValue());
     }
-
-    private ProductWithImageUrlsDto ToProductWithImageUrls(ProductWithImageKeysDto product) =>
-        new()
-        {
-            ProductId = product.ProductId,
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-            ManufacturerId = product.ManufacturerId,
-            CategoryId = product.CategoryId,
-            Manufacturer = product.Manufacturer,
-            Category = product.Category,
-            ImageUrls = s3ImageUrlBuilder.BuildUrls(product.ImageKeys),
-        };
 
     [HttpPost]
     [Authorize]
@@ -109,68 +46,12 @@ public class ProductsController(
         [FromForm] CreateProductRequest request,
         CancellationToken cancellationToken)
     {
-        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product";
-        logger.LogDebug("Creating product at {Url}", upstreamUrl);
-
-        using var upstreamRequest = new HttpRequestMessage(HttpMethod.Post, upstreamUrl);
         string authorizationHeader = Request.Headers.Authorization.ToString();
-        if (!string.IsNullOrWhiteSpace(authorizationHeader))
-        {
-            upstreamRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
-        }
 
-        string bucketName = s3Configuration.Value.BucketName;
-        var transferUtility = new TransferUtility(s3Client);
+        using HttpResponseMessage response =
+            await productService.CreateProductAsync(request, authorizationHeader, cancellationToken);
 
-        string[] keys = await Task.WhenAll(request.Files.Select(file => UploadImageAsync(
-            file,
-            bucketName,
-            transferUtility,
-            cancellationToken)));
-
-        upstreamRequest.Content = JsonContent.Create(new
-        {
-            name = request.Name,
-            description = request.Description,
-            price = request.Price,
-            manufacturerId = request.ManufacturerId,
-            categoryId = request.CategoryId,
-            imageKeys = keys,
-        });
-
-        using HttpResponseMessage response = await httpClient.SendAsync(upstreamRequest, cancellationToken);
         string body = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            logger.LogWarning(
-                "Create product failed with status {StatusCode}: {Body}",
-                response.StatusCode,
-                body);
-        }
-
         return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
-    }
-
-    private static async Task<string> UploadImageAsync(
-        IFormFile file,
-        string bucketName,
-        TransferUtility transferUtility,
-        CancellationToken cancellationToken)
-    {
-        using var fileStream = new MemoryStream();
-        await file.CopyToAsync(fileStream, cancellationToken);
-        fileStream.Position = 0;
-
-        // TODO: use productId with prefix instead of guid
-        string key = Guid.NewGuid().ToString();
-        var uploadRequest = new TransferUtilityUploadRequest
-        {
-            BucketName = bucketName,
-            Key = key,
-            InputStream = fileStream,
-        };
-        await transferUtility.UploadAsync(uploadRequest, cancellationToken);
-        return key;
     }
 }

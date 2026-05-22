@@ -3,6 +3,7 @@ using BFF.Auth;
 using BFF.Cart;
 using BFF.Configuration;
 using BFF.Order;
+using BFF.Products;
 using BFF.StoreProducts;
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Microservices;
@@ -33,6 +34,7 @@ builder.Services.AddHttpClient<IKeycloakTokenService, KeycloakTokenService>();
 builder.Services.AddHttpClient<ICartService, CartService>();
 builder.Services.AddHttpClient<IOrderPaymentSessionService, OrderPaymentSessionService>();
 builder.Services.AddHttpClient<IStoreProductsService, StoreProductsService>();
+builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddOptions<MicroserviceHosts>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
     .ValidateDataAnnotations()
