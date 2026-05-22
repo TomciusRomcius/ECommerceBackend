@@ -13,6 +13,10 @@ public class S3ImageUrlBuilder(IOptions<S3Configuration> options) : IS3ImageUrlB
     {
         S3Configuration s3 = options.Value;
         string baseUrl = s3.ServiceUrl.TrimEnd('/');
+        if (baseUrl.Contains("localstack", StringComparison.OrdinalIgnoreCase))
+        {
+            baseUrl = baseUrl.Replace("localstack", "localhost", StringComparison.OrdinalIgnoreCase);
+        }
 
         return s3Keys
             .Where(key => !string.IsNullOrWhiteSpace(key))
