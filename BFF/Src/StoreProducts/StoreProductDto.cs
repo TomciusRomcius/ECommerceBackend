@@ -21,6 +21,8 @@ public class StoreProductDto
     public JsonElement? Category { get; set; }
 
     public StoreProductStoreDto? Store { get; set; }
+
+    public List<string> ImageUrls { get; set; } = [];
 }
 
 public class StoreProductStoreDto

@@ -26,5 +26,11 @@ export const productResolver: ResolveFn<ProductModel[]> = (
     httpClient.get<ApiResponse<PageModel<ProductModel>>>(`${environment.backendApi}/storeproducts`, {
       params,
     }),
-  ).pipe(map((page) => page.data));
+  ).pipe(map((page) => {
+    const data = page.data;
+    data.forEach(product => {
+      product.imageUrls = product.imageUrls.map((url) => url.replace('localstack', 'localhost'));
+    });
+    return data;
+  }));
 };

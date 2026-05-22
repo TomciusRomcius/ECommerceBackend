@@ -18,6 +18,7 @@ internal static class ProductResponseMapper
             CategoryId = product.CategoryId,
             Manufacturer = product.Manufacturer,
             Category = product.Category,
+            ImageKeys = product.Images.Select(image => image.S3Key).ToList(),
         };
     }
 

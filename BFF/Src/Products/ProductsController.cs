@@ -1,11 +1,12 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Amazon.S3;
-using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using Amazon.Util.Internal;
+using BFF.Configuration;
 using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
+using ECommerceBackend.Utils.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -17,9 +18,91 @@ namespace BFF.Products;
 public class ProductsController(
     HttpClient httpClient,
     IOptions<MicroserviceHosts> hosts,
+    IOptions<S3Configuration> s3Configuration,
     IAmazonS3 s3Client,
+    IS3ImageUrlBuilder s3ImageUrlBuilder,
     ILogger<ProductsController> logger) : ControllerBase
 {
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    [HttpGet]
+    public async Task<IActionResult> GetProducts(
+        [FromQuery] int pageNumber = 0,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new QueryString()
+            .Add("pageNumber", pageNumber.ToString())
+            .Add("pageSize", pageSize.ToString());
+        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product{query}";
+
+        using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+        }
+
+        Page<ProductWithImageKeysDto>? page =
+            JsonSerializer.Deserialize<Page<ProductWithImageKeysDto>>(body, JsonOptions);
+
+        if (page is null)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway);
+        }
+
+        Page<ProductWithImageUrlsDto> mapped = new()
+        {
+            Data = page.Data.Select(ToProductWithImageUrls).ToList(),
+            TotalCount = page.TotalCount,
+            HasNextPage = page.HasNextPage,
+            HasPrevPage = page.HasPrevPage,
+        };
+
+        return Ok(mapped);
+    }
+
+    [HttpGet("{productId:int}")]
+    public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellationToken = default)
+    {
+        var query = new QueryString().Add("ids", productId.ToString());
+        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product/by-ids{query}";
+
+        using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+        }
+
+        List<ProductWithImageKeysDto>? products =
+            JsonSerializer.Deserialize<List<ProductWithImageKeysDto>>(body, JsonOptions);
+
+        ProductWithImageKeysDto? product = products?.FirstOrDefault();
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(ToProductWithImageUrls(product));
+    }
+
+    private ProductWithImageUrlsDto ToProductWithImageUrls(ProductWithImageKeysDto product) =>
+        new()
+        {
+            ProductId = product.ProductId,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            ManufacturerId = product.ManufacturerId,
+            CategoryId = product.CategoryId,
+            Manufacturer = product.Manufacturer,
+            Category = product.Category,
+            ImageUrls = s3ImageUrlBuilder.BuildUrls(product.ImageKeys),
+        };
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateProduct(
@@ -46,7 +129,7 @@ public class ProductsController(
             keys.Add(key);
             var req = new TransferUtilityUploadRequest()
             {
-                BucketName = "ecommerce-api",
+                BucketName = s3Configuration.Value.BucketName,
                 Key = key,
                 InputStream = fileStream
             };

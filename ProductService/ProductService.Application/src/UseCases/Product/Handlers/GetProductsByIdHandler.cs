@@ -37,6 +37,7 @@ public class GetProductsByIdHandler : IRequestHandler<GetProductsByIdQuery, Resu
             .Where(p => request.ProductIds.Contains(p.ProductId))
             .Include(p => p.Category)
             .Include(p => p.Manufacturer)
+            .Include(p => p.Images)
             .ToListAsync(cancellationToken);
 
         _logger.LogDebug("Retrieved products: {@Products}", products);

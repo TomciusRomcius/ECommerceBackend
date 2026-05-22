@@ -5,12 +5,15 @@ internal static class StoreProductMerger
     public static List<StoreProductDto> Merge(
         IEnumerable<ProductFromServiceDto> products,
         IReadOnlyDictionary<int, ProductStoreLocationDto> storeDetailsByProductId,
+        Func<ProductFromServiceDto, IReadOnlyList<string>> imageUrlsForProduct,
         int? storeLocationId = null)
     {
         List<StoreProductDto> merged = [];
 
         foreach (ProductFromServiceDto product in products)
         {
+            IReadOnlyList<string> imageUrls = imageUrlsForProduct(product);
+
             if (!storeDetailsByProductId.TryGetValue(product.ProductId, out ProductStoreLocationDto? storeDetails))
             {
                 if (storeLocationId is not null)
@@ -18,11 +21,11 @@ internal static class StoreProductMerger
                     continue;
                 }
 
-                merged.Add(ToStoreProductDto(product, store: null));
+                merged.Add(ToStoreProductDto(product, store: null, imageUrls));
                 continue;
             }
 
-            merged.Add(ToStoreProductDto(product, storeDetails));
+            merged.Add(ToStoreProductDto(product, storeDetails, imageUrls));
         }
 
         return merged;
@@ -30,7 +33,8 @@ internal static class StoreProductMerger
 
     public static StoreProductDto ToStoreProductDto(
         ProductFromServiceDto product,
-        ProductStoreLocationDto? store)
+        ProductStoreLocationDto? store,
+        IReadOnlyList<string> imageUrls)
     {
         return new StoreProductDto
         {
@@ -42,6 +46,7 @@ internal static class StoreProductMerger
             CategoryId = product.CategoryId,
             Manufacturer = product.Manufacturer,
             Category = product.Category,
+            ImageUrls = imageUrls.ToList(),
             Store = store is null
                 ? null
                 : new StoreProductStoreDto

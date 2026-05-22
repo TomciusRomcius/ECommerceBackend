@@ -5,7 +5,15 @@
         class="flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-gray-100"
         aria-hidden="true"
       >
-        <span class="text-sm text-gray-400">No image</span>
+        @if (product.imageUrls.length > 0) {
+          <img
+            [src]="product.imageUrls[0]"
+            [alt]="product.name"
+            class="h-full w-full object-cover"
+          />
+        } @else {
+          <span class="text-sm text-gray-400">No image</span>
+        }
       </div>
       <div class="flex flex-col gap-4">
         <h1 class="text-2xl font-semibold">{{ product.name }}</h1>

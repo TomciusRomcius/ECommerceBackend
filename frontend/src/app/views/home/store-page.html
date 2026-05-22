@@ -19,7 +19,15 @@
           class="flex aspect-4/3 items-center justify-center overflow-hidden bg-gray-100"
           aria-hidden="true"
         >
-          <span class="text-sm text-gray-400">No image</span>
+          @if (product.imageUrls.length > 0) {
+            <img
+              [src]="product.imageUrls[0]"
+              [alt]="product.name"
+              class="h-full w-full object-cover"
+            />
+          } @else {
+            <span class="text-sm text-gray-400">No image</span>
+          }
         </div>
         <mat-card-header>
           <mat-card-title>{{ product.name }}</mat-card-title>

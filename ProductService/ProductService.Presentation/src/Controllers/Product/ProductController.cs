@@ -67,7 +67,8 @@ public class ProductController : ControllerBase
             createProductDto.Description,
             createProductDto.Price,
             createProductDto.ManufacturerId,
-            createProductDto.CategoryId
+            createProductDto.CategoryId,
+            createProductDto.ImageKeys
         ));
 
         if (result.Errors.Any())
@@ -75,6 +76,7 @@ public class ProductController : ControllerBase
             return ControllerUtils.ResultErrorToResponse(result.Errors.First());
         }
 
-        return Created(nameof(CreateProducts), result.GetValue());
+        ProductEntity product = result.GetValue();
+        return Created(nameof(CreateProducts), new CreateProductResponseDto { ProductId = product.ProductId });
     }
 }

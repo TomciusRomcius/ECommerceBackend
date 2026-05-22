@@ -102,6 +102,7 @@ export class CreateProductPage implements OnInit {
         next: (response) => {
           this.loading.set(false);
           this.successMessage.set(`Product created (id: ${response.productId}).`);
+          this.images.set([]);
           this.form.reset({
             name: '',
             description: '',

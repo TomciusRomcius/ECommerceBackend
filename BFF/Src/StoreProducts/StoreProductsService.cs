@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using BFF.Configuration;
 using ECommerceBackend.Utils.Microservices;
 using ECommerceBackend.Utils.Pagination;
 using Microsoft.Extensions.Options;
@@ -9,6 +10,7 @@ namespace BFF.StoreProducts;
 public class StoreProductsService(
     HttpClient httpClient,
     IOptions<MicroserviceHosts> hosts,
+    IS3ImageUrlBuilder s3ImageUrlBuilder,
     ILogger<StoreProductsService> logger) : IStoreProductsService
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -41,6 +43,7 @@ public class StoreProductsService(
         List<StoreProductDto> merged = StoreProductMerger.Merge(
             productPage.Data,
             storeDetailsByProductId,
+            product => s3ImageUrlBuilder.BuildUrls(product.ImageKeys),
             storeLocationId);
 
         return new Page<StoreProductDto>
@@ -66,7 +69,8 @@ public class StoreProductsService(
             await FetchStoreDetailsByProductIdsAsync([productId], storeLocationId: null, cancellationToken);
 
         storeDetailsByProductId.TryGetValue(productId, out ProductStoreLocationDto? storeDetails);
-        return StoreProductMerger.ToStoreProductDto(product, storeDetails);
+        IReadOnlyList<string> imageUrls = s3ImageUrlBuilder.BuildUrls(product.ImageKeys);
+        return StoreProductMerger.ToStoreProductDto(product, storeDetails, imageUrls);
     }
 
     private async Task<Page<ProductFromServiceDto>> FetchProductPageAsync(

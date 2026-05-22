@@ -13,4 +13,6 @@ public class S3Configuration
     public required string ServiceUrl { get; init; }
     [Required]
     public required string Region { get; init; }
+    [Required]
+    public string BucketName { get; init; }
 }

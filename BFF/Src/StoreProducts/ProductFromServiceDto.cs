@@ -19,6 +19,8 @@ internal sealed class ProductFromServiceDto
     public JsonElement? Manufacturer { get; set; }
 
     public JsonElement? Category { get; set; }
+
+    public List<string> ImageKeys { get; set; } = [];
 }
 
 internal sealed class ProductStoreLocationDto

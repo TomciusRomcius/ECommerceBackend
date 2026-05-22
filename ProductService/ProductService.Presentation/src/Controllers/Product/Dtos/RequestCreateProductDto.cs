@@ -13,4 +13,6 @@ public class RequestCreateProductDto
     public required decimal Price { get; set; }
     public required int ManufacturerId { get; set; }
     public required int CategoryId { get; set; }
+
+    public List<string> ImageKeys { get; set; } = [];
 }

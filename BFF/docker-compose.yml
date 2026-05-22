@@ -33,5 +33,6 @@ services:
       S3__AwsSecretAccessKey: ${S3__AwsSecretAccessKey}
       S3__Region: ${S3__Region}
       S3__ServiceUrl: ${S3__ServiceUrl}
+      S3__BucketName: ecommerce-resources
     volumes:
       - ./Src:/app/Src

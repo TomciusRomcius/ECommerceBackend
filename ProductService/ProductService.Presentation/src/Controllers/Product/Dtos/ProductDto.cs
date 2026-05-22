@@ -19,4 +19,6 @@ public class ProductDto
     public ManufacturerEntity? Manufacturer { get; set; }
 
     public CategoryEntity? Category { get; set; }
+
+    public List<string> ImageKeys { get; set; } = [];
 }

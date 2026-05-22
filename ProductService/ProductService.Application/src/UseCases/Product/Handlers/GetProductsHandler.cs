@@ -32,6 +32,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, Page<Product
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Manufacturer)
+            .Include(p => p.Images)
             .ToPageAsync(request.PageNumber, request.PageSize);
 
         _logger.LogDebug("Retrieved products page: {@Page}", page);

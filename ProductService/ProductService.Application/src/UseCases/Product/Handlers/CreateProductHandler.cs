@@ -26,10 +26,27 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Result
 
         _logger.LogDebug("Creating product: {@Product}", productEntity);
 
-        await _context.Products.AddAsync(productEntity);
+        await _context.Products.AddAsync(productEntity, cancellationToken);
         try
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            foreach (string imageKey in request.ImageKeys)
+            {
+                if (string.IsNullOrWhiteSpace(imageKey))
+                {
+                    continue;
+                }
+
+                await _context.ProductImages.AddAsync(
+                    new ProductImageEntity(productEntity.ProductId, imageKey.Trim()),
+                    cancellationToken);
+            }
+
+            if (request.ImageKeys.Count > 0)
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
         catch (Exception ex)
         {

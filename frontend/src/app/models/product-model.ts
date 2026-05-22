@@ -12,4 +12,5 @@ export default interface ProductModel {
   manufacturer: ManufacturerModel;
   category: CategoryModel;
   store: StoreModel | null;
+  imageUrls: string[];
 }
