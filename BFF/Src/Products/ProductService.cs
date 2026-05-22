@@ -109,11 +109,13 @@ public class ProductService(
 
         string bucketName = s3Configuration.Value.BucketName;
         var transferUtility = new TransferUtility(s3Client);
+        string imageSetId = Guid.NewGuid().ToString("N");
 
-        string[] keys = await Task.WhenAll(request.Files.Select(file => UploadImageAsync(
+        string[] keys = await Task.WhenAll(request.Files.Select((file, index) => UploadImageAsync(
             file,
             bucketName,
             transferUtility,
+            $"{imageSetId}_{index}",
             cancellationToken)));
 
         upstreamRequest.Content = JsonContent.Create(new
@@ -140,8 +142,10 @@ public class ProductService(
         return response;
     }
 
-    private ProductWithImageUrlsDto ToProductWithImageUrls(ProductWithImageKeysDto product) =>
-        new()
+    private ProductWithImageUrlsDto ToProductWithImageUrls(ProductWithImageKeysDto product)
+    {
+        IReadOnlyList<string> sortedKeys = SortImageKeysByFileOrder(product.ImageKeys);
+        return new ProductWithImageUrlsDto
         {
             ProductId = product.ProductId,
             Name = product.Name,
@@ -151,21 +155,38 @@ public class ProductService(
             CategoryId = product.CategoryId,
             Manufacturer = product.Manufacturer,
             Category = product.Category,
-            ImageUrls = s3ImageUrlBuilder.BuildUrls(product.ImageKeys),
+            ImageUrls = s3ImageUrlBuilder.BuildUrls(sortedKeys),
         };
+    }
+
+    private static IReadOnlyList<string> SortImageKeysByFileOrder(IEnumerable<string> imageKeys) =>
+        imageKeys
+            .Where(key => !string.IsNullOrWhiteSpace(key))
+            .OrderBy(GetFileOrderFromKey)
+            .ToList();
+
+    private static int GetFileOrderFromKey(string key)
+    {
+        int underscoreIndex = key.LastIndexOf('_');
+        if (underscoreIndex < 0 || underscoreIndex >= key.Length - 1)
+        {
+            return int.MaxValue;
+        }
+
+        return int.TryParse(key.AsSpan(underscoreIndex + 1), out int order) ? order : int.MaxValue;
+    }
 
     private static async Task<string> UploadImageAsync(
         IFormFile file,
         string bucketName,
         TransferUtility transferUtility,
+        string key,
         CancellationToken cancellationToken)
     {
         using var fileStream = new MemoryStream();
         await file.CopyToAsync(fileStream, cancellationToken);
         fileStream.Position = 0;
 
-        // TODO: use productId with prefix instead of guid
-        string key = Guid.NewGuid().ToString();
         var uploadRequest = new TransferUtilityUploadRequest
         {
             BucketName = bucketName,
@@ -176,3 +197,4 @@ public class ProductService(
         return key;
     }
 }
+
