@@ -4,4 +4,5 @@ export default interface CreateProductRequest {
   price: number;
   manufacturerId: number;
   categoryId: number;
+  files: File[];
 }

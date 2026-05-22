@@ -1,9 +1,12 @@
+using Amazon.S3;
 using BFF.Auth;
 using BFF.Cart;
+using BFF.Configuration;
 using BFF.Order;
 using BFF.StoreProducts;
 using ECommerceBackend.Utils.Auth;
 using ECommerceBackend.Utils.Microservices;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +37,22 @@ builder.Services.AddOptions<MicroserviceHosts>()
     .Bind(builder.Configuration.GetSection("MicroserviceNetworkConfig"))
     .ValidateDataAnnotations()
     .ValidateOnStart();
+builder.Services.AddOptions<S3Configuration>()
+    .Bind(builder.Configuration.GetSection(S3Configuration.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 builder.Services.AddApplicationAuth(builder);
-
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    S3Configuration s3 = sp.GetRequiredService<IOptions<S3Configuration>>().Value;
+    var s3Config = new AmazonS3Config
+    {
+        ServiceURL = s3.ServiceUrl,
+        ForcePathStyle = true,
+        AuthenticationRegion = s3.Region,
+    };
+    return new AmazonS3Client(s3.AwsAccessKeyId, s3.AwsSecretAccessKey, s3Config);
+});
 
 var app = builder.Build();
 

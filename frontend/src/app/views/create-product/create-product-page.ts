@@ -97,7 +97,7 @@ export class CreateProductPage implements OnInit {
     const { name, description, price } = this.form.getRawValue();
 
     this.productAdminService
-      .createProduct({ name, description, price, manufacturerId, categoryId })
+      .createProduct({ name, description, price, manufacturerId, categoryId, files: this.images() })
       .subscribe({
         next: (response) => {
           this.loading.set(false);

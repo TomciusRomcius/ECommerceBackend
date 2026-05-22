@@ -1,5 +1,9 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.S3.Transfer;
+using Amazon.Util.Internal;
 using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +17,13 @@ namespace BFF.Products;
 public class ProductsController(
     HttpClient httpClient,
     IOptions<MicroserviceHosts> hosts,
+    IAmazonS3 s3Client,
     ILogger<ProductsController> logger) : ControllerBase
 {
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateProduct(
-        [FromBody] CreateProductRequest request,
+        [FromForm] CreateProductRequest request,
         CancellationToken cancellationToken)
     {
         string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product";
@@ -31,6 +36,24 @@ public class ProductsController(
             upstreamRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
         }
 
+        List<string> keys = [];
+        foreach (IFormFile file in request.Files)
+        {
+            using var fileStream = new MemoryStream();
+            await file.CopyToAsync(fileStream, cancellationToken);
+            // TODO: use productId with prefix instead of guid
+            string key = Guid.NewGuid().ToString();
+            keys.Add(key);
+            var req = new TransferUtilityUploadRequest()
+            {
+                BucketName = "ecommerce-api",
+                Key = key,
+                InputStream = fileStream
+            };
+            var fileTransferUtility = new TransferUtility(s3Client);
+            await fileTransferUtility.UploadAsync(req, cancellationToken);
+        }
+
         upstreamRequest.Content = JsonContent.Create(new
         {
             name = request.Name,
@@ -38,6 +61,7 @@ public class ProductsController(
             price = request.Price,
             manufacturerId = request.ManufacturerId,
             categoryId = request.CategoryId,
+            imageKeys = keys,
         });
 
         using HttpResponseMessage response = await httpClient.SendAsync(upstreamRequest, cancellationToken);

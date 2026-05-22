@@ -42,4 +42,5 @@ public class ProductEntity
 
     public ManufacturerEntity? Manufacturer { get; set; }
     public CategoryEntity? Category { get; set; }
+    public ICollection<ProductImageEntity> Images { get; set; } = [];
 }

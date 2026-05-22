@@ -29,5 +29,9 @@ services:
       KeycloakAuth__TokenEndpoint: http://keycloak:8080/realms/ecommerce-api/protocol/openid-connect/token
       KeycloakAuth__ClientId: frontend
       KeycloakAuth__RedirectUri: http://localhost:4200/auth/callback
+      S3__AwsAccessKeyId: ${S3__AwsAccessKeyId}
+      S3__AwsSecretAccessKey: ${S3__AwsSecretAccessKey}
+      S3__Region: ${S3__Region}
+      S3__ServiceUrl: ${S3__ServiceUrl}
     volumes:
       - ./Src:/app/Src

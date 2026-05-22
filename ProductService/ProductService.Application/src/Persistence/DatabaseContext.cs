@@ -1,4 +1,4 @@
-﻿using ECommerceBackend.Utils.Database;
+using ECommerceBackend.Utils.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ProductService.Domain.Entities;
@@ -14,6 +14,7 @@ public class DatabaseContext : DbContext
 
     public const int PageSize = 20;
     public DbSet<ProductEntity> Products { get; set; }
+    public DbSet<ProductImageEntity> ProductImages { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<ManufacturerEntity> Manufacturers { get; set; }
     private IOptions<PostgresConfiguration> _postgresConfiguration { get; }
@@ -33,5 +34,26 @@ public class DatabaseContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<ProductImageEntity>(entity =>
+        {
+            entity.HasKey(e => e.ProductImageId);
+
+            entity.Property(e => e.ProductImageId)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.S3Key)
+                .HasMaxLength(36)
+                .IsRequired();
+
+            entity.HasIndex(e => e.ProductId);
+            
+            // Handled using Kafka. Needs to still be persisted to delete S3 objects
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.Images)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
     }
 }

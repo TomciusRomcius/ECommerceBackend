@@ -40,6 +40,10 @@ addMicroserviceUrls "BFF"
 echo "KeycloakAuth__TokenEndpoint=http://keycloak:8080/auth/realms/ecommerce-api/protocol/openid-connect/token" >> ../BFF/.env
 echo "KeycloakAuth__ClientId=frontend" >> ../BFF/.env
 echo "KeycloakAuth__RedirectUri=http://localhost:4200/auth/callback" >> ../BFF/.env
+echo "S3__AwsAccessKeyId=test" >> ../BFF/.env
+echo "S3__AwsSecretAccessKey=test" >> ../BFF/.env
+echo "S3__Region=us-east-1" >> ../BFF/.env
+echo "S3__ServiceUrl=http://localstack:4566" >> ../BFF/.env
 
 # Payment service
 echo "Database__Host=payment-service-postgres" > ../PaymentService/.env 
