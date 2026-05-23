@@ -1,26 +1,27 @@
-# E-Commerce Backend.
+# E-Commerce Store application.
 
-## Architecture
+## Architecture (currently no full K8 implementation, just Docker Compose)
 ![Architecture](./docs/images/architecture.jpg)
 
 ## Tech stack
 * Frontend: Angular.
 * Backend: ASP.NET Core(.NET 9).
-* Database: PostgreSQL.
-* Containerization & Orchestration: Docker, Docker Compose, Kubernetes, Helm.
+* Persistence: PostgreSQL, EF Core.
+* Containerization & Orchestration: Docker, Docker Compose, Kubernetes (not fully implemented, maybe in the future).
 * Automation: Terraform, Bash.
 * Event streaming: Kafka.
 
 ## Features
 * Create, delete, and update store locations.
 * Create, delete, and update products, categories, and manufacturers.
-* User authentication and role-based authorization.
+* Inventory management.
 * User cart + making orders.
 * Payment support using Stripe.
+* Role-based auth using Keycloak.
 
 ## Design
 * Used microservice architecture mainly to more deeply learn about how enterprise apps work.
-* Containerized the backend using Docker, set up a development environment using Docker Compose and a simple Kubernetes cluster.
+* Containerized the whole application using Docker, set up a development environment using Docker Compose and a simple Kubernetes cluster (not finished).
 * Implemented auth using the Keycloak identity provider.
 * Followed a code-first approach to database design using EF Core.
 * Created a payment system that currently supports Stripe.
@@ -36,6 +37,7 @@
   ```bash
   docker compose up
   ```
+* Access the frontend via http://localhost:4200
 * Note: it takes 1-2 minutes to start all services.
 * Note: if you are on Windows, it is recommended to run this in WSL.
 #### K8 setup (very experimental, not fully implemented)
@@ -51,19 +53,12 @@
   ```
 * To start and restart deployments manually, do so using Helm from k8s/umbrella directory.
 
-### Setup keycloak
-```bash
-  cd terraform/keycloak
-  terraform init
-  terraform apply -var-file=dev.tfvars
-```
-
 ### Setup the stripe webhook listener:
 ```bash
   stripe listen --forward-to=http://localhost:8080/paymentservice/webhook/stripe
 ```
 
-### Get the admin access token:
+### Get the admin access token (for accessing the REST API directly):
 * Fetch admin JWT token for development (works only in docker compose): <br>
   ```
   curl -X POST http://localhost:8080/auth/realms/ecommerce-api/protocol/openid-connect/token \
