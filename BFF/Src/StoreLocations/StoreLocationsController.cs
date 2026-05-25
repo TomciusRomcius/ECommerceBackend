@@ -1,4 +1,7 @@
+using System.Net.Http.Json;
+using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -26,6 +29,37 @@ public class StoreLocationsController(ILogger<StoreLocationsController> logger, 
 
         var locations = await response.Content.ReadFromJsonAsync<List<StoreLocationDto>>();
         return Ok(new { data = locations });
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> CreateStoreLocation(
+        [FromBody] CreateStoreLocationRequest request,
+        CancellationToken cancellationToken)
+    {
+        string upstreamUrl = $"{hosts.Value.StoreServiceUrl}/storelocation";
+
+        using var upstreamRequest = new HttpRequestMessage(HttpMethod.Post, upstreamUrl);
+        HttpRequestUtils.ApplyAuthorizationHeader(upstreamRequest, Request);
+
+        upstreamRequest.Content = JsonContent.Create(new
+        {
+            displayName = request.DisplayName,
+            address = request.Address,
+        });
+
+        using HttpResponseMessage response = await httpClient.SendAsync(upstreamRequest, cancellationToken);
+        string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogWarning(
+                "Create store location failed with status {StatusCode}: {Body}",
+                response.StatusCode,
+                body);
+        }
+
+        return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
     }
 }
 

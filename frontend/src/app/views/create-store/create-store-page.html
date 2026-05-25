@@ -1,0 +1,45 @@
+<h2 class="mb-6 text-2xl font-semibold">Create store</h2>
+
+<form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Display name</mat-label>
+    <input matInput formControlName="displayName" autocomplete="off" />
+    @if (form.controls.displayName.hasError('required') && form.controls.displayName.touched) {
+      <mat-error>Display name is required</mat-error>
+    }
+    @if (form.controls.displayName.hasError('minlength') && form.controls.displayName.touched) {
+      <mat-error>Display name must be at least 3 characters</mat-error>
+    }
+    @if (form.controls.displayName.hasError('maxlength') && form.controls.displayName.touched) {
+      <mat-error>Display name must be at most 100 characters</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Address</mat-label>
+    <input matInput formControlName="address" autocomplete="off" />
+    @if (form.controls.address.hasError('required') && form.controls.address.touched) {
+      <mat-error>Address is required</mat-error>
+    }
+    @if (form.controls.address.hasError('minlength') && form.controls.address.touched) {
+      <mat-error>Address must be at least 5 characters</mat-error>
+    }
+    @if (form.controls.address.hasError('maxlength') && form.controls.address.touched) {
+      <mat-error>Address must be at most 200 characters</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+    Create store
+  </button>
+</form>
+
+@if (loading()) {
+  <p class="mt-4 text-gray-600">Creating store...</p>
+}
+@if (error()) {
+  <p class="mt-4 text-red-600">{{ error() }}</p>
+}
+@if (successMessage()) {
+  <p class="mt-4 text-green-700">{{ successMessage() }}</p>
+}
