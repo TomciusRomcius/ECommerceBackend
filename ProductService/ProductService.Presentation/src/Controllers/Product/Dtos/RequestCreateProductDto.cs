@@ -15,4 +15,9 @@ public class RequestCreateProductDto
     public required int CategoryId { get; set; }
 
     public List<string> ImageKeys { get; set; } = [];
+
+    /// <summary>
+    /// When ImageKeys is empty, generates keys as {productId}_{order} for order 0..ImageCount-1.
+    /// </summary>
+    public int ImageCount { get; set; }
 }

@@ -68,7 +68,8 @@ public class ProductController : ControllerBase
             createProductDto.Price,
             createProductDto.ManufacturerId,
             createProductDto.CategoryId,
-            createProductDto.ImageKeys
+            createProductDto.ImageKeys,
+            createProductDto.ImageCount
         ));
 
         if (result.Errors.Any())

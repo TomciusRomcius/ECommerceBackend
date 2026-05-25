@@ -10,4 +10,5 @@ public record CreateProductCommand(
     decimal Price,
     int ManufacturerId,
     int CategoryId,
-    IReadOnlyList<string> ImageKeys) : IRequest<Result<ProductEntity>>;
+    IReadOnlyList<string> ImageKeys,
+    int ImageCount = 0) : IRequest<Result<ProductEntity>>;

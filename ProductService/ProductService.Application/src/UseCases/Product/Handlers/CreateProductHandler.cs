@@ -31,7 +31,15 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Result
         {
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (string imageKey in request.ImageKeys)
+            IReadOnlyList<string> imageKeys = request.ImageKeys;
+            if (imageKeys.Count == 0 && request.ImageCount > 0)
+            {
+                imageKeys = Enumerable.Range(0, request.ImageCount)
+                    .Select(order => $"{productEntity.ProductId}_{order}")
+                    .ToList();
+            }
+
+            foreach (string imageKey in imageKeys)
             {
                 if (string.IsNullOrWhiteSpace(imageKey))
                 {
@@ -43,7 +51,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Result
                     cancellationToken);
             }
 
-            if (request.ImageKeys.Count > 0)
+            if (imageKeys.Count > 0)
             {
                 await _context.SaveChangesAsync(cancellationToken);
             }

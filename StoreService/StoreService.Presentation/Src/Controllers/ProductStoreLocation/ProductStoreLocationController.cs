@@ -1,4 +1,5 @@
 using ECommerceBackend.Utils.Jwt;
+using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,27 @@ public class ProductStoreLocationController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <param name="query">Store location id and pagination parameters</param>
+    [HttpGet]
+    public async Task<IActionResult> GetProductsFromStore(
+        [FromQuery] GetProductsFromStoreDto query,
+        CancellationToken cancellationToken = default)
+    {
+        Page<ProductStoreLocationEntity> page = await _mediator.Send(
+            new GetProductsFromStoreQuery(query.StoreLocationId, query.PageNumber, query.PageSize),
+            cancellationToken);
+
+        Page<ProductStoreLocationItemDto> response = new()
+        {
+            Data = page.Data.Select(ToDto).ToList(),
+            TotalCount = page.TotalCount,
+            HasNextPage = page.HasNextPage,
+            HasPrevPage = page.HasPrevPage,
+        };
+
+        return Ok(response);
+    }
+
     [HttpGet("by-product-ids")]
     public async Task<IActionResult> GetByProductIds([FromQuery] List<int> ids)
     {
@@ -28,6 +50,14 @@ public class ProductStoreLocationController : ControllerBase
             await _mediator.Send(new GetProductStoreLocationsByProductIdsQuery(ids));
         return Ok(result);
     }
+
+    private static ProductStoreLocationItemDto ToDto(ProductStoreLocationEntity entity) =>
+        new()
+        {
+            StoreLocationId = entity.StoreLocationId,
+            ProductId = entity.ProductId,
+            Stock = entity.Stock,
+        };
 
     [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]

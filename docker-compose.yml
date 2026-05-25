@@ -82,14 +82,11 @@ services:
       KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/ecommerce-api/protocol/openid-connect/token
       KEYCLOAK_CLIENT_ID: ecommerce-api
       KEYCLOAK_CLIENT_SECRET: secret
+      S3_ENDPOINT_URL: http://localstack:4566
+      S3_BUCKET: ecommerce-resources
+      AWS_DEFAULT_REGION: us-east-1
     volumes:
       - ./DataSeeder:/app
-    depends_on:
-      - reverse-proxy
-      - keycloak
-      - keycloak-config
-      - product-service
-      - store-service
   localstack:
     container_name: '${LOCALSTACK_DOCKER_NAME:-localstack-main}'
     image: localstack/localstack

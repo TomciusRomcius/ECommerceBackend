@@ -11,6 +11,11 @@ using Microsoft.Extensions.Options;
 
 namespace BFF.Products;
 
+internal sealed class CreateProductResponseDto
+{
+    public int ProductId { get; set; }
+}
+
 public class ProductService(
     HttpClient httpClient,
     IOptions<MicroserviceHosts> hosts,
@@ -107,17 +112,6 @@ public class ProductService(
             upstreamRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
         }
 
-        string bucketName = s3Configuration.Value.BucketName;
-        var transferUtility = new TransferUtility(s3Client);
-        string imageSetId = Guid.NewGuid().ToString("N");
-
-        string[] keys = await Task.WhenAll(request.Files.Select((file, index) => UploadImageAsync(
-            file,
-            bucketName,
-            transferUtility,
-            $"{imageSetId}_{index}",
-            cancellationToken)));
-
         upstreamRequest.Content = JsonContent.Create(new
         {
             name = request.Name,
@@ -125,21 +119,72 @@ public class ProductService(
             price = request.Price,
             manufacturerId = request.ManufacturerId,
             categoryId = request.CategoryId,
-            imageKeys = keys,
+            imageKeys = Array.Empty<string>(),
         });
 
-        HttpResponseMessage response = await httpClient.SendAsync(upstreamRequest, cancellationToken);
+        using HttpResponseMessage createResponse =
+            await httpClient.SendAsync(upstreamRequest, cancellationToken);
 
-        if (!response.IsSuccessStatusCode)
+        string createBody = await createResponse.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!createResponse.IsSuccessStatusCode)
         {
-            string body = await response.Content.ReadAsStringAsync(cancellationToken);
             logger.LogWarning(
                 "Create product failed with status {StatusCode}: {Body}",
-                response.StatusCode,
-                body);
+                createResponse.StatusCode,
+                createBody);
+            return createResponse;
         }
 
-        return response;
+        CreateProductResponseDto? created =
+            JsonSerializer.Deserialize<CreateProductResponseDto>(createBody, JsonOptions);
+
+        if (created is null)
+        {
+            logger.LogWarning("Create product succeeded but response could not be deserialized: {Body}", createBody);
+            return createResponse;
+        }
+
+        if (request.Files.Count == 0)
+        {
+            return createResponse;
+        }
+
+        int productId = created.ProductId;
+        string bucketName = s3Configuration.Value.BucketName;
+        var transferUtility = new TransferUtility(s3Client);
+
+        string[] keys = await Task.WhenAll(request.Files.Select((file, index) => UploadImageAsync(
+            file,
+            bucketName,
+            transferUtility,
+            $"{productId}_{index}",
+            cancellationToken)));
+
+        using var addImagesRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            $"{upstreamUrl}/{productId}/images");
+        if (!string.IsNullOrWhiteSpace(authorizationHeader))
+        {
+            addImagesRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
+        }
+
+        addImagesRequest.Content = JsonContent.Create(new { imageKeys = keys });
+
+        HttpResponseMessage addImagesResponse = await httpClient.SendAsync(addImagesRequest, cancellationToken);
+
+        if (!addImagesResponse.IsSuccessStatusCode)
+        {
+            string addImagesBody = await addImagesResponse.Content.ReadAsStringAsync(cancellationToken);
+            logger.LogWarning(
+                "Add product images failed for product {ProductId} with status {StatusCode}: {Body}",
+                productId,
+                addImagesResponse.StatusCode,
+                addImagesBody);
+            return addImagesResponse;
+        }
+
+        return createResponse;
     }
 
     private ProductWithImageUrlsDto ToProductWithImageUrls(ProductWithImageKeysDto product)
