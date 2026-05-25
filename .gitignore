@@ -130,6 +130,7 @@ charts
 *.tfvars
 **/.terraform/
 !dev.tfvars
+!docker-compose.tfvars
 *.pyc
 
 localstack_data
