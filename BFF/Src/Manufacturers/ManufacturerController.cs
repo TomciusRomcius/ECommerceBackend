@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
@@ -49,11 +48,7 @@ public class ManufacturerController(
         logger.LogDebug("Creating manufacturer at {Url}", upstreamUrl);
 
         using var upstreamRequest = new HttpRequestMessage(HttpMethod.Post, upstreamUrl);
-        string authorizationHeader = Request.Headers.Authorization.ToString();
-        if (!string.IsNullOrWhiteSpace(authorizationHeader))
-        {
-            upstreamRequest.Headers.Authorization = AuthenticationHeaderValue.Parse(authorizationHeader);
-        }
+        HttpRequestUtils.ApplyAuthorizationHeader(upstreamRequest, Request);
 
         upstreamRequest.Content = JsonContent.Create(new { name = request.Name });
 
