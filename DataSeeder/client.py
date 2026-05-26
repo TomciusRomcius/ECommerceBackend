@@ -40,18 +40,14 @@ class ApiClient:
         return {"Authorization": f"Bearer {self._token}"}
 
     def get_json(self, path: str, params: dict | None = None) -> object | None:
-        try:
-            response = self._session.get(
-                f"{config.API_BASE_URL}{path}",
-                params=params,
-                headers=self._headers(),
-                timeout=config.REQUEST_TIMEOUT_SEC,
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as exc:
-            logger.warning("GET %s failed: %s", path, exc)
-            return None
+        response = self._session.get(
+            f"{config.API_BASE_URL}{path}",
+            params=params,
+            headers=self._headers(),
+            timeout=config.REQUEST_TIMEOUT_SEC,
+        )
+        response.raise_for_status()
+        return response.json()
 
     def post_json(self, path: str, body: dict) -> dict | None:
         try:
