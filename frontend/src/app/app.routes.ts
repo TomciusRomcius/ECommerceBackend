@@ -16,6 +16,11 @@ import { CreateProductPage } from './views/create-product/create-product-page';
 import { CreateStorePage } from './views/create-store/create-store-page';
 import { Manufacturers } from './views/admin/manufacturers/manufacturers';
 import { manufacturersResolver } from './views/admin/manufacturers/manufacturers.resolver';
+import { Categories } from './views/admin/categories/categories';
+import { categoriesResolver } from './views/admin/categories/categories.resolver';
+import { Products } from './views/admin/products/products';
+import { productsResolver } from './views/admin/products/products.resolver';
+import { Stores } from './views/admin/stores/stores';
 
 export const routes: Routes = [
   {
@@ -54,9 +59,27 @@ export const routes: Routes = [
         resolve: { manufacturers: manufacturersResolver },
         runGuardsAndResolvers: 'paramsOrQueryParamsChange',
       },
-      { path: 'categories', component: CreateCategoryPage },
-      { path: 'products', component: CreateProductPage },
-      { path: 'stores', component: CreateStorePage },
+      { path: 'categories/create', component: CreateCategoryPage },
+      {
+        path: 'categories',
+        component: Categories,
+        resolve: { categories: categoriesResolver },
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+      },
+      { path: 'products/create', component: CreateProductPage },
+      {
+        path: 'products',
+        component: Products,
+        resolve: { products: productsResolver },
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+      },
+      { path: 'stores/create', component: CreateStorePage },
+      {
+        path: 'stores',
+        component: Stores,
+        resolve: { storeLocations: storeLocationsResolver },
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+      },
     ],
   },
   {

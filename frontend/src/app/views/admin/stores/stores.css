@@ -1,0 +1,9 @@
+.mat-column-displayName {
+  width: 40%;
+}
+.mat-column-address {
+  width: 100%;
+}
+.mat-column-actions {
+  white-space: nowrap;
+}

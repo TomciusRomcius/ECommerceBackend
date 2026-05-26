@@ -1,0 +1,9 @@
+.mat-column-name {
+  width: 100%;
+}
+.mat-column-price {
+  white-space: nowrap;
+}
+.mat-column-actions {
+  white-space: nowrap;
+}
