@@ -26,14 +26,14 @@ def _index_by_name(items: list[dict], id_field: str, name_key: str = "name") -> 
 
 # returns dict(name, id)
 def _load_categories(client: ApiClient) -> dict[str, int]:
-    data = client.get_json("/productservice/categories", params={"pageNumber": 0})
+    data = client.get_json("/productservice/categories", params={"pageNumber": 1})
     if isinstance(data, list):
         return _index_by_name(data, "categoryId")
     return {}
 
 # returns dict(name, id)
 def _load_manufacturers(client: ApiClient) -> dict[str, int]:
-    data = client.get_json("/productservice/manufacturer", params={"pageNumber": 0})
+    data = client.get_json("/productservice/manufacturer", params={"pageNumber": 1})
     if isinstance(data, list):
         return _index_by_name(data, "manufacturerId")
     return {}
@@ -42,7 +42,7 @@ def _load_manufacturers(client: ApiClient) -> dict[str, int]:
 def _load_products(client: ApiClient) -> dict[str, int]:
     data = client.get_json(
         "/productservice/product",
-        params={"pageNumber": 0, "pageSize": 100},
+        params={"pageNumber": 1, "pageSize": 100},
     )
     if isinstance(data, dict) and isinstance(data.get("data"), list):
         return _index_by_name(data["data"], "productId")
@@ -50,7 +50,7 @@ def _load_products(client: ApiClient) -> dict[str, int]:
 
 # returns dict(name, id)
 def _load_store_locations(client: ApiClient) -> dict[str, int]:
-    data = client.get_json("/storeservice/storelocation", params={"pageNumber": 0})
+    data = client.get_json("/storeservice/storelocation", params={"pageNumber": 1})
     if not isinstance(data, list):
         return {}
     return {
