@@ -10,10 +10,12 @@ import { CheckoutPage } from './views/checkout/checkout-page';
 import { StoresPage } from './views/stores/stores-page';
 import { storeLocationsResolver } from './views/stores/store-locations.resolver';
 import { AdminPage } from './views/admin/admin-page';
-import { CreateManufacturerPage } from './views/create-manufacturer/create-manufacturer-page';
+import { CreateManufacturerPage } from './views/admin/manufacturers/components/create-manufacturer/create-manufacturer-page';
 import { CreateCategoryPage } from './views/create-category/create-category-page';
 import { CreateProductPage } from './views/create-product/create-product-page';
 import { CreateStorePage } from './views/create-store/create-store-page';
+import { Manufacturers } from './views/admin/manufacturers/manufacturers';
+import { manufacturersResolver } from './views/admin/manufacturers/manufacturers.resolver';
 
 export const routes: Routes = [
   {
@@ -45,7 +47,13 @@ export const routes: Routes = [
     component: AdminPage,
     children: [
       { path: '', redirectTo: 'manufacturers', pathMatch: 'full' },
-      { path: 'manufacturers', component: CreateManufacturerPage },
+      { path: 'manufacturers/create', component: CreateManufacturerPage },
+      {
+        path: 'manufacturers',
+        component: Manufacturers,
+        resolve: { manufacturers: manufacturersResolver },
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+      },
       { path: 'categories', component: CreateCategoryPage },
       { path: 'products', component: CreateProductPage },
       { path: 'stores', component: CreateStorePage },

@@ -8,7 +8,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ManufacturerService } from '../../services/manufacturer.service';
+import { ManufacturerService } from '../../../../../services/manufacturer.service';
 
 @Component({
   selector: 'app-create-manufacturer-page',

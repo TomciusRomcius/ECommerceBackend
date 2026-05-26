@@ -1,0 +1,23 @@
+<div class="flex justify-between">
+  <h1 class="text-xl">Manufacturers</h1>
+  <a mat-flat-button routerLink="/admin/manufacturers/create">Create</a>
+</div>
+<table mat-table [dataSource]="manufacturers()" class="w-full">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let manufacturer">{{ manufacturer.name }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let manufacturer">
+      <button mat-button type="button" (click)="edit(manufacturer)">Edit</button>
+      <button mat-button type="button" color="warn" (click)="delete(manufacturer)">
+        Delete
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+</table>
