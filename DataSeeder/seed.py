@@ -34,6 +34,7 @@ def _load_categories(client: ApiClient) -> dict[str, int]:
 # returns dict(name, id)
 def _load_manufacturers(client: ApiClient) -> dict[str, int]:
     data = client.get_json("/productservice/manufacturer", params={"pageNumber": 1})
+    print(data);
     if isinstance(data, list):
         return _index_by_name(data, "manufacturerId")
     return {}
@@ -62,7 +63,7 @@ def _load_store_locations(client: ApiClient) -> dict[str, int]:
 # returns set(productId)
 def _load_product_links(client: ApiClient, store_location_id: int) -> set[int]:
     product_ids: set[int] = set()
-    page_number = 0
+    page_number = 1
 
     while True:
         data = client.get_json(
