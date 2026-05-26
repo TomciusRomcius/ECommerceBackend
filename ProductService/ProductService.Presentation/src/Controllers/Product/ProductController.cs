@@ -34,6 +34,7 @@ public class ProductController : ControllerBase
         {
             Data = ProductResponseMapper.ToDtoList(page.Data),
             TotalCount = page.TotalCount,
+            PageSize = page.PageSize,
             HasNextPage = page.HasNextPage,
             HasPrevPage = page.HasPrevPage,
         };

@@ -1,0 +1,35 @@
+<div class="flex w-full flex-wrap items-center justify-center gap-2">
+  @if (showArrows()) {
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Previous page"
+      [disabled]="!canGoPrev()"
+      (click)="goToPrev()"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  }
+
+  @for (page of visiblePages(); track page) {
+    @if (isCurrentPage(page)) {
+      <button mat-flat-button type="button" color="accent" (click)="goToPage(page)">
+        {{ page }}
+      </button>
+    } @else {
+      <button mat-button type="button" (click)="goToPage(page)">{{ page }}</button>
+    }
+  }
+
+  @if (showArrows()) {
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Next page"
+      [disabled]="!canGoNext()"
+      (click)="goToNext()"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  }
+</div>

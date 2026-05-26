@@ -31,6 +31,7 @@ public class StoreProductsService(
                 TotalCount = productPage.TotalCount,
                 HasNextPage = productPage.HasNextPage,
                 HasPrevPage = productPage.HasPrevPage,
+                PageSize = pageSize
             };
         }
 
@@ -52,6 +53,7 @@ public class StoreProductsService(
             TotalCount = productPage.TotalCount,
             HasNextPage = productPage.HasNextPage,
             HasPrevPage = productPage.HasPrevPage,
+            PageSize = pageSize,
         };
     }
 

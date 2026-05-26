@@ -6,9 +6,8 @@ import { inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import { unwrapApiResponse } from "../../utils/unwrap-api-response";
-import { map } from "rxjs";
 
-export const productResolver: ResolveFn<ProductModel[]> = (
+export const productResolver: ResolveFn<PageModel<ProductModel>> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
 ) => {
@@ -25,6 +24,5 @@ export const productResolver: ResolveFn<ProductModel[]> = (
   return unwrapApiResponse(
     httpClient.get<ApiResponse<PageModel<ProductModel>>>(`${environment.backendApi}/storeproducts`, {
       params,
-    }),
-  ).pipe(map((page) => page.data));
-};
+    }));
+}

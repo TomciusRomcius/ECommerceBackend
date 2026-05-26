@@ -60,6 +60,7 @@ public class ProductService(
         {
             Data = page.Data.Select(ToProductWithImageUrls).ToList(),
             TotalCount = page.TotalCount,
+            PageSize = page.PageSize,
             HasNextPage = page.HasNextPage,
             HasPrevPage = page.HasPrevPage,
         };
