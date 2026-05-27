@@ -1,0 +1,10 @@
+<app-modal-template>
+    <h1 class="text-xl">Adjust stock</h1>
+    <form [formGroup]="form" appearance="fill">
+        <mat-form-field>
+            <mat-label>Stock</mat-label>
+            <input type="number" formControlName="stock" matInput />
+        </mat-form-field>
+    </form>
+    <button (click)="submit()" matButton>Submit</button>
+</app-modal-template>
