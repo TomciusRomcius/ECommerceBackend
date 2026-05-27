@@ -21,6 +21,9 @@ import { categoriesResolver } from './views/admin/categories/categories.resolver
 import { Products } from './views/admin/products/products';
 import { productsResolver } from './views/admin/products/products.resolver';
 import { Stores } from './views/admin/stores/stores';
+import { Store } from './views/admin/store/store';
+import { storeLocationResolver } from './views/admin/store/store-location.resolver';
+import { storeProductsResolver } from './views/admin/store/store-products.resolver';
 
 export const routes: Routes = [
   {
@@ -52,6 +55,15 @@ export const routes: Routes = [
     component: AdminPage,
     children: [
       { path: '', redirectTo: 'manufacturers', pathMatch: 'full' },
+      {
+        path: 'store/:id',
+        component: Store,
+        resolve: {
+          storeLocation: storeLocationResolver,
+          products: storeProductsResolver,
+        },
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+      },
       { path: 'manufacturers/create', component: CreateManufacturerPage },
       {
         path: 'manufacturers',

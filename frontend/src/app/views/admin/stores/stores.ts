@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import StoreLocationModel from '../../../models/store-location-model';
 
 @Component({
@@ -11,6 +11,7 @@ import StoreLocationModel from '../../../models/store-location-model';
   styleUrl: './stores.css',
 })
 export class Stores {
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
   storeLocations = signal<StoreLocationModel[]>(
     this.route.snapshot.data['storeLocations'] ?? [],
@@ -21,6 +22,10 @@ export class Stores {
     this.route.data.subscribe((data) => {
       this.storeLocations.set(data['storeLocations'] as StoreLocationModel[]);
     });
+  }
+
+  view(store: StoreLocationModel): void {
+    this.router.navigate([`/admin/store/${store.storeLocationId}`]);
   }
 
   edit(store: StoreLocationModel): void {
