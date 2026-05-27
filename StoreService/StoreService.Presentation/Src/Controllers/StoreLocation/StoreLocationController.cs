@@ -28,6 +28,18 @@ public class StoreLocation : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{storeLocationId:int}")]
+    public async Task<IActionResult> GetLocation(int storeLocationId)
+    {
+        StoreLocationEntity? result = await _mediator.Send(new GetStoreLocationByIdQuery(storeLocationId));
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
     [Authorize(Roles = RoleTypes.Admin)]
     [HttpPost]
     public async Task<IActionResult> CreateStoreLocation([FromBody] RequestCreateLocationDto createLocationDto)

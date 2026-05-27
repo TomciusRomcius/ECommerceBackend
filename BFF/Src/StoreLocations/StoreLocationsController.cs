@@ -31,6 +31,31 @@ public class StoreLocationsController(ILogger<StoreLocationsController> logger, 
         return Ok(new { data = locations });
     }
 
+    [HttpGet("{storeLocationId:int}")]
+    public async Task<IActionResult> GetStoreLocation(
+        int storeLocationId,
+        CancellationToken cancellationToken = default)
+    {
+        var upstreamUrl = $"{hosts.Value.StoreServiceUrl}/StoreLocation/{storeLocationId}";
+        logger.LogDebug("Fetching store location {StoreLocationId} from {Url}", storeLocationId, upstreamUrl);
+
+        var response = await httpClient.GetAsync(upstreamUrl, cancellationToken);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return NotFound();
+        }
+
+        response.EnsureSuccessStatusCode();
+
+        var location = await response.Content.ReadFromJsonAsync<StoreLocationDto>(cancellationToken);
+        if (location is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new { data = location });
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateStoreLocation(
