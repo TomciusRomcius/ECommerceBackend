@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using BFF.Configuration;
+using BFF.Utils;
 using ECommerceBackend.Utils.Microservices;
 using ECommerceBackend.Utils.Pagination;
 using Microsoft.Extensions.Options;
@@ -155,5 +156,27 @@ public class StoreProductsService(
             await response.Content.ReadFromJsonAsync<List<ProductStoreLocationDto>>(JsonOptions, cancellationToken);
 
         return StoreProductMerger.IndexStoreDetails(storeDetails ?? [], storeLocationId);
+    }
+
+    public async Task<HttpResponseMessage> UpdateProductStockAsync(
+        int storeLocationId,
+        int productId,
+        int stock,
+        string? authorizationHeader,
+        CancellationToken cancellationToken = default)
+    {
+        string url = $"{hosts.Value.StoreServiceUrl}/productstorelocation";
+        logger.LogDebug("Updating product stock at {Url}", url);
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, url);
+        HttpRequestUtils.ApplyAuthorizationHeader(request, authorizationHeader);
+        request.Content = JsonContent.Create(new
+        {
+            storeLocationId,
+            productId,
+            stock,
+        });
+
+        return await httpClient.SendAsync(request, cancellationToken);
     }
 }

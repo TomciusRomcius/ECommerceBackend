@@ -86,7 +86,7 @@ public class ProductStoreLocationController : ControllerBase
     }
 
     [Authorize(Roles = RoleTypes.Admin)]
-    [HttpPatch]
+    [HttpPut]
     public async Task<IActionResult> ModifyProductFromStore([FromBody] AddProductToStoreDto addProductToStoreDto)
     {
         var model = new ProductStoreLocationEntity(

@@ -1,4 +1,6 @@
+using BFF.Utils;
 using ECommerceBackend.Utils.Pagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BFF.StoreProducts;
@@ -56,6 +58,44 @@ public class StoreProductsController(
         {
             logger.LogWarning(ex, "Failed to fetch product {ProductId}.", productId);
             return StatusCode(StatusCodes.Status502BadGateway, new { error = "Failed to fetch product." });
+        }
+    }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdateProductStock(
+        [FromBody] UpdateProductStockRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using HttpResponseMessage response = await storeProductsService.UpdateProductStockAsync(
+                request.StoreLocationId,
+                request.ProductId,
+                request.Stock,
+                Request.Headers.Authorization.ToString(),
+                cancellationToken);
+
+            string body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                logger.LogWarning(
+                    "Update product stock failed with status {StatusCode}: {Body}",
+                    response.StatusCode,
+                    body);
+            }
+
+            return HttpResponseUtils.FromStringBody((int)response.StatusCode, body);
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogWarning(
+                ex,
+                "Failed to update stock for product {ProductId} at store {StoreLocationId}.",
+                request.ProductId,
+                request.StoreLocationId);
+            return StatusCode(StatusCodes.Status502BadGateway, new { error = "Failed to update product stock." });
         }
     }
 }

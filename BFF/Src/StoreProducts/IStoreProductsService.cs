@@ -11,4 +11,11 @@ public interface IStoreProductsService
         CancellationToken cancellationToken = default);
 
     Task<StoreProductDto?> GetProductByIdAsync(int productId, CancellationToken cancellationToken = default);
+
+    Task<HttpResponseMessage> UpdateProductStockAsync(
+        int storeLocationId,
+        int productId,
+        int stock,
+        string? authorizationHeader,
+        CancellationToken cancellationToken = default);
 }
