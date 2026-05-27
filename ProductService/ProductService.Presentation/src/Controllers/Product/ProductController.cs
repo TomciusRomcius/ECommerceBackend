@@ -26,9 +26,9 @@ public class ProductController : ControllerBase
     /// <param name="pageNumber">Page number for pagination</param>
     /// <param name="pageSize">Number of products per page</param>
     [HttpGet]
-    public async Task<IActionResult> GetProducts(int pageNumber = 0, int pageSize = 20, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetProducts(string searchText = "", int pageNumber = 0, int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        Page<ProductEntity> page = await _mediator.Send(new GetProductsQuery(pageNumber, pageSize), cancellationToken);
+        Page<ProductEntity> page = await _mediator.Send(new GetProductsQuery(searchText, pageNumber, pageSize), cancellationToken);
 
         Page<ProductDto> response = new()
         {

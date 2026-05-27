@@ -11,12 +11,13 @@ public class ProductsController(IProductService productService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetProducts(
-        [FromQuery] int pageNumber = 0,
-        [FromQuery] int pageSize = 20,
+        string searchText = "",
+        int pageNumber = 0,
+        int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
         Result<Page<ProductWithImageUrlsDto>> result =
-            await productService.GetProductsAsync(pageNumber, pageSize, cancellationToken);
+            await productService.GetProductsAsync(searchText, pageNumber, pageSize, cancellationToken);
 
         if (result.Errors.Any())
         {

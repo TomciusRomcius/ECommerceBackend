@@ -6,10 +6,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Paginator } from '../../../components/paginator/paginator';
 import PageModel, { emptyPage } from '../../../models/page-model';
 import ProductModel from '../../../models/product-model';
+import { SearchBar } from "@components/search-bar/search-bar";
 
 @Component({
   selector: 'app-products',
-  imports: [CurrencyPipe, MatButtonModule, MatTableModule, Paginator, RouterLink],
+  imports: [CurrencyPipe, MatButtonModule, MatTableModule, Paginator, RouterLink, SearchBar],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })

@@ -12,8 +12,9 @@ export const productsResolver: ResolveFn<PageModel<ProductModel>> = (
   const httpClient = inject(HttpClient);
   const pageNumber = route.queryParamMap.get('pageNumber') ?? '1';
   const pageSize = route.queryParamMap.get('pageSize') ?? '20';
+  const searchText = route.queryParamMap.get('searchText') ?? '';
 
   return httpClient.get<PageModel<ProductModel>>(`${environment.backendApi}/Products`, {
-    params: { pageNumber, pageSize },
+    params: { pageNumber, pageSize, searchText },
   });
 };

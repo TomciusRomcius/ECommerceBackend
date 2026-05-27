@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using ECommerceBackend.Utils.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, Page<Product
 
         Page<ProductEntity> page = await _context.Products
             .AsNoTracking()
+            .Where(p => EF.Functions.ILike(p.Name, $"%{request.searchText}%"))
             .Include(p => p.Category)
             .Include(p => p.Manufacturer)
             .Include(p => p.Images)

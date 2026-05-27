@@ -27,11 +27,13 @@ public class ProductService(
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<Result<Page<ProductWithImageUrlsDto>>> GetProductsAsync(
+        string searchText,
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default)
     {
         var query = new QueryString()
+            .Add("searchText", searchText.ToString())
             .Add("pageNumber", pageNumber.ToString())
             .Add("pageSize", pageSize.ToString());
         string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Product{query}";

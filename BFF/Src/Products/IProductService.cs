@@ -6,6 +6,7 @@ namespace BFF.Products;
 public interface IProductService
 {
     Task<Result<Page<ProductWithImageUrlsDto>>> GetProductsAsync(
+        string searchText,
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default);
