@@ -6,5 +6,10 @@
             <input type="number" formControlName="stock" matInput />
         </mat-form-field>
     </form>
-    <button (click)="submit()" matButton>Submit</button>
+    @if (error()) {
+      <p class="text-sm text-red-600">{{ error() }}</p>
+    }
+    <button (click)="submit()" mat-flat-button type="button" [disabled]="loading()">
+      {{ loading() ? 'Saving…' : 'Submit' }}
+    </button>
 </app-modal-template>

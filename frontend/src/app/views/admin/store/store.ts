@@ -2,7 +2,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Paginator } from '../../../components/paginator/paginator';
 import PageModel, { emptyPage } from '../../../models/page-model';
 import ProductModel from '../../../models/product-model';
@@ -18,6 +18,7 @@ import { EditStock } from './components/edit-stock/edit-stock';
 })
 export class Store {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   storeLocation = signal<StoreLocationModel | null>(
     this.route.snapshot.data['storeLocation'] ?? null,
   );
@@ -34,11 +35,26 @@ export class Store {
     });
   }
 
+  private reloadProducts(): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParamsHandling: 'preserve',
+      onSameUrlNavigation: 'reload'
+    });
+  }
+
   editStock(product: ProductModel): void {
+    const storeLocationId = this.storeLocation()?.storeLocationId;
+    if (!storeLocationId) {
+      return;
+    }
+
     this.dialog.open(EditStock, {
       data: {
-        initialStock: product.store?.stock ?? 0
-      }
+        storeLocationId,
+        productId: product.productId,
+        initialStock: product.store?.stock ?? 0,
+      },
     });
   }
 

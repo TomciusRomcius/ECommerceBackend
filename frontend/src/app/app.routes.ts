@@ -62,7 +62,7 @@ export const routes: Routes = [
           storeLocation: storeLocationResolver,
           products: storeProductsResolver,
         },
-        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+        runGuardsAndResolvers: 'always',
       },
       { path: 'manufacturers/create', component: CreateManufacturerPage },
       {
