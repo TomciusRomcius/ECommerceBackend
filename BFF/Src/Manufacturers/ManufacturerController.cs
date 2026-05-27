@@ -15,9 +15,11 @@ public class ManufacturerController(
     ILogger<ManufacturerController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetManufacturers(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetManufacturers(
+        string searchText = "",
+        CancellationToken cancellationToken = default)
     {
-        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Manufacturer";
+        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Manufacturer?searchText={Uri.EscapeDataString(searchText)}";
         logger.LogDebug("Fetching manufacturers from {Url}", upstreamUrl);
 
         using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);

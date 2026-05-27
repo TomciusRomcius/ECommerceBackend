@@ -23,9 +23,13 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetManufacturers()
+    public async Task<IActionResult> GetManufacturers(
+        string searchText = "",
+        CancellationToken cancellationToken = default)
     {
-        List<ManufacturerEntity> manufacturers = await _mediator.Send(new GetManufacturersQuery());
+        List<ManufacturerEntity> manufacturers = await _mediator.Send(
+            new GetManufacturersQuery(searchText),
+            cancellationToken);
         return Ok(manufacturers);
     }
 

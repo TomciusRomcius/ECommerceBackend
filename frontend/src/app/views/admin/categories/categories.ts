@@ -3,10 +3,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import CategoryModel from '../../../models/category-model';
+import { SearchBar } from '@components/search-bar/search-bar';
 
 @Component({
   selector: 'app-categories',
-  imports: [MatButtonModule, MatTableModule, RouterLink],
+  imports: [MatButtonModule, MatTableModule, RouterLink, SearchBar],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })

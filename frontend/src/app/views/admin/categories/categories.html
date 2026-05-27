@@ -2,6 +2,7 @@
   <h1 class="text-xl">Categories</h1>
   <a mat-flat-button routerLink="/admin/categories/create">Create</a>
 </div>
+<app-search-bar />
 <table mat-table [dataSource]="categories()" class="w-full">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Name</th>

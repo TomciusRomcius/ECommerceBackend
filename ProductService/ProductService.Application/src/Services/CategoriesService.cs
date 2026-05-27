@@ -8,7 +8,9 @@ namespace ProductService.Application.Services;
 
 public interface ICategoriesService
 {
-    public Task<List<CategoryEntity>> GetCategoriesAsync();
+    public Task<List<CategoryEntity>> GetCategoriesAsync(
+        string searchText,
+        CancellationToken cancellationToken = default);
     public Task<Result<int>> CreateCategoryAsync(CategoryEntity entity);
 }
 
@@ -23,11 +25,21 @@ public class CategoriesService : ICategoriesService
         _context = context;
     }
 
-    public async Task<List<CategoryEntity>> GetCategoriesAsync()
+    public async Task<List<CategoryEntity>> GetCategoriesAsync(
+        string searchText,
+        CancellationToken cancellationToken = default)
     {
         _logger.LogTrace("Entered {FunctionName}", nameof(GetCategoriesAsync));
         _logger.LogDebug("Fetching all categories");
-        List<CategoryEntity> result = await _context.Categories.ToListAsync();
+        IQueryable<CategoryEntity> query = _context.Categories;
+
+        string normalizedSearchText = searchText.Trim();
+        if (!string.IsNullOrWhiteSpace(normalizedSearchText))
+        {
+            query = query.Where(category => EF.Functions.ILike(category.Name, $"%{normalizedSearchText}%"));
+        }
+
+        List<CategoryEntity> result = await query.ToListAsync(cancellationToken);
         return result;
     }
 

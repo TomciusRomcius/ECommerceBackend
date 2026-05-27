@@ -29,9 +29,19 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, Page<Product
             request.PageSize
         );
 
-        Page<ProductEntity> page = await _context.Products
-            .AsNoTracking()
-            .Where(p => EF.Functions.ILike(p.Name, $"%{request.searchText}%"))
+        IQueryable<ProductEntity> query = _context.Products.AsNoTracking();
+        string searchText = request.searchText.Trim();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            string pattern = $"%{searchText}%";
+            query = query.Where(p =>
+                EF.Functions.ILike(p.Name, pattern) ||
+                (p.Category != null && EF.Functions.ILike(p.Category.Name, pattern)) ||
+                (p.Manufacturer != null && EF.Functions.ILike(p.Manufacturer.Name, pattern)));
+        }
+
+        Page<ProductEntity> page = await query
             .Include(p => p.Category)
             .Include(p => p.Manufacturer)
             .Include(p => p.Images)

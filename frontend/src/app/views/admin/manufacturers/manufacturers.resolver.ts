@@ -12,10 +12,11 @@ export const manufacturersResolver: ResolveFn<ManufacturerModel[]> = (
   ) => {
     const httpClient = inject(HttpClient);
     const page = route.queryParamMap.get('page') ?? '1';
+    const searchText = route.queryParamMap.get('searchText') ?? '';
   
     return unwrapApiResponse(
       httpClient.get<ApiResponse<ManufacturerModel[]>>(`${environment.backendApi}/manufacturer`, {
-        params: { page },
+        params: { page, searchText },
       }),
     );
   };

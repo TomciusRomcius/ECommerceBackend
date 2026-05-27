@@ -10,10 +10,11 @@ import StoreLocationModel from '../../../models/store-location-model';
 import { MatDialog } from '@angular/material/dialog';
 import { EditStock } from './components/edit-stock/edit-stock';
 import { AddProductToStore } from './components/add-product-to-store/add-product-to-store';
+import { SearchBar } from "@components/search-bar/search-bar";
 
 @Component({
   selector: 'app-store',
-  imports: [CurrencyPipe, MatButtonModule, MatTableModule, Paginator, RouterLink],
+  imports: [CurrencyPipe, MatButtonModule, MatTableModule, Paginator, RouterLink, SearchBar],
   templateUrl: './store.html',
   styleUrl: './store.css',
 })

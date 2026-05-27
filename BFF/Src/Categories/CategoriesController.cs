@@ -15,9 +15,11 @@ public class CategoriesController(
     ILogger<CategoriesController> logger) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetCategories(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCategories(
+        string searchText = "",
+        CancellationToken cancellationToken = default)
     {
-        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Categories";
+        string upstreamUrl = $"{hosts.Value.ProductServiceUrl}/Categories?searchText={Uri.EscapeDataString(searchText)}";
         logger.LogDebug("Fetching categories from {Url}", upstreamUrl);
 
         using HttpResponseMessage response = await httpClient.GetAsync(upstreamUrl, cancellationToken);

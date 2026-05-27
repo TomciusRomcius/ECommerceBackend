@@ -21,9 +21,11 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCategories()
+    public async Task<IActionResult> GetCategories(
+        string searchText = "",
+        CancellationToken cancellationToken = default)
     {
-        List<CategoryEntity> categories = await _categoriesService.GetCategoriesAsync();
+        List<CategoryEntity> categories = await _categoriesService.GetCategoriesAsync(searchText, cancellationToken);
         return Ok(categories);
     }
 

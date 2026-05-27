@@ -7,12 +7,15 @@ import CategoryModel from '../../../models/category-model';
 import { unwrapApiResponse } from '../../../utils/unwrap-api-response';
 
 export const categoriesResolver: ResolveFn<CategoryModel[]> = (
-  _route: ActivatedRouteSnapshot,
+  route: ActivatedRouteSnapshot,
   _state: RouterStateSnapshot,
 ) => {
   const httpClient = inject(HttpClient);
+  const searchText = route.queryParamMap.get('searchText') ?? '';
 
   return unwrapApiResponse(
-    httpClient.get<ApiResponse<CategoryModel[]>>(`${environment.backendApi}/Categories`),
+    httpClient.get<ApiResponse<CategoryModel[]>>(`${environment.backendApi}/Categories`, {
+      params: { searchText },
+    }),
   );
 };

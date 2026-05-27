@@ -23,7 +23,15 @@ public class GetManufacturersHandler : IRequestHandler<GetManufacturersQuery, Li
     {
         _logger.LogTrace("Entered Handle");
         _logger.LogDebug("Fetching all manufacturers");
-        List<ManufacturerEntity> result = await _context.Manufacturers
+        IQueryable<ManufacturerEntity> query = _context.Manufacturers;
+        string searchText = request.SearchText.Trim();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            query = query.Where(manufacturer => EF.Functions.ILike(manufacturer.Name, $"%{searchText}%"));
+        }
+
+        List<ManufacturerEntity> result = await query
             .ToListAsync(cancellationToken: cancellationToken);
         _logger.LogDebug("Retrieved manufacturers: {@Manufacturers}", result);
         return result;
