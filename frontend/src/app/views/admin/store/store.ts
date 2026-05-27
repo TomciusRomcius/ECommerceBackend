@@ -9,6 +9,7 @@ import ProductModel from '../../../models/product-model';
 import StoreLocationModel from '../../../models/store-location-model';
 import { MatDialog } from '@angular/material/dialog';
 import { EditStock } from './components/edit-stock/edit-stock';
+import { AddProductToStore } from './components/add-product-to-store/add-product-to-store';
 
 @Component({
   selector: 'app-store',
@@ -55,6 +56,20 @@ export class Store {
         productId: product.productId,
         initialStock: product.store?.stock ?? 0,
       },
+    });
+  }
+
+  addProduct(): void {
+    const storeLocationId = this.storeLocation()?.storeLocationId;
+    if (!storeLocationId) {
+      return;
+    }
+
+    this.dialog.open(AddProductToStore, {
+      data: {
+        storeLocationId,
+      },
+      minWidth: '700px',
     });
   }
 

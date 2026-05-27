@@ -7,7 +7,10 @@
       <h1 class="text-xl">Store</h1>
     }
   </div>
-  <a mat-flat-button routerLink="/admin/stores">Back to stores</a>
+  <div>
+    <a mat-button routerLink="/admin/stores">Back to stores</a>
+    <button mat-flat-button type="button" (click)="addProduct()">Add product</button>
+  </div>
 </div>
 
 <h2 class="mb-4 mt-8 text-lg font-medium">Products</h2>
