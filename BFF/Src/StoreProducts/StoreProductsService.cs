@@ -179,4 +179,26 @@ public class StoreProductsService(
 
         return await httpClient.SendAsync(request, cancellationToken);
     }
+
+    public async Task<HttpResponseMessage> AddProductToStoreAsync(
+        int storeLocationId,
+        int productId,
+        int stock,
+        string? authorizationHeader,
+        CancellationToken cancellationToken = default)
+    {
+        string url = $"{hosts.Value.StoreServiceUrl}/productstorelocation";
+        logger.LogDebug("Adding product to store at {Url}", url);
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, url);
+        HttpRequestUtils.ApplyAuthorizationHeader(request, authorizationHeader);
+        request.Content = JsonContent.Create(new
+        {
+            storeLocationId,
+            productId,
+            stock,
+        });
+
+        return await httpClient.SendAsync(request, cancellationToken);
+    }
 }

@@ -18,4 +18,11 @@ public interface IStoreProductsService
         int stock,
         string? authorizationHeader,
         CancellationToken cancellationToken = default);
+
+    Task<HttpResponseMessage> AddProductToStoreAsync(
+        int storeLocationId,
+        int productId,
+        int stock,
+        string? authorizationHeader,
+        CancellationToken cancellationToken = default);
 }
